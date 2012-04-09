@@ -4,7 +4,9 @@ A front end for git in xyzzy.
 
 
 ## Author
-DeaR (<mailto:nayuri@kuonn.mydns.jp>)
+DeaR (<nayuri@kuonn.mydns.jp>)
+
+[@nayuri_aohime](http://twitter.com/nayuri_aohime/)
 
 
 ## License
