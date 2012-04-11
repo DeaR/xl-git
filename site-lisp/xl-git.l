@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 17:51:43 DeaR>
+;; @timestamp   <2012-04-11 20:42:20 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -27,12 +27,12 @@
 (in-package :user)
 
 (require "xl-git/process")
-(require "xl-git/utils")
 (require "xl-git/output")
-(require "xl-git/command")
+(require "xl-git/utils")
 (require "xl-git/diff")
 (require "xl-git/log")
 (require "xl-git/status")
+(require "xl-git/command")
 (require "xl-git/version")
 
 (provide "xl-git")

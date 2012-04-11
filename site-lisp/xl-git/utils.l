@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 18:38:58 DeaR>
+;; @timestamp   <2012-04-11 20:41:05 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -26,13 +26,23 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (require "xl-git/package")
-  (require "xl-git/process"))
+  (require "xl-git/process")
+  (require "xl-git/output"))
 
 (in-package :git)
 
-(export '(*git-temp-bufname*))
+(export '(*git-output-bufname*
+          *git-output-split-vertical-p*
+          *git-temp-bufname*
+          define-git-command))
 
 
+
+(defvar *git-output-bufname* "*Git*"
+  "出力バッファ名")
+
+(defvar *git-output-split-vertical-p* t
+  "出力バッファは縦に分割する")
 
 (defvar *git-temp-bufname* " *Git Temp*"
   "作業バッファ名")
@@ -56,6 +66,52 @@
   (let ((path (merge-pathnames path)))
     (substring path
                (length (append-trail-slash (git-top-dir (directory-namestring path)))))))
+
+(defmacro define-git-command (command &key symbol document prompt file-arg mode)
+  "シンプルなgitコマンド生成"
+  `(let ((symbol (intern (concat "git-"
+                                 (if ',symbol
+                                     (if (stringp ',symbol)
+                                         ,symbol
+                                       (symbol-name ',symbol))
+                                   (if (listp ,command)
+                                       (format nil "~{~A~}" ,command)
+                                     (substitute-string ,command " " ""))))
+                         :git)))
+     (export symbol :git)
+     (setf (symbol-function symbol)
+           #'(lambda ()
+               ,document
+               (interactive)
+               (git::git-command-wrapper ,command
+                                         :prompt ,prompt
+                                         :file-arg ,file-arg
+                                         :mode ,mode)))))
+(setf (get 'define-git-command 'lisp-indent-hook) 'defun)
+
+(defun git-command-wrapper (command &key prompt file-arg
+                                    (mode #'git-output-mode))
+  "シンプルなgitコマンド実体"
+  (let ((args (if (or prompt
+                      *prefix-args*
+                      (not (file-visited-p)))
+                  (read-string (if (listp command)
+                                   (format nil "git~{ ~A~}: " command)
+                                 (format nil "git ~A: " command)))
+                (if file-arg
+                    (format nil "\"~A\"" (file-namestring (get-buffer-file-name)))
+                  "")))
+        (buffer (get-buffer-create *git-output-bufname*)))
+    (erase-buffer buffer)
+    (git-make-process (if (listp command)
+                          (append command (list args))
+                        (format nil "~A ~A" command args))
+                      :output buffer)
+    (unless (or (get-buffer-window buffer)
+                (> (count-windows) 1))
+      (split-window nil *git-output-split-vertical-p*))
+    (pop-to-buffer buffer nil *git-output-split-vertical-p*)
+    (funcall mode)))
 
 
 
