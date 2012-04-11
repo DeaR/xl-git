@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 20:02:37 DeaR>
+;; @timestamp   <2012-04-11 20:31:24 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -33,33 +33,7 @@
 
 (export '(*git-output-bufname*
           *git-output-split-vertical-p*
-          define-git-command
-          git-add
-          git-bisect
-          git-branch
-          git-checkout
-          git-clone
-          git-commit
-          git-commit-all
-          git-commit-amend
-          git-diff
-          git-diff-file
-          git-fetch
-          git-grep
-          git-help
-          git-init
-          ; git-log
-          ; git-glog
-          git-merge
-          git-mv
-          git-pull
-          git-push
-          git-rebase
-          git-reset
-          git-rm
-          git-show
-          git-status
-          git-tag))
+          define-git-command))
 
 
 
@@ -73,13 +47,17 @@
 
 (defmacro define-git-command (command &key symbol document prompt file-arg mode)
   "シンプルなgitコマンド生成"
-  `(let ((symbol (concat "git-"
-                         (if ',symbol
-                             (symbol-name ',symbol)
-                           (if (listp ,command)
-                               (format nil "~{~A~}" ,command)
-                             (substitute-string ,command " " ""))))))
-     (setf (symbol-function (intern symbol :git))
+  `(let ((symbol (intern (concat "git-"
+                                 (if ',symbol
+                                     (if (stringp ',symbol)
+                                         ,symbol
+                                       (symbol-name ',symbol))
+                                   (if (listp ,command)
+                                       (format nil "~{~A~}" ,command)
+                                     (substitute-string ,command " " ""))))
+                         :git)))
+     (export symbol :git)
+     (setf (symbol-function symbol)
            #'(lambda ()
                ,document
                (interactive)
@@ -198,6 +176,9 @@ Used to amend the tip of the current branch. Prepare the tree object you would w
 
 (define-git-command '("show")
   :document "Show various types of objects.")
+
+(define-git-command '("stash")
+  :document "Stash the changes in a dirty working directory away.")
 
 (define-git-command '("status")
   :document "Show the working tree status."
