@@ -1,10 +1,10 @@
-;; -*- mode: lisp; package: user; encoding: shift_jis -*-
+;; -*- mode: lisp; package: git; encoding: shift_jis -*-
 
-;; @name        xl-git.l
+;; @name        xl-git/utils.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 17:51:43 DeaR>
+;; @timestamp   <2012-04-11 15:22:09 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -24,15 +24,39 @@
 ;; DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-(in-package :user)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (require "xl-git/package")
+  (require "xl-git/process"))
 
-(require "xl-git/process")
-(require "xl-git/utils")
-(require "xl-git/output")
-(require "xl-git/command")
-(require "xl-git/diff")
-(require "xl-git/log")
-(require "xl-git/status")
-(require "xl-git/version")
+(in-package :git)
 
-(provide "xl-git")
+(export '(*git-temp-bufname*))
+
+
+
+(defvar *git-temp-bufname* " *Git Temp*"
+  "作業バッファ名")
+
+
+
+(defun git-top-dir (&optional (dir (default-directory)))
+  ".gitのパスを取得"
+  (multiple-value-bind (exec-code out)
+      (git-call-process '("rev-parse" "--show-cdup")
+                        :output (get-buffer-create *git-temp-bufname*)
+                        :exec-directory dir)
+    (unless (= exec-code 0)
+      (error out))
+    (merge-pathnames (or (first (split-string out #\LFD))
+                         "")
+                     dir)))
+
+(defun git-relative-pathnames (path)
+  "git用の相対パスに変換"
+  (let ((path (merge-pathnames path)))
+    (substring path
+               (length (append-trail-slash (git-top-dir (directory-namestring path)))))))
+
+
+
+(provide "xl-git/utils")

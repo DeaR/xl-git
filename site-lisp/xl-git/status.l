@@ -1,10 +1,10 @@
-;; -*- mode: lisp; package: user; encoding: shift_jis -*-
+;; -*- mode: lisp; package: git; encoding: shift_jis -*-
 
-;; @name        xl-git.l
+;; @name        xl-git/status.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 17:51:43 DeaR>
+;; @timestamp   <2012-04-11 15:22:09 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -24,15 +24,34 @@
 ;; DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-(in-package :user)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (require "xl-git/package")
+  (require "xl-git/output"))
 
-(require "xl-git/process")
-(require "xl-git/utils")
-(require "xl-git/output")
-(require "xl-git/command")
-(require "xl-git/diff")
-(require "xl-git/log")
-(require "xl-git/status")
-(require "xl-git/version")
+(in-package :git)
 
-(provide "xl-git")
+
+
+(defvar *git-status-keymap* nil
+  "git status出力モードのキーマップ")
+(unless *git-status-keymap*
+  (setf *git-status-keymap* (make-sparse-keymap))
+  (define-key *git-status-keymap* #\q 'git-output-quit))
+
+
+
+(defun git-status-mode (&key
+                        (directory (default-directory))
+                        (encoding *git-process-encoding*)
+                        (eol-code *git-process-eol-code*))
+  "git status出力モード"
+  (git-output-mode :directory directory
+                   :encoding encoding
+                   :eol-code eol-code)
+  ; (make-local-variable 'regexp-keyword-list)
+  ; (setf regexp-keyword-list
+  ;       (compile-regexp-keyword-list
+  ;        `()))
+  (use-keymap *git-status-keymap*))
+
+(provide "xl-git/status")

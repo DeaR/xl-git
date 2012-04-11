@@ -1,6 +1,6 @@
 ;; -*- mode: lisp; package: git; encoding: shift_jis -*-
 
-;; @name        xl-git/version.l
+;; @name        xl-git/diff.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
@@ -25,19 +25,52 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (require "xl-git/package"))
+  (require "xl-git/package")
+  (require "xl-git/output"))
 
 (in-package :git)
 
-(export '(xl-git-version))
+(export '(*git-diff-color-add*
+          *git-diff-color-remove*
+          *git-diff-color-area*))
 
 
 
-(defconstant +xl-git-version+ "1.0a1")
+(defvar *git-diff-color-add* '(:color 2)
+  "diffの追加行の色")
+
+(defvar *git-diff-color-remove* '(:color 1)
+  "diffの削除行の色")
+
+(defvar *git-diff-color-area* '(:color 6)
+  "diffの範囲情報の色
+@@ -R +R @@")
+
+(defvar *git-diff-keymap* nil
+  "git diff出力モードのキーマップ")
+(unless *git-diff-keymap*
+  (setf *git-diff-keymap* (make-sparse-keymap))
+  (define-key *git-diff-keymap* #\q 'git-output-quit))
 
 
 
-(defun xl-git-version ()
-  +xl-git-version+)
+(defun git-diff-mode (&key
+                      (directory (default-directory))
+                      (encoding *git-process-encoding*)
+                      (eol-code *git-process-eol-code*))
+  "git diff出力モード"
+  (git-output-mode :directory directory
+                   :encoding encoding
+                   :eol-code eol-code)
+  (make-local-variable 'regexp-keyword-list)
+  (setf regexp-keyword-list
+        (compile-regexp-keyword-list
+         `(("^\\+.*$"
+            nil ,*git-diff-color-add*)
+           ("^\\-.*$"
+            nil ,*git-diff-color-remove*)
+           ("^@@ .* @@.*$"
+            nil ,*git-diff-color-area*))))
+  (use-keymap *git-diff-keymap*))
 
-(provide "xl-git/version")
+(provide "xl-git/diff")

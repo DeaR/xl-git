@@ -1,10 +1,10 @@
-;; -*- mode: lisp; package: user; encoding: shift_jis -*-
+;; -*- mode: lisp; package: git; encoding: shift_jis -*-
 
-;; @name        xl-git.l
+;; @name        xl-git/output.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 17:51:43 DeaR>
+;; @timestamp   <2012-04-11 17:17:40 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -24,15 +24,41 @@
 ;; DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-(in-package :user)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (require "xl-git/package"))
 
-(require "xl-git/process")
-(require "xl-git/utils")
-(require "xl-git/output")
-(require "xl-git/command")
-(require "xl-git/diff")
-(require "xl-git/log")
-(require "xl-git/status")
-(require "xl-git/version")
+(in-package :git)
 
-(provide "xl-git")
+(export '(git-output-quit))
+
+
+
+(defvar *git-output-keymap* nil
+  "git出力モードのキーマップ")
+(unless *git-output-keymap*
+  (setf *git-output-keymap* (make-sparse-keymap))
+  (define-key *git-output-keymap* #\q 'git-output-quit))
+
+
+
+(defun git-output-mode (&key
+                        (directory (default-directory))
+                        (encoding *git-process-encoding*)
+                        (eol-code *git-process-eol-code*))
+  "git出力モード"
+  (set-default-directory directory)
+  (set-buffer-fileio-encoding encoding)
+  (set-buffer-eol-code eol-code)
+  (make-local-variable 'need-not-save)
+  (setf need-not-save t)
+  (use-keymap *git-output-keymap*))
+
+(defun git-output-quit (&optional (buffer (selected-buffer)))
+  "git出力バッファを閉じる"
+  (interactive)
+  (when (and (set-window (get-buffer-window buffer))
+             (> (count-windows) 1))
+    (delete-window))
+  (delete-buffer buffer))
+
+(provide "xl-git/output")

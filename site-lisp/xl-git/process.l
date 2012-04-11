@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 15:50:18 DeaR>
+;; @timestamp   <2012-04-11 17:23:50 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -95,7 +95,7 @@
                       :outcode encoding
                       :eol-code eol-code
                       :show show)
-      (save-excursion intern
+      (save-excursion
         (let ((buffer (switch-to-buffer output)))
           (make-local-variable '*delete-buffer-hook*)
           (add-hook '*delete-buffer-hook* 'git-kill-process))))))
@@ -105,6 +105,7 @@
   (let ((proc (buffer-process buffer)))
     (when (and proc
                (eq (process-status proc) :run))
-      (kill-process proc))))
+      (kill-process proc)))
+  t)
 
 (provide "xl-git/process")

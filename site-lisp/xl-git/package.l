@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-09 19:26:06 DeaR>
+;; @timestamp   <2012-04-11 15:22:09 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -14,10 +14,10 @@
 ;; use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
 ;; the Software, and to permit persons to whom the Software is furnished to do so,
 ;; subject to the following conditions:
-;; 
+;;
 ;; The above copyright notice and this permission notice shall be included in all copies
 ;; or substantial portions of the Software.
-;; 
+;;
 ;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 ;; INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 ;; PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
