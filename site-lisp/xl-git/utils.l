@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 15:22:09 DeaR>
+;; @timestamp   <2012-04-11 18:38:58 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -52,7 +52,7 @@
                      dir)))
 
 (defun git-relative-pathnames (path)
-  "git用の相対パスに変換"
+  ".gitからの相対パスに変換"
   (let ((path (merge-pathnames path)))
     (substring path
                (length (append-trail-slash (git-top-dir (directory-namestring path)))))))

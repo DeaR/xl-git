@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 18:39:52 DeaR>
+;; @timestamp   <2012-04-11 19:02:03 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -64,30 +64,26 @@
 
 (defun git-command-wrapper (command &key prompt file-arg)
   "シンプルなgitコマンド実体"
-  (handler-case
-      (let ((args (if (or prompt
-                          *prefix-args*
-                          (not (file-visited-p)))
-                      (read-string (if (listp command)
-                                       (format nil "git~{ ~A~}: " command)
-                                     (format nil "git ~A: " command)))
-                    (if file-arg
-                        (format nil "\"~A\"" (git-relative-pathnames (get-buffer-file-name)))
-                      "")))
-            (buffer (get-buffer-create *git-output-bufname*)))
-        (erase-buffer buffer)
-        (git-make-process (if (listp command)
-                              (append command (list args))
-                            (format nil "~A ~A" command args))
-                          :output buffer
-                          :exec-directory (git-top-dir))
-        (unless (or (get-buffer-window buffer)
-                    (> (count-windows) 1))
-          (split-window nil *git-output-split-vertical-p*))
-        (pop-to-buffer buffer nil *git-output-split-vertical-p*)
-        (git-output-mode))
-    (error (c)
-      (message (si:*condition-string c)))))
+  (let ((args (if (or prompt
+                      *prefix-args*
+                      (not (file-visited-p)))
+                  (read-string (if (listp command)
+                                   (format nil "git~{ ~A~}: " command)
+                                 (format nil "git ~A: " command)))
+                (if file-arg
+                    (format nil "\"~A\"" (file-namestring (get-buffer-file-name)))
+                  "")))
+        (buffer (get-buffer-create *git-output-bufname*)))
+    (erase-buffer buffer)
+    (git-make-process (if (listp command)
+                          (append command (list args))
+                        (format nil "~A ~A" command args))
+                      :output buffer)
+    (unless (or (get-buffer-window buffer)
+                (> (count-windows) 1))
+      (split-window nil *git-output-split-vertical-p*))
+    (pop-to-buffer buffer nil *git-output-split-vertical-p*)
+    (git-output-mode)))
 
 (define-git-command "add"
   :document "Add file contents to the index."
