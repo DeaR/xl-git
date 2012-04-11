@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 15:22:09 DeaR>
+;; @timestamp   <2012-04-11 20:03:04 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -26,7 +26,8 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (require "xl-git/package")
-  (require "xl-git/output"))
+  (require "xl-git/output")
+  (require "xl-git/command"))
 
 (in-package :git)
 

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 15:22:09 DeaR>
+;; @timestamp   <2012-04-11 20:05:53 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -26,7 +26,8 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (require "xl-git/package")
-  (require "xl-git/output"))
+  (require "xl-git/output")
+  (require "xl-git/command"))
 
 (in-package :git)
 
@@ -37,7 +38,9 @@
           *git-log-color-branch*
           *git-log-color-remote-branch*
           *git-log-color-tag*
-          *git-log-default-limit*))
+          *git-log-default-limit*
+          git-log
+          git-glog))
 
 
 
@@ -88,5 +91,19 @@
                  (2 . ,*git-log-color-tag*)
                  (4 . ,*git-log-color-remote-branch*)
                  (6 . ,*git-log-color-branch*)))))))
+
+(defun git-log ()
+  "Show commit logs."
+  (interactive)
+  (git-command-wrapper (list "log" (format nil "-n ~D" *git-log-default-limit*))
+                       :mode #'git-log-mode))
+
+(defun git-glog ()
+  "Show commit logs.
+Draw a text-based graphical representation of the commit history on the left hand side of the output. This may cause extra lines to be printed in between commits, in order for the graph history to be drawn properly."
+  (interactive)
+  (git-command-wrapper (list "log" (format nil "-n ~D" *git-log-default-limit*)
+                             "--graph" "--oneline" "--decorate" "--branches")
+                       :mode #'git-log-mode))
 
 (provide "xl-git/log")
