@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 19:08:03 DeaR>
+;; @timestamp   <2012-04-12 20:07:49 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -51,18 +51,19 @@
   :prompt t
   :no-std-handles t)
 
-(define-git-command ("commit")
-  :document "Record changes to the repository.")
-
-(define-git-command ("commit" "-a")
-  :symbol #:commit-all
-  :document "Record changes to the repository.
-Tell the command to automatically stage files that have been modified and deleted, but new files you have not told git about are not affected.")
-
-(define-git-command ("commit" "--amend")
-  :symbol #:commit-amend
-  :document "Record changes to the repository.
-Used to amend the tip of the current branch. Prepare the tree object you would want to replace the latest commit as usual (this includes the usual -i/-o and explicit paths), and the commit log editor is seeded with the commit message from the tip of the current branch. The commit you create replaces the current tip - if it was a merge, it will have the parents of the current tip as parents - so the current top commit is discarded.")
+; -> commit.l
+; (define-git-command ("commit")
+;   :document "Record changes to the repository.")
+; 
+; (define-git-command ("commit" "-a")
+;   :symbol #:commit-all
+;   :document "Record changes to the repository.
+; Tell the command to automatically stage files that have been modified and deleted, but new files you have not told git about are not affected.")
+; 
+; (define-git-command ("commit" "--amend")
+;   :symbol #:commit-amend
+;   :document "Record changes to the repository.
+; Used to amend the tip of the current branch. Prepare the tree object you would want to replace the latest commit as usual (this includes the usual -i/-o and explicit paths), and the commit log editor is seeded with the commit message from the tip of the current branch. The commit you create replaces the current tip - if it was a merge, it will have the parents of the current tip as parents - so the current top commit is discarded.")
 
 (define-git-command ("diff")
   :document "Show changes between commits, commit and working tree, etc."
@@ -87,10 +88,11 @@ Used to amend the tip of the current branch. Prepare the tree object you would w
 (define-git-command ("init")
   :document "Create an empty git repository or reinitialize an existing one.")
 
+; -> log.l
 ; (define-git-command ("log")
 ;   :document "Show commit logs."
 ;   :minor-mode #'git-log-mode)
-
+;
 ; (define-git-command ("log" "--graph" "--oneline" "--decorate" "--branches")
 ;   :symbol #:glog
 ;   :document "Show commit logs."
