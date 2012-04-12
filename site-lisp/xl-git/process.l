@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 19:05:06 DeaR>
+;; @timestamp   <2012-04-12 20:25:18 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -64,7 +64,7 @@
                               (exec-directory (default-directory))
                               (encoding *git-process-encoding*)
                               (eol-code *git-process-eol-code*)
-                              show wait no-std-handles)
+                              no-std-handles show wait)
   "gitのプロセスを実行"
   (multiple-value-bind (cmdline dir)
       (git-command-line args exec-directory)

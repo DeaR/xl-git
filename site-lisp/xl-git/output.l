@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 17:11:55 DeaR>
+;; @timestamp   <2012-04-12 20:39:34 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -50,7 +50,9 @@
   (setup-temp-buffer (selected-buffer))
   (setf mode-name "GitOutput")
   (setf buffer-mode 'git-output-mode)
-  (use-keymap *git-output-mode-map*))
+  (use-keymap *git-output-mode-map*)
+  (and #1=(buffer-process (selected-buffer))
+       (set-process-sentinel #1# #'git-process-sentinel)))
 
 (defun git-output-quit (&optional (buffer (selected-buffer)))
   "git出力バッファを閉じる"
@@ -59,5 +61,18 @@
              (> (count-windows) 1))
     (delete-window))
   (delete-buffer buffer))
+
+(defun git-process-sentinel (proc)
+  "gitのプロセスのセンチネル"
+  (let ((buffer (process-buffer proc)))
+    (when (and buffer
+               (eq (process-status proc) :exit)
+               (= (process-exit-code proc) 0)
+               (save-excursion
+                 (set-buffer buffer)
+                 (= (point-min) (point-max))))
+      (git-output-quit buffer)
+      (message "success no output.")
+      (refresh-screen))))
 
 (provide "xl-git/output")
