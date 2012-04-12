@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 16:31:51 DeaR>
+;; @timestamp   <2012-04-12 19:05:06 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -36,7 +36,7 @@
 
 
 
-(defvar *git-binary* "git"
+(defvar *git-binary* "git.exe"
   "git.exe のパス")
 
 (defvar *git-environ* nil
@@ -64,8 +64,7 @@
                               (exec-directory (default-directory))
                               (encoding *git-process-encoding*)
                               (eol-code *git-process-eol-code*)
-                              (show :hide)
-                              (wait t))
+                              show wait no-std-handles)
   "gitのプロセスを実行"
   (multiple-value-bind (cmdline dir)
       (git-command-line args exec-directory)
@@ -75,7 +74,8 @@
                           :output outfile
                           :exec-directory dir
                           :show show
-                          :wait wait)
+                          :wait wait
+                          :no-std-handles no-std-handles)
             (save-excursion
               (let ((buffer (switch-to-buffer output))
                     (p (point-max)))

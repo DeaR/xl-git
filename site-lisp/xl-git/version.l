@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 14:50:08 DeaR>
+;; @timestamp   <2012-04-12 19:05:25 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -45,7 +45,8 @@
 ’l2: git version‚ÌŒ‹‰Ê"
   (multiple-value-bind (exec-code out)
       (git-call-process '("version")
-                        :output (get-buffer-create *git-temp-bufname*))
+                        :output (get-buffer-create *git-temp-bufname*)
+                        :show :hide :wait t)
     (values +git-version+
             (string-trim "\n" out))))
 

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 16:52:04 DeaR>
+;; @timestamp   <2012-04-12 19:08:03 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -48,7 +48,8 @@
 
 (define-git-command ("clone")
   :document "Clone a repository into a new directory."
-  :prompt t)
+  :prompt t
+  :no-std-handles t)
 
 (define-git-command ("commit")
   :document "Record changes to the repository.")
@@ -74,7 +75,8 @@ Used to amend the tip of the current branch. Prepare the tree object you would w
   :minor-mode #'git-diff-mode)
 
 (define-git-command ("fetch")
-  :document "Download objects and refs from another repository.")
+  :document "Download objects and refs from another repository."
+  :no-std-handles t)
 
 (define-git-command ("grep")
   :document "Print lines matching a pattern.")
@@ -101,10 +103,12 @@ Used to amend the tip of the current branch. Prepare the tree object you would w
   :document "Move or rename a file, a directory, or a symlink.")
 
 (define-git-command ("pull")
-  :document "Fetch from and merge with another repository or a local branch.")
+  :document "Fetch from and merge with another repository or a local branch."
+  :no-std-handles t)
 
 (define-git-command ("push")
-  :document "Update remote refs along with associated objects.")
+  :document "Update remote refs along with associated objects."
+  :no-std-handles t)
 
 (define-git-command ("rebase")
   :document "Forward-port local commits to the updated upstream head.")

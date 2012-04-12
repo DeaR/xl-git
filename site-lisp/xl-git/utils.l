@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 17:14:03 DeaR>
+;; @timestamp   <2012-04-12 19:08:38 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -54,7 +54,8 @@
   (multiple-value-bind (exec-code out)
       (git-call-process '("rev-parse" "--show-cdup")
                         :output (get-buffer-create *git-temp-bufname*)
-                        :exec-directory dir)
+                        :exec-directory dir
+                        :show :hide :wait t)
     (unless (= exec-code 0)
       (error out))
     (merge-pathnames (or (first (split-string out #\LFD))
@@ -67,7 +68,7 @@
     (substring path
                (length (append-trail-slash (git-top-dir (directory-namestring path)))))))
 
-(defmacro define-git-command (command &key symbol document prompt file-arg minor-mode)
+(defmacro define-git-command (command &key symbol document prompt file-arg minor-mode no-std-handles)
   "シンプルなgitコマンド生成"
   (let ((name (concat "git-"
                       (if symbol
@@ -83,10 +84,11 @@
          (git::git-command-wrapper ',command args
                                    :prompt ,prompt
                                    :file-arg ,file-arg
-                                   :minor-mode ,minor-mode)))))
+                                   :minor-mode ,minor-mode
+                                   :no-std-handles ,no-std-handles)))))
 (setf (get 'define-git-command 'lisp-indent-hook) 'defun)
 
-(defun git-command-wrapper (command args &key prompt file-arg (minor-mode #'git-output-mode))
+(defun git-command-wrapper (command args &key prompt file-arg minor-mode no-std-handles)
   "シンプルなgitコマンド実体"
   (let* ((dir (default-directory))
          (command (if (listp command)
@@ -100,13 +102,15 @@
                    (and file-arg
                         (format nil "\"~A\"" (file-namestring (get-buffer-file-name))))
                    "")))
-    (with-output-to-temp-buffer (*git-output-bufname* t *git-output-split-vertical-p*)
-      (git-output-mode)
-      (set-default-directory dir)
-      (set-buffer-fileio-encoding *git-process-encoding*)
-      (set-buffer-eol-code *git-process-eol-code*)
-      (when minor-mode
-        (funcall minor-mode))
-      (git-make-process (format nil "~A ~A" command args) :output (selected-buffer)))))
+    (if no-std-handles
+        (git-call-process (format nil "~A ~A" command args) :no-std-handles t :wait t)
+      (with-output-to-temp-buffer (*git-output-bufname* t *git-output-split-vertical-p*)
+        (git-output-mode)
+        (set-default-directory dir)
+        (set-buffer-fileio-encoding *git-process-encoding*)
+        (set-buffer-eol-code *git-process-eol-code*)
+        (when minor-mode
+          (funcall minor-mode))
+        (git-make-process (format nil "~A ~A" command args) :output (selected-buffer))))))
 
 (provide "xl-git/utils")
