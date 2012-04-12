@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 19:08:38 DeaR>
+;; @timestamp   <2012-04-12 20:17:03 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -101,16 +101,21 @@
                         (read-string (format nil "git ~A: " command)))
                    (and file-arg
                         (format nil "\"~A\"" (file-namestring (get-buffer-file-name))))
-                   "")))
+                   ""))
+         (buffer (with-output-to-temp-buffer (*git-output-bufname* nil)
+                   (find-buffer *git-output-bufname*))))
     (if no-std-handles
-        (git-call-process (format nil "~A ~A" command args) :no-std-handles t :wait t)
-      (with-output-to-temp-buffer (*git-output-bufname* t *git-output-split-vertical-p*)
+        (git-call-process (format nil "~A ~A" command args)
+                          :output buffer :no-std-handles t :wait t)
+      (progn
+        (pop-to-buffer buffer t *git-output-split-vertical-p*)
         (git-output-mode)
         (set-default-directory dir)
         (set-buffer-fileio-encoding *git-process-encoding*)
         (set-buffer-eol-code *git-process-eol-code*)
         (when minor-mode
           (funcall minor-mode))
-        (git-make-process (format nil "~A ~A" command args) :output (selected-buffer))))))
+        (git-make-process (format nil "~A ~A" command args)
+                          :output (selected-buffer))))))
 
 (provide "xl-git/utils")
