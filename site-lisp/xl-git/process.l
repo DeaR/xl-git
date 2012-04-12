@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 17:23:50 DeaR>
+;; @timestamp   <2012-04-12 16:31:51 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -30,13 +30,18 @@
 (in-package :git)
 
 (export '(*git-binary*
+          *git-environ*
           *git-process-encoding*
           *git-process-eol-code*))
 
 
 
-(defvar *git-binary* "git.exe"
+(defvar *git-binary* "git"
   "git.exe のパス")
+
+(defvar *git-environ* nil
+  "必ず設定する環境変数
+'((\"VARNAME\" . \"VAR\"))")
 
 (defvar *git-process-encoding* *encoding-utf8n*
   "git.exe の入出力文字コード")
@@ -65,7 +70,8 @@
   (multiple-value-bind (cmdline dir)
       (git-command-line args exec-directory)
     (values (call-process cmdline
-                          :environ environ
+                          :environ (append *git-environ*
+                                           environ)
                           :output outfile
                           :exec-directory dir
                           :show show
@@ -88,7 +94,8 @@
       (git-command-line args exec-directory)
     (prog1
         (make-process cmdline
-                      :environ environ
+                      :environ (append *git-environ*
+                                       environ)
                       :output output
                       :exec-directory dir
                       :incode encoding

@@ -1,10 +1,10 @@
 ;; -*- mode: lisp; package: git; encoding: shift_jis -*-
 
-;; @name        xl-git/diff.l
+;; @name        xl-git/commit.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 17:05:45 DeaR>
+;; @timestamp   <2012-04-12 17:05:42 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -29,42 +29,16 @@
 
 (in-package :git)
 
-(export '(*git-diff-color-add*
-          *git-diff-color-remove*
-          *git-diff-color-area*))
+
+
+(defvar-local *git-commit-mode* nil
+  "git-commit-mode")
+(pushnew '(*git-commit-mode* . "Commit") *minor-mode-alist* :key #'first)
 
 
 
-(defvar *git-diff-color-add* '(:color 2)
-  "diffの追加行の色")
+(defun git-commit-mode (&optional (arg nil sv))
+  "git commitモード"
+  (ed::toggle-mode '*git-commit-mode* arg sv))
 
-(defvar *git-diff-color-remove* '(:color 1)
-  "diffの削除行の色")
-
-(defvar *git-diff-color-area* '(:color 6)
-  "diffの範囲情報の色
-@@ -R +R @@")
-
-(defvar-local *git-diff-mode* nil
-  "git-diff-mode")
-(pushnew '(*git-diff-mode* . "Diff") *minor-mode-alist* :key #'first)
-
-
-
-(defun git-diff-mode (&optional (arg nil sv))
-  "git diffモード"
-  (ed::toggle-mode '*git-diff-mode* arg sv)
-  (if *git-diff-mode*
-      (progn
-        (make-local-variable 'regexp-keyword-list)
-        (setf regexp-keyword-list
-              (compile-regexp-keyword-list
-               `(("^\\+.*$"
-                  nil ,*git-diff-color-add*)
-                 ("^\\-.*$"
-                  nil ,*git-diff-color-remove*)
-                 ("^@@ .* @@.*$"
-                  nil ,*git-diff-color-area*)))))
-    (kill-local-variable 'regexp-keyword-list)))
-
-(provide "xl-git/diff")
+(provide "xl-git/commit")

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 15:22:09 DeaR>
+;; @timestamp   <2012-04-12 14:50:08 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -25,19 +25,28 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (require "xl-git/package"))
+  (require "xl-git/package")
+  (require "xl-git/process")
+  (require "xl-git/utils"))
 
 (in-package :git)
 
-(export '(xl-git-version))
+(export '(git-version))
 
 
 
-(defconstant +xl-git-version+ "1.0a1")
+(defconstant +git-version+ "1.0a1")
 
 
 
-(defun xl-git-version ()
-  +xl-git-version+)
+(defun git-version ()
+  "バージョンを多値で返します
+値1: xl-gitのバージョン
+値2: git versionの結果"
+  (multiple-value-bind (exec-code out)
+      (git-call-process '("version")
+                        :output (get-buffer-create *git-temp-bufname*))
+    (values +git-version+
+            (string-trim "\n" out))))
 
 (provide "xl-git/version")

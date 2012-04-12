@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 15:22:09 DeaR>
+;; @timestamp   <2012-04-12 17:05:08 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -25,33 +25,20 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (require "xl-git/package")
-  (require "xl-git/output"))
+  (require "xl-git/package"))
 
 (in-package :git)
 
 
 
-(defvar *git-status-keymap* nil
-  "git status出力モードのキーマップ")
-(unless *git-status-keymap*
-  (setf *git-status-keymap* (make-sparse-keymap))
-  (define-key *git-status-keymap* #\q 'git-output-quit))
+(defvar-local *git-status-mode* nil
+  "git-status-mode")
+(pushnew '(*git-status-mode* . "Status") *minor-mode-alist* :key #'first)
 
 
 
-(defun git-status-mode (&key
-                        (directory (default-directory))
-                        (encoding *git-process-encoding*)
-                        (eol-code *git-process-eol-code*))
+(defun git-status-mode (&optional (arg nil sv))
   "git status出力モード"
-  (git-output-mode :directory directory
-                   :encoding encoding
-                   :eol-code eol-code)
-  ; (make-local-variable 'regexp-keyword-list)
-  ; (setf regexp-keyword-list
-  ;       (compile-regexp-keyword-list
-  ;        `()))
-  (use-keymap *git-status-keymap*))
+  (ed::toggle-mode '*git-status-mode* arg sv))
 
 (provide "xl-git/status")

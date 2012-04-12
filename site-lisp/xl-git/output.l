@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 17:17:40 DeaR>
+;; @timestamp   <2012-04-12 17:04:14 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -27,17 +27,21 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (require "xl-git/package"))
 
+(require "process")
+
 (in-package :git)
 
 (export '(git-output-quit))
 
 
 
-(defvar *git-output-keymap* nil
+(defvar *git-output-mode-map* nil
   "git出力モードのキーマップ")
-(unless *git-output-keymap*
-  (setf *git-output-keymap* (make-sparse-keymap))
-  (define-key *git-output-keymap* #\q 'git-output-quit))
+(unless *git-output-mode-map*
+  (setf *git-output-mode-map* (make-sparse-keymap))
+  (define-key *git-output-mode-map* #\q   'git-output-quit)
+  (define-key *git-output-mode-map* #\RET 'command-output-send-input)
+  (define-key *git-output-mode-map* #\C-j 'command-output-alternate-send-input))
 
 
 
@@ -46,12 +50,13 @@
                         (encoding *git-process-encoding*)
                         (eol-code *git-process-eol-code*))
   "git出力モード"
+  (setup-temp-buffer (selected-buffer))
+  (setf mode-name "GitOutput")
+  (setf buffer-mode 'git-output-mode)
   (set-default-directory directory)
   (set-buffer-fileio-encoding encoding)
   (set-buffer-eol-code eol-code)
-  (make-local-variable 'need-not-save)
-  (setf need-not-save t)
-  (use-keymap *git-output-keymap*))
+  (use-keymap *git-output-mode-map*))
 
 (defun git-output-quit (&optional (buffer (selected-buffer)))
   "git出力バッファを閉じる"

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 20:05:53 DeaR>
+;; @timestamp   <2012-04-12 17:05:48 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -26,8 +26,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (require "xl-git/package")
-  (require "xl-git/output")
-  (require "xl-git/command"))
+  (require "xl-git/utils"))
 
 (in-package :git)
 
@@ -68,35 +67,37 @@
 (defvar *git-log-default-limit* 100
   "logのデフォルト件数")
 
+(defvar-local *git-log-mode* nil
+  "git-log-mode")
+(pushnew '(*git-log-mode* . "Log") *minor-mode-alist* :key #'first)
 
 
-(defun git-log-mode (&key
-                     (directory (default-directory))
-                     (encoding *git-process-encoding*)
-                     (eol-code *git-process-eol-code*))
-  "git log出力モード"
-  (git-output-mode :directory directory
-                   :encoding encoding
-                   :eol-code eol-code)
-  (make-local-variable 'regexp-keyword-list)
-  (setf regexp-keyword-list
-        (compile-regexp-keyword-list
-         `(("^[ */|\\]+ "
-            nil ,*git-log-color-line*)
-           ("\\(commit[: ]+\\)?[0-9a-f]\\{4,40\\}"
-            nil ,*git-log-color-sha*)
-           ("(\\(HEAD,? ?\\)?\\(\\(tag: [^, ():]+,? ?\\)*\\)\\(\\(origin/[^, ():]+,? ?\\)*\\)\\(\\([^():]+\\)*\\))"
-            nil ((0 . ,*git-log-color-brace*)
-                 (1 . ,*git-log-color-head*)
-                 (2 . ,*git-log-color-tag*)
-                 (4 . ,*git-log-color-remote-branch*)
-                 (6 . ,*git-log-color-branch*)))))))
+
+(defun git-log-mode (&optional (arg nil sv))
+  "git logモード"
+  (ed::toggle-mode '*git-log-mode* arg sv)
+  (if *git-log-mode*
+      (progn
+        (make-local-variable 'regexp-keyword-list)
+        (setf regexp-keyword-list
+              (compile-regexp-keyword-list
+               `(("^[ */|\\]+ "
+                  nil ,*git-log-color-line*)
+                 ("\\(commit[: ]+\\)?[0-9a-f]\\{4,40\\}"
+                  nil ,*git-log-color-sha*)
+                 ("(\\(HEAD,? ?\\)?\\(\\(tag: [^, ():]+,? ?\\)*\\)\\(\\(origin/[^, ():]+,? ?\\)*\\)\\(\\([^():]+\\)*\\))"
+                  nil ((0 . ,*git-log-color-brace*)
+                       (1 . ,*git-log-color-head*)
+                       (2 . ,*git-log-color-tag*)
+                       (4 . ,*git-log-color-remote-branch*)
+                       (6 . ,*git-log-color-branch*)))))))
+    (kill-local-variable 'regexp-keyword-list)))
 
 (defun git-log ()
   "Show commit logs."
   (interactive)
   (git-command-wrapper (list "log" (format nil "-n ~D" *git-log-default-limit*))
-                       :mode #'git-log-mode))
+                       nil :minor-mode #'git-log-mode))
 
 (defun git-glog ()
   "Show commit logs.
@@ -104,6 +105,6 @@ Draw a text-based graphical representation of the commit history on the left han
   (interactive)
   (git-command-wrapper (list "log" (format nil "-n ~D" *git-log-default-limit*)
                              "--graph" "--oneline" "--decorate" "--branches")
-                       :mode #'git-log-mode))
+                       nil :minor-mode #'git-log-mode))
 
 (provide "xl-git/log")
