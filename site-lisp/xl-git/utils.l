@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 17:09:06 DeaR>
+;; @timestamp   <2012-04-12 17:14:03 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -88,7 +88,8 @@
 
 (defun git-command-wrapper (command args &key prompt file-arg (minor-mode #'git-output-mode))
   "シンプルなgitコマンド実体"
-  (let* ((command (if (listp command)
+  (let* ((dir (default-directory))
+         (command (if (listp command)
                       (string-trim " " (format nil "~{ ~A~}" command))
                     command))
          (args (or args
@@ -101,6 +102,9 @@
                    "")))
     (with-output-to-temp-buffer (*git-output-bufname* t *git-output-split-vertical-p*)
       (git-output-mode)
+      (set-default-directory dir)
+      (set-buffer-fileio-encoding *git-process-encoding*)
+      (set-buffer-eol-code *git-process-eol-code*)
       (when minor-mode
         (funcall minor-mode))
       (git-make-process (format nil "~A ~A" command args) :output (selected-buffer)))))
