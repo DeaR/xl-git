@@ -1,10 +1,10 @@
-;; -*- mode: lisp; package: user; encoding: shift_jis -*-
+;; -*- mode: lisp; package: git; encoding: shift_jis -*-
 
-;; @name        xl-git.l
+;; @name        xl-git/flow.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-13 16:54:16 DeaR>
+;; @timestamp   <2012-04-13 16:56:08 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -24,18 +24,38 @@
 ;; DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-(in-package :user)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (require "xl-git/package")
+  (require "xl-git/utils"))
 
-(require "xl-git/process")
-(require "xl-git/version")
-(require "xl-git/output")
-(require "xl-git/utils")
-(require "xl-git/commit")
-(require "xl-git/diff")
-(require "xl-git/log")
-(require "xl-git/status")
-(require "xl-git/command")
+(in-package :git)
 
-(require "xl-git/flow")
 
-(provide "xl-git")
+
+(define-git-command ("flow" "init")
+  :symbol #:git-flow-init
+  :document "Initialize a new git repo with support for the branching model.")
+
+(define-git-command ("flow" "feature")
+  :symbol #:git-flow-feature
+  :document "Manage your feature branches.")
+
+(define-git-command ("flow" "release")
+  :symbol #:git-flow-release
+  :document "Manage your release branches.")
+
+(define-git-command ("flow" "hotfix")
+  :symbol #:git-flow-hotfix
+  :document "Manage your hotfix branches.")
+
+(define-git-command ("flow" "support")
+  :symbol #:git-flow-support
+  :document "Manage your support branches.")
+
+(define-git-command ("flow" "version")
+  :symbol #:git-flow-version
+  :document "Shows version information.")
+
+
+
+(provide "xl-git/flow")

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 20:36:40 DeaR>
+;; @timestamp   <2012-04-13 17:42:14 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -70,12 +70,11 @@
 
 (defmacro define-git-command (command &key symbol document prompt file-arg minor-mode no-std-handles)
   "シンプルなgitコマンド生成"
-  (let ((name (concat "git-"
-                      (if symbol
-                          (string symbol)
-                        (if (listp command)
-                            (format nil "~{~A~}" command)
-                          (substitute-string command " " ""))))))
+  (let ((name (if symbol
+                  (string symbol)
+                (if (listp command)
+                    (format nil "git-~{~A~}" command)
+                  (concat "git-" (substitute-string command " " ""))))))
     `(progn
        (export (intern ,name :git) :git)
        (defun ,(intern name :git) (&optional args)
@@ -95,27 +94,28 @@
                       (string-trim " " (format nil "~{ ~A~}" command))
                     command))
          (args (or args
-                   (and (or prompt
-                            *prefix-args*
-                            (not (file-visited-p)))
-                        (read-string (format nil "git ~A: " command)))
-                   (and file-arg
-                        (format nil "\"~A\"" (file-namestring (get-buffer-file-name))))
+                   (when (or prompt
+                             *prefix-args*
+                             (not (file-visited-p)))
+                     (read-string (format nil "git ~A: " command)))
+                   (when file-arg
+                     (format nil "\"~A\"" (file-namestring (get-buffer-file-name))))
                    ""))
-         (buffer (with-output-to-temp-buffer (*git-output-bufname* nil)
-                   (find-buffer *git-output-bufname*))))
+         (cmdline (format nil "~A ~A" command args))
+         (buffer (get-buffer-create *git-output-bufname*)))
+    (erase-buffer buffer)
+    (set-default-directory dir buffer)
+    (set-buffer-fileio-encoding *git-process-encoding* buffer)
+    (set-buffer-eol-code *git-process-eol-code* buffer)
     (if no-std-handles
-        (git-call-process (format nil "~A ~A" command args)
-                          :output buffer :no-std-handles t :wait t)
+        (if (= 0 (git-call-process cmdline :output buffer :no-std-handles t :wait t))
+            (msgbox "Success.")
+          (msgbox "Error!"))
       (prog1
-          (git-make-process (format nil "~A ~A" command args)
-                            :output buffer)
-        (pop-to-buffer buffer t *git-output-split-vertical-p*)
-        (git-output-mode)
-        (when minor-mode
-          (funcall minor-mode))
-        (set-default-directory dir)
-        (set-buffer-fileio-encoding *git-process-encoding*)
-        (set-buffer-eol-code *git-process-eol-code*)))))
+          (git-make-process cmdline :output buffer)
+        (when (= (count-windows) 1)
+          (split-window nil *git-output-split-vertical-p*))
+        (pop-to-buffer buffer)
+        (git-output-mode minor-mode)))))
 
 (provide "xl-git/utils")

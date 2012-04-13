@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 17:05:48 DeaR>
+;; @timestamp   <2012-04-13 15:50:51 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -96,14 +96,15 @@
 (defun git-log ()
   "Show commit logs."
   (interactive)
-  (git-command-wrapper (list "log" (format nil "-n ~D" *git-log-default-limit*))
+  (git-command-wrapper (list "log" (format nil "-~D" *git-log-default-limit*))
                        nil :minor-mode #'git-log-mode))
 
 (defun git-glog ()
   "Show commit logs.
-Draw a text-based graphical representation of the commit history on the left hand side of the output. This may cause extra lines to be printed in between commits, in order for the graph history to be drawn properly."
+Draw a text-based graphical representation of the commit history on the left hand side of the output.
+This may cause extra lines to be printed in between commits, in order for the graph history to be drawn properly."
   (interactive)
-  (git-command-wrapper (list "log" (format nil "-n ~D" *git-log-default-limit*)
+  (git-command-wrapper (list "log" (format nil "-~D" *git-log-default-limit*)
                              "--graph" "--oneline" "--decorate" "--branches")
                        nil :minor-mode #'git-log-mode))
 

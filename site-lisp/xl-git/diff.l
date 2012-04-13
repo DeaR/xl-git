@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 17:05:45 DeaR>
+;; @timestamp   <2012-04-13 17:33:30 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -29,11 +29,15 @@
 
 (in-package :git)
 
-(export '(*git-diff-color-add*
+(export '(*git-diff-color-header*
+          *git-diff-color-add*
           *git-diff-color-remove*
           *git-diff-color-area*))
 
 
+
+(defvar *git-diff-color-header* '(:color 0 0 :bold)
+  "diffのヘッダの色")
 
 (defvar *git-diff-color-add* '(:color 2)
   "diffの追加行の色")
@@ -59,9 +63,13 @@
         (make-local-variable 'regexp-keyword-list)
         (setf regexp-keyword-list
               (compile-regexp-keyword-list
-               `(("^\\+.*$"
+               `(("^diff .*$"
+                  nil ,*git-diff-color-header*)
+                 ("^[+-]\\{3\\} .*$"
+                  nil ,*git-diff-color-header*)
+                 ("^\\+.*$"
                   nil ,*git-diff-color-add*)
-                 ("^\\-.*$"
+                 ("^-.*$"
                   nil ,*git-diff-color-remove*)
                  ("^@@ .* @@.*$"
                   nil ,*git-diff-color-area*)))))

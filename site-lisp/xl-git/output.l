@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 20:39:34 DeaR>
+;; @timestamp   <2012-04-13 17:34:38 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -31,9 +31,13 @@
 
 (in-package :git)
 
-(export '(git-output-quit))
+(export '(*git-output-mode-hook*
+          git-output-quit))
 
 
+
+(defvar *git-output-mode-hook* nil
+  "git-output-mode起動時に実行されます")
 
 (defvar *git-output-mode-map* nil
   "git出力モードのキーマップ")
@@ -45,14 +49,15 @@
 
 
 
-(defun git-output-mode ()
+(defun git-output-mode (&optional minor-mode)
   "git出力モード"
   (setup-temp-buffer (selected-buffer))
   (setf mode-name "GitOutput")
   (setf buffer-mode 'git-output-mode)
   (use-keymap *git-output-mode-map*)
-  (and #1=(buffer-process (selected-buffer))
-       (set-process-sentinel #1# #'git-process-sentinel)))
+  (when minor-mode
+    (funcall minor-mode))
+  (run-hooks '*git-output-mode-hook*))
 
 (defun git-output-quit (&optional (buffer (selected-buffer)))
   "git出力バッファを閉じる"
@@ -61,18 +66,5 @@
              (> (count-windows) 1))
     (delete-window))
   (delete-buffer buffer))
-
-(defun git-process-sentinel (proc)
-  "gitのプロセスのセンチネル"
-  (let ((buffer (process-buffer proc)))
-    (when (and buffer
-               (eq (process-status proc) :exit)
-               (= (process-exit-code proc) 0)
-               (save-excursion
-                 (set-buffer buffer)
-                 (= (point-min) (point-max))))
-      (git-output-quit buffer)
-      (message "success no output.")
-      (refresh-screen))))
 
 (provide "xl-git/output")

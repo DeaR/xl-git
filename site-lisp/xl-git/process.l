@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 20:25:18 DeaR>
+;; @timestamp   <2012-04-13 17:15:40 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -39,7 +39,9 @@
 (defvar *git-binary* "git.exe"
   "git.exe ÇÃÉpÉX")
 
-(defvar *git-environ* nil
+(defvar *git-environ* `(("PATH" . ,(concat "C:/msysgit/bin;C:/msysgit/mingw/bin;C:/msysgit/cmd;" (si:getenv "PATH")))
+                        ; ("GIT_SSH" . "C:/Apps/PuTTY/PLINK.EXE")
+                        ("CYGWIN" . ""))
   "ïKÇ∏ê›íËÇ∑ÇÈä¬ã´ïœêî
 '((\"VARNAME\" . \"VAR\"))")
 
@@ -57,6 +59,13 @@
               (format nil "~A~{ ~A~}" *git-binary* args)
             (format nil "~A ~A" *git-binary* args))
           dir))
+
+(defun replace-escape-code (&optional (buffer (selected-buffer))
+                                      (point (point-min)))
+  "ÉGÉXÉPÅ[ÉvÉRÅ[ÉhÇÃçÌèú"
+  (save-excursion
+    (goto-char point)
+    (perform-replace "\\[[0-9;]*m" "" nil t nil t)))
 
 (defun git-call-process (args &key environ
                               (output (selected-buffer))
@@ -77,10 +86,11 @@
                           :wait wait
                           :no-std-handles no-std-handles)
             (save-excursion
-              (let ((buffer (switch-to-buffer output))
-                    (p (point-max)))
+              (set-buffer output)
+              (let ((p (point-max)))
                 (goto-char p)
                 (insert-file outfile encoding)
+                (replace-escape-code output p)
                 (buffer-substring p (point-max)))))))
 
 (defun git-make-process (args &key environ
@@ -103,7 +113,10 @@
                       :eol-code eol-code
                       :show show)
       (save-excursion
-        (let ((buffer (switch-to-buffer output)))
+        (let* ((buffer (switch-to-buffer output))
+               (proc (buffer-process buffer)))
+          (set-process-filter proc #'git-process-filter)
+          (set-process-sentinel proc #'git-process-sentinel)
           (make-local-variable '*delete-buffer-hook*)
           (add-hook '*delete-buffer-hook* 'git-kill-process))))))
 
@@ -114,5 +127,25 @@
                (eq (process-status proc) :run))
       (kill-process proc)))
   t)
+
+(defun git-process-filter (proc str)
+  "gitÇÃÉvÉçÉZÉXÇÃÉtÉBÉãÉ^Å["
+  (save-excursion
+    (let ((buffer (switch-to-buffer (process-buffer proc)))
+          (p (point-max)))
+      (goto-char p)
+      (insert str)
+      (replace-excape-code buffer p))))
+
+(defun git-process-sentinel (proc)
+  "gitÇÃÉvÉçÉZÉXÇÃÉZÉìÉ`ÉlÉã"
+  (save-excursion
+    (let ((buffer (process-buffer proc)))
+      (when (and (eq (process-status proc) :exit)
+                 (set-buffer buffer)
+                 (= (point-min) (point-max)))
+        (if (= (process-exit-code proc) 0)
+            (insert "Success no output.")
+          (insert "Error!"))))))
 
 (provide "xl-git/process")

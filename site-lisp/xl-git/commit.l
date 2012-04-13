@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 20:10:34 DeaR>
+;; @timestamp   <2012-04-13 17:33:30 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -60,7 +60,9 @@ Tell the command to automatically stage files that have been modified and delete
 
 (defun git-commit-amend ()
   "Record changes to the repository.
-Used to amend the tip of the current branch. Prepare the tree object you would want to replace the latest commit as usual (this includes the usual -i/-o and explicit paths), and the commit log editor is seeded with the commit message from the tip of the current branch. The commit you create replaces the current tip - if it was a merge, it will have the parents of the current tip as parents - so the current top commit is discarded."
+Used to amend the tip of the current branch.
+Prepare the tree object you would want to replace the latest commit as usual (this includes the usual -i/-o and explicit paths), and the commit log editor is seeded with the commit message from the tip of the current branch.
+The commit you create replaces the current tip - if it was a merge, it will have the parents of the current tip as parents - so the current top commit is discarded."
   (interactive)
   (git-command-wrapper '("commit" "--amend")
                        nil :minor-mode #'git-commit-mode))
