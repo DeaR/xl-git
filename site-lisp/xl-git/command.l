@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-13 19:22:52 DeaR>
+;; @timestamp   <2012-04-14 01:19:51 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -54,7 +54,7 @@ Like -u, but match <filepattern> against files in the working tree in addition t
 That means that it will find new files as well as staging modified content and removing files that are no longer in the working tree.")
 
 (define-git-command ("add" "-p")
-  :symbol #:git-add-all
+  :symbol #:git-add-patch
   :document "Add file contents to the index.
 Interactively choose hunks of patch between the index and the work tree and add them to the index.
 This gives the user a chance to review the difference before adding modified contents to the index."

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-13 21:47:21 DeaR>
+;; @timestamp   <2012-04-14 01:15:25 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -42,12 +42,12 @@
 (unless *git-output-mode-map*
   (setf *git-output-mode-map* (make-sparse-keymap))
   (dotimes (n #x80)
-    (define-key *git-output-mode-map* (code-char n) 'git-output-insert-or-send))
+    (define-key *git-output-mode-map* (code-char n) 'git-output-send-and-funcall))
   (undefine-key *git-output-mode-map* #\C-x)
   (undefine-key *git-output-mode-map* #\C-c)
   (define-key *git-output-mode-map* '(#\C-c #\C-g) 'git-output-quit)
-  (define-key *git-output-mode-map* '#\RET 'git-output-insert-or-send-LFD)
-  (define-key *git-output-mode-map* '#\q 'git-output-quit-or-send))
+  (define-key *git-output-mode-map* '#\RET 'git-output-send-LFD-or-newline)
+  (define-key *git-output-mode-map* '#\q 'git-output-send-or-quit))
 
 
 
@@ -70,30 +70,32 @@
       (delete-window))
     (delete-buffer buffer)))
 
-(defun git-output-insert-or-send (&optional (inst *last-command-char*)
-                                            (send *last-command-char*))
-  "git出力バッファのプロセスが終了していたら挿入して、動作中なら送る"
+(defun git-output-send-and-funcall (&optional (send *last-command-char*)
+                                              func
+                                              (keymap *global-keymap*))
+  "git出力バッファのプロセスが動作中なら送り、終了していたら関数を実行"
+  (interactive)
+  (let ((proc (buffer-process (selected-buffer))))
+    (when (and proc
+               (eq (process-status proc) :run))
+      (process-send-string proc (string send))))
+  (unless func
+    (setf func (lookup-keymap keymap send)))
+  (when func
+    (funcall func)))
+
+(defun git-output-send-LFD-or-newline ()
+  "git出力バッファのプロセスが動作中ならLFDを送り、終了していたらRETの関数を実行"
+  (interactive)
+  (git-output-send-and-funcall #\LFD))
+
+(defun git-output-send-or-quit ()
+  "git出力バッファのプロセスが動作中なら送り、終了していたら閉じる"
   (interactive)
   (let ((proc (buffer-process (selected-buffer))))
     (if (and proc
              (eq (process-status proc) :run))
-        (process-send-string proc (string send))
-      (let ((func (lookup-keymap *global-keymap* inst)))
-        (when func
-          (funcall func))))))
-
-(defun git-output-insert-or-send-LFD ()
-  "git出力バッファのプロセスが終了していたら挿入して、動作中ならLFDを送る"
-  (interactive)
-  (git-output-insert-or-send #\LFD #\LFD))
-
-(defun git-output-quit-or-send ()
-  "git出力バッファのプロセスが終了していたら閉じて、動作中なら送る"
-  (interactive)
-  (let ((proc (buffer-process (selected-buffer))))
-    (if (and proc
-             (eq (process-status proc) :run))
-        (git-output-insert-or-send)
+        (git-output-send-and-funcall)
       (git-output-quit))))
 
 (provide "xl-git/output")

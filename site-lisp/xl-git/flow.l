@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-13 21:44:12 DeaR>
+;; @timestamp   <2012-04-14 01:18:23 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -34,8 +34,7 @@
 
 (define-git-command ("flow" "init")
   :symbol #:git-flow-init
-  :document "Initialize a new git repo with support for the branching model."
-  :no-std-handles t)
+  :document "Initialize a new git repo with support for the branching model.")
 
 
 

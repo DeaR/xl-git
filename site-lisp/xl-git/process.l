@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-13 21:31:15 DeaR>
+;; @timestamp   <2012-04-14 01:23:11 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -41,7 +41,9 @@
 
 (defvar *git-environ* `(("PATH" . ,(concat "C:/msysgit/bin;C:/msysgit/mingw/bin;C:/msysgit/cmd;" (si:getenv "PATH")))
                         ; ("GIT_SSH" . "C:/Apps/PuTTY/PLINK.EXE")
-                        ("CYGWIN" . ""))
+                        ("CYGWIN" . "")
+                        ("EDITOR" . ,(concat (merge-pathnames "xyzzycli.exe" (si:system-root))
+                                             " -wait")))
   "ïKÇ∏ê›íËÇ∑ÇÈä¬ã´ïœêî
 '((\"VARNAME\" . \"VAR\"))")
 
@@ -51,6 +53,9 @@
 (defvar *git-process-eol-code* *eol-lf*
   "git.exe ÇÃâ¸çsÉRÅ[Éh")
 
+(defconstant *escape-code* (compile-regexp "\\[[0-9;]*[a-z]" t)
+  "çÌèúÇ∑ÇÈÉGÉXÉPÅ[ÉvÉVÅ[ÉPÉìÉX")
+
 
 
 (defun git-command-line (args dir)
@@ -59,13 +64,6 @@
               (format nil "~A~{ ~A~}" *git-binary* args)
             (format nil "~A ~A" *git-binary* args))
           dir))
-
-(defun replace-escape-code (&optional (buffer (selected-buffer))
-                                      (point (point-min)))
-  "ÉGÉXÉPÅ[ÉvÉRÅ[ÉhÇÃçÌèú"
-  (save-excursion
-    (goto-char point)
-    (perform-replace "\\[[0-9;]*m" "" nil t nil t)))
 
 (defun git-call-process (args &key environ
                               (output (selected-buffer))
@@ -90,7 +88,7 @@
               (let ((p (point-max)))
                 (goto-char p)
                 (insert-file outfile encoding)
-                (replace-escape-code output p)
+                (perform-replace *escape-code* "" nil t nil t)
                 (buffer-substring p (point-max)))))))
 
 (defun git-make-process (args &key environ
@@ -136,8 +134,7 @@
     (let ((buffer (switch-to-buffer (process-buffer proc)))
           (p (point-max)))
       (goto-char p)
-      (insert str)
-      (replace-excape-code buffer p)
+      (insert (substitute-string str *escape-code* ""))
       (refresh-screen))))
 
 (defun git-process-sentinel (proc)
