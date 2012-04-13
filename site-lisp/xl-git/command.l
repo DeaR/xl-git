@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-13 16:05:42 DeaR>
+;; @timestamp   <2012-04-13 19:22:52 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -153,6 +153,24 @@ Note that this diff output doesnÅft have its lines prefixed with #."
 
 (define-git-command ("push")
   :document "Update remote refs along with associated objects."
+  :no-std-handles t)
+
+(define-git-command ("push ""matching")
+  :symbol #:git-push-matching
+  :document "Update remote refs along with associated objects.
+Push all matching branches."
+  :no-std-handles t)
+
+(define-git-command ("push" "tracking")
+  :symbol #:git-push-tracking
+  :document "Update remote refs along with associated objects.
+Push the current branch to whatever it is tracking."
+  :no-std-handles t)
+
+(define-git-command ("push" "current")
+  :symbol #:git-push-current
+  :document "Update remote refs along with associated objects.
+Push the current branch."
   :no-std-handles t)
 
 (define-git-command ("rebase")
