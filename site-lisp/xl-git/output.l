@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-13 17:34:38 DeaR>
+;; @timestamp   <2012-04-13 21:04:07 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -25,14 +25,12 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (require "xl-git/package"))
-
-(require "process")
+  (require "xl-git/package")
+  (require "xl-git/process"))
 
 (in-package :git)
 
-(export '(*git-output-mode-hook*
-          git-output-quit))
+(export '(*git-output-mode-hook*))
 
 
 
@@ -43,9 +41,12 @@
   "git出力モードのキーマップ")
 (unless *git-output-mode-map*
   (setf *git-output-mode-map* (make-sparse-keymap))
-  (define-key *git-output-mode-map* #\q   'git-output-quit)
-  (define-key *git-output-mode-map* #\RET 'command-output-send-input)
-  (define-key *git-output-mode-map* #\C-j 'command-output-alternate-send-input))
+  (dotimes (n #x80)
+    (define-key *git-output-mode-map* (code-char n) 'git-output-self-insert-or-self-send-command))
+  (undefine-key *git-output-mode-map* #\C-x)
+  (undefine-key *git-output-mode-map* #\C-c)
+  (define-key *git-output-mode-map* '(#\C-c #\C-g) 'git-output-quit)
+  (define-key *git-output-mode-map* '#\q 'git-output-quit-or-self-send-command))
 
 
 
@@ -59,12 +60,33 @@
     (funcall minor-mode))
   (run-hooks '*git-output-mode-hook*))
 
-(defun git-output-quit (&optional (buffer (selected-buffer)))
+(defun git-output-quit ()
   "git出力バッファを閉じる"
   (interactive)
-  (when (and (set-window (get-buffer-window buffer))
-             (> (count-windows) 1))
-    (delete-window))
-  (delete-buffer buffer))
+  (let ((buffer (selected-buffer)))
+    (when (and (set-window (get-buffer-window buffer))
+               (> (count-windows) 1))
+      (delete-window))
+    (delete-buffer buffer)))
+
+(defun git-output-self-insert-or-self-send-command ()
+  "git出力バッファのプロセスが終了していたら挿入して、動作中なら送る"
+  (interactive)
+  (let ((proc (buffer-process (selected-buffer))))
+    (if (and proc
+             (eq (process-status proc) :run))
+        (process-send-string proc (string *last-command-char*))
+      (let ((func (lookup-keymap *global-keymap* *last-command-char*)))
+        (when func
+          (funcall func))))))
+
+(defun git-output-quit-or-self-send-command ()
+  "git出力バッファのプロセスが終了していたら閉じて、動作中なら送る"
+  (interactive)
+  (let ((proc (buffer-process (selected-buffer))))
+    (if (and proc
+             (eq (process-status proc) :run))
+        (process-send-string proc (string *last-command-char*))
+      (git-output-quit))))
 
 (provide "xl-git/output")

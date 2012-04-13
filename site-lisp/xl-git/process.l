@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-13 17:15:40 DeaR>
+;; @timestamp   <2012-04-13 21:05:20 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -117,15 +117,17 @@
                (proc (buffer-process buffer)))
           (set-process-filter proc #'git-process-filter)
           (set-process-sentinel proc #'git-process-sentinel)
-          (make-local-variable '*delete-buffer-hook*)
-          (add-hook '*delete-buffer-hook* 'git-kill-process))))))
+          (make-local-variable '*before-delete-buffer-hook*)
+          (add-hook '*before-delete-buffer-hook* 'git-kill-process))))))
 
-(defun git-kill-process (&optional (buffer (selected-buffer)))
+(defun git-kill-process (buffer)
   "gitのプロセスを強制終了"
   (let ((proc (buffer-process buffer)))
     (when (and proc
                (eq (process-status proc) :run))
-      (kill-process proc)))
+      (kill-process proc)
+      (while (eq (process-status proc) :run)
+        (sleep-for 0.1))))
   t)
 
 (defun git-process-filter (proc str)
