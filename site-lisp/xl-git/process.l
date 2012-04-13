@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-13 21:05:20 DeaR>
+;; @timestamp   <2012-04-13 21:31:15 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -132,19 +132,21 @@
 
 (defun git-process-filter (proc str)
   "gitのプロセスのフィルター"
-  (save-excursion
+  (with-selected-window
     (let ((buffer (switch-to-buffer (process-buffer proc)))
           (p (point-max)))
       (goto-char p)
       (insert str)
-      (replace-excape-code buffer p))))
+      (replace-excape-code buffer p)
+      (refresh-screen))))
 
 (defun git-process-sentinel (proc)
   "gitのプロセスのセンチネル"
-  (save-excursion
+  (with-selected-window
     (let ((buffer (process-buffer proc)))
       (when (and (eq (process-status proc) :exit)
                  (set-buffer buffer)
+                 (goto-char (point-min))
                  (= (point-min) (point-max)))
         (if (= (process-exit-code proc) 0)
             (insert "Success no output.")
