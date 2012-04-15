@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-14 01:23:11 DeaR>
+;; @timestamp   <2012-04-15 03:01:55 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -42,8 +42,7 @@
 (defvar *git-environ* `(("PATH" . ,(concat "C:/msysgit/bin;C:/msysgit/mingw/bin;C:/msysgit/cmd;" (si:getenv "PATH")))
                         ; ("GIT_SSH" . "C:/Apps/PuTTY/PLINK.EXE")
                         ("CYGWIN" . "")
-                        ("EDITOR" . ,(concat (merge-pathnames "xyzzycli.exe" (si:system-root))
-                                             " -wait")))
+                        ("EDITOR" . ,(concat (merge-pathnames "xyzzycli.exe" (si:system-root)) " -wait")))
   "•K‚¸İ’è‚·‚éŠÂ‹«•Ï”
 '((\"VARNAME\" . \"VAR\"))")
 
@@ -54,7 +53,7 @@
   "git.exe ‚Ì‰üsƒR[ƒh")
 
 (defconstant *escape-code* (compile-regexp "\\[[0-9;]*[a-z]" t)
-  "íœ‚·‚éƒGƒXƒP[ƒvƒV[ƒPƒ“ƒX")
+  "íœ‚·‚éƒGƒXƒP[ƒvƒR[ƒh")
 
 
 
@@ -72,7 +71,8 @@
                               (encoding *git-process-encoding*)
                               (eol-code *git-process-eol-code*)
                               no-std-handles show wait)
-  "git‚ÌƒvƒƒZƒX‚ğÀs"
+  "git‚ÌƒvƒƒZƒX‚ğÀs
+’l2‚Éo—Í•¶š—ñ‚ğ•Ô‚·"
   (multiple-value-bind (cmdline dir)
       (git-command-line args exec-directory)
     (values (call-process cmdline
@@ -88,7 +88,7 @@
               (let ((p (point-max)))
                 (goto-char p)
                 (insert-file outfile encoding)
-                (perform-replace *escape-code* "" nil t nil t)
+                (replace-buffer *escape-code* "" :regexp t)
                 (buffer-substring p (point-max)))))))
 
 (defun git-make-process (args &key environ
@@ -129,7 +129,8 @@
   t)
 
 (defun git-process-filter (proc str)
-  "git‚ÌƒvƒƒZƒX‚ÌƒtƒBƒ‹ƒ^["
+  "git‚ÌƒvƒƒZƒX‚ÌƒtƒBƒ‹ƒ^[
+ƒGƒXƒP[ƒvƒR[ƒh‚Ì’uŠ·‚Ìˆ×"
   (with-selected-window
     (let ((buffer (switch-to-buffer (process-buffer proc)))
           (p (point-max)))
@@ -138,15 +139,17 @@
       (refresh-screen))))
 
 (defun git-process-sentinel (proc)
-  "git‚ÌƒvƒƒZƒX‚ÌƒZƒ“ƒ`ƒlƒ‹"
+  "git‚ÌƒvƒƒZƒX‚ÌƒZƒ“ƒ`ƒlƒ‹
+o—Í‚ªˆêØ–³‚¢ê‡A³íI—¹‚È‚Ì‚©ƒGƒ‰[‚È‚Ì‚©‘ã‚í‚è‚Ìo—Í‚ğs‚¤"
   (with-selected-window
     (let ((buffer (process-buffer proc)))
       (when (and (eq (process-status proc) :exit)
                  (set-buffer buffer)
                  (goto-char (point-min))
                  (= (point-min) (point-max)))
-        (if (= (process-exit-code proc) 0)
-            (insert "Success no output.")
-          (insert "Error!"))))))
+        (let ((exit-code (process-exit-code proc)))
+          (if (= exit-code 0)
+              (insert "Success no output.")
+            (insert (format nil "Error! (~A)" exit-code))))))))
 
 (provide "xl-git/process")

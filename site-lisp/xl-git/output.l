@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-14 01:15:25 DeaR>
+;; @timestamp   <2012-04-15 02:55:06 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -53,7 +53,6 @@
 
 (defun git-output-mode (&optional minor-mode)
   "gitèoóÕÉÇÅ[Éh"
-  (setup-temp-buffer (selected-buffer))
   (setf mode-name "GitOutput")
   (setf buffer-mode 'git-output-mode)
   (use-keymap *git-output-mode-map*)

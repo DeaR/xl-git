@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-13 17:42:14 DeaR>
+;; @timestamp   <2012-04-15 02:55:51 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -33,8 +33,7 @@
 
 (export '(*git-output-bufname*
           *git-output-split-vertical-p*
-          *git-temp-bufname*
-          define-git-command))
+          *git-temp-bufname*))
 
 
 
@@ -103,14 +102,18 @@
                    ""))
          (cmdline (format nil "~A ~A" command args))
          (buffer (get-buffer-create *git-output-bufname*)))
-    (erase-buffer buffer)
+    (setup-temp-buffer buffer)
     (set-default-directory dir buffer)
     (set-buffer-fileio-encoding *git-process-encoding* buffer)
     (set-buffer-eol-code *git-process-eol-code* buffer)
+    (erase-buffer buffer)
     (if no-std-handles
-        (if (= 0 (git-call-process cmdline :output buffer :no-std-handles t :wait t))
-            (msgbox "Success.")
-          (msgbox "Error!"))
+        (let ((exit-code (git-call-process cmdline :output buffer :no-std-handles t :wait t)))
+          (if (or (eq exit-code t)
+                  (= exit-code 0))
+              (msgbox "Success.")
+            (msgbox "Error! (~A)" exit-code))
+          exit-code)
       (prog1
           (git-make-process cmdline :output buffer)
         (when (= (count-windows) 1)
