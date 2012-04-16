@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 19:47:12 DeaR>
+;; @timestamp   <2012-04-16 20:34:04 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -145,12 +145,12 @@
         (when (= (count-windows) 1)
           (split-window nil *git-output-split-vertical-p*))
         (pop-to-buffer buffer)
+        (erase-buffer buffer)
         (git-output-mode minor-mode)
         (setup-temp-buffer buffer)
         (set-default-directory dir buffer)
         (set-buffer-fileio-encoding *git-process-encoding* buffer)
         (set-buffer-eol-code *git-process-eol-code* buffer)
-        (erase-buffer buffer)
         (git-make-process cmdline :output buffer)))))
 
 (provide "xl-git/utils")
