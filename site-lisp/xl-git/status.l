@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 15:20:22 DeaR>
+;; @timestamp   <2012-04-16 16:37:01 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -41,7 +41,7 @@
 
 
 (defun git-status-mode (&optional (arg nil sv))
-  "git status出力モード"
+  "git statusモード"
   (ed::toggle-mode '*git-status-mode* arg sv))
 
 (defun git-status (&optional args)

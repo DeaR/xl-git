@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 14:38:32 DeaR>
+;; @timestamp   <2012-04-16 20:05:33 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -42,13 +42,13 @@
 
 (defvar *git-environ* `(("PATH" . ,(concat "C:/msysgit/bin;C:/msysgit/mingw/bin;C:/msysgit/cmd;" (si:getenv "PATH")))
                         ; ("GIT_SSH" . "C:/Apps/PuTTY/PLINK.EXE")
-                        ("CYGWIN" . "")
-                        ("EDITOR" . ,(concat (merge-pathnames "xyzzycli.exe" (si:system-root)) " -wait")))
+                        ("GIT_EDITOR" . ,(concat (merge-pathnames "xyzzycli.exe" (si:system-root)) " -wait"))
+                        ("CYGWIN" . ""))
   "必ず設定する環境変数
 '((\"VARNAME\" . \"VAR\"))")
 
 (defvar *git-process-encoding* *encoding-utf8n*
-  "git.exe の入出力文字コード")
+  "git.exe の文字コード")
 
 (defvar *git-process-eol-code* *eol-lf*
   "git.exe の改行コード")

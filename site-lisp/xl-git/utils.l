@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 14:05:55 DeaR>
+;; @timestamp   <2012-04-16 19:47:12 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -48,8 +48,18 @@
 
 
 
-(defun git-top-dir (&optional (dir (default-directory)))
-  ".gitのパスを取得"
+(defun git-config (key &optional (dir (default-directory)))
+  "設定を取得"
+  (multiple-value-bind (exec-code out)
+      (git-call-process `("config" ,key)
+                        :output (get-buffer-create *git-temp-bufname*)
+                        :exec-directory dir
+                        :show :hide :wait t)
+    (and (= exec-code 0)
+         (first (split-string out #\LFD)))))
+
+(defun git-top-dir-relative (&optional (dir (default-directory)))
+  "リポジトリのトップディレクトリを取得"
   (multiple-value-bind (exec-code out)
       (git-call-process '("rev-parse" "--show-cdup")
                         :output (get-buffer-create *git-temp-bufname*)
@@ -57,9 +67,42 @@
                         :show :hide :wait t)
     (unless (= exec-code 0)
       (error out))
-    (merge-pathnames (or (first (split-string out #\LFD))
-                         "")
-                     dir)))
+    (or (first (split-string out #\LFD))
+        "")))
+
+(defun git-top-dir (&optional (dir (default-directory)))
+  "リポジトリのトップディレクトリを取得"
+  (merge-pathnames (git-top-dir-relative)
+                   dir))
+
+(defun git-status-to-symbol (str)
+  "Short Formatの状態文字をシンボルに変換"
+  (case (character str)
+    (#\SPC :unmodified)
+    (#\M :modified)
+    (#\A :added)
+    (#\D :deleted)
+    (#\R :renamed)
+    (#\C :copied)
+    (#\U :unmerged)
+    (#\? :untracked)
+    (#\! :ignored)))
+
+(defun git-status-list (&optional (dir (default-directory)))
+  "リポジトリの状態をリストで取得"
+  (multiple-value-bind (exec-code out)
+      (git-call-process '("status" "--porcelain")
+                        :output (get-buffer-create *git-temp-bufname*)
+                        :exec-directory dir
+                        :show :hide :wait t)
+    (unless (= exec-code 0)
+      (error out))
+    (mapcar #'(lambda (l)
+                (when (string-match "\\(.\\)\\(.\\) \\(.*\\)$" l)
+                  (list (git-status-to-symbol (match-string 1))
+                        (git-status-to-symbol (match-string 2))
+                        (match-string 3))))
+            (split-string out #\LFD))))
 
 (defmacro define-git-command (command &key symbol document prompt file-arg minor-mode no-std-handles)
   "シンプルなgitコマンド生成"
@@ -99,17 +142,15 @@
     (if no-std-handles
         (git-call-process cmdline :no-std-handles t :wait t)
       (let ((buffer (get-buffer-create *git-output-bufname*)))
-        (prog2
-            (progn
-              (setup-temp-buffer buffer)
-              (set-default-directory dir buffer)
-              (set-buffer-fileio-encoding *git-process-encoding* buffer)
-              (set-buffer-eol-code *git-process-eol-code* buffer)
-              (erase-buffer buffer))
-            (git-make-process cmdline :output buffer)
-          (when (= (count-windows) 1)
-            (split-window nil *git-output-split-vertical-p*))
-          (pop-to-buffer buffer)
-          (git-output-mode minor-mode))))))
+        (when (= (count-windows) 1)
+          (split-window nil *git-output-split-vertical-p*))
+        (pop-to-buffer buffer)
+        (git-output-mode minor-mode)
+        (setup-temp-buffer buffer)
+        (set-default-directory dir buffer)
+        (set-buffer-fileio-encoding *git-process-encoding* buffer)
+        (set-buffer-eol-code *git-process-eol-code* buffer)
+        (erase-buffer buffer)
+        (git-make-process cmdline :output buffer)))))
 
 (provide "xl-git/utils")

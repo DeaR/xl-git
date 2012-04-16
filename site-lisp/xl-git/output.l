@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-15 02:55:06 DeaR>
+;; @timestamp   <2012-04-16 16:36:33 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -30,7 +30,8 @@
 
 (in-package :git)
 
-(export '(*git-output-mode-hook*))
+(export '(*git-output-mode-hook*
+          *git-output-mode-map*))
 
 
 
@@ -38,7 +39,7 @@
   "git-output-mode起動時に実行されます")
 
 (defvar *git-output-mode-map* nil
-  "git出力モードのキーマップ")
+  "出力モードのキーマップ")
 (unless *git-output-mode-map*
   (setf *git-output-mode-map* (make-sparse-keymap))
   (dotimes (n #x80)
@@ -52,7 +53,9 @@
 
 
 (defun git-output-mode (&optional minor-mode)
-  "git出力モード"
+  "出力モード"
+  (interactive)
+  (kill-all-local-variables)
   (setf mode-name "GitOutput")
   (setf buffer-mode 'git-output-mode)
   (use-keymap *git-output-mode-map*)
@@ -61,7 +64,7 @@
   (run-hooks '*git-output-mode-hook*))
 
 (defun git-output-quit ()
-  "git出力バッファを閉じる"
+  "出力バッファを閉じる"
   (interactive)
   (let ((buffer (selected-buffer)))
     (when (and (set-window (get-buffer-window buffer))
@@ -72,7 +75,7 @@
 (defun git-output-send-and-funcall (&optional (send *last-command-char*)
                                               func
                                               (keymap *global-keymap*))
-  "git出力バッファのプロセスが動作中なら送り、終了していたら関数を実行"
+  "出力バッファのプロセスが動作中なら送り、終了していたら関数を実行"
   (interactive)
   (let ((proc (buffer-process (selected-buffer))))
     (when (and proc
@@ -84,12 +87,12 @@
     (funcall func)))
 
 (defun git-output-send-LFD-or-newline ()
-  "git出力バッファのプロセスが動作中ならLFDを送り、終了していたらRETの関数を実行"
+  "出力バッファのプロセスが動作中ならLFDを送り、終了していたらRETの関数を実行"
   (interactive)
   (git-output-send-and-funcall #\LFD))
 
 (defun git-output-send-or-quit ()
-  "git出力バッファのプロセスが動作中なら送り、終了していたら閉じる"
+  "出力バッファのプロセスが動作中なら送り、終了していたら閉じる"
   (interactive)
   (let ((proc (buffer-process (selected-buffer))))
     (if (and proc
