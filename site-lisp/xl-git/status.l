@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 12:03:10 DeaR>
+;; @timestamp   <2012-04-16 15:20:22 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -30,6 +30,8 @@
 
 (in-package :git)
 
+(export '(git-status))
+
 
 
 (defvar-local *git-status-mode* nil
@@ -46,6 +48,6 @@
   "Show the working tree status."
   (interactive)
   (git-command-wrapper '("status")
-                       args :minor-mode #'git-log-mode))
+                       args :minor-mode #'git-status-mode))
 
 (provide "xl-git/status")
