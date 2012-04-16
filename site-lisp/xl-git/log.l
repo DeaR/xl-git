@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-13 15:50:51 DeaR>
+;; @timestamp   <2012-04-16 12:03:20 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -93,19 +93,19 @@
                        (6 . ,*git-log-color-branch*)))))))
     (kill-local-variable 'regexp-keyword-list)))
 
-(defun git-log ()
+(defun git-log (&optional args)
   "Show commit logs."
   (interactive)
-  (git-command-wrapper (list "log" (format nil "-~D" *git-log-default-limit*))
-                       nil :minor-mode #'git-log-mode))
+  (git-command-wrapper `("log" ,(format nil "-~D" *git-log-default-limit*))
+                       args :minor-mode #'git-log-mode))
 
-(defun git-glog ()
+(defun git-glog (&optional args)
   "Show commit logs.
 Draw a text-based graphical representation of the commit history on the left hand side of the output.
 This may cause extra lines to be printed in between commits, in order for the graph history to be drawn properly."
   (interactive)
-  (git-command-wrapper (list "log" (format nil "-~D" *git-log-default-limit*)
-                             "--graph" "--oneline" "--decorate" "--branches")
-                       nil :minor-mode #'git-log-mode))
+  (git-command-wrapper `("log" ,(format nil "-~D" *git-log-default-limit*)
+                         "--graph" "--oneline" "--decorate" "--branches")
+                       args :minor-mode #'git-log-mode))
 
 (provide "xl-git/log")

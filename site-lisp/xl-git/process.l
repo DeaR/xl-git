@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-15 03:01:55 DeaR>
+;; @timestamp   <2012-04-16 14:38:32 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -32,7 +32,8 @@
 (export '(*git-binary*
           *git-environ*
           *git-process-encoding*
-          *git-process-eol-code*))
+          *git-process-eol-code*
+          *git-wrapper-bat*))
 
 
 
@@ -51,6 +52,11 @@
 
 (defvar *git-process-eol-code* *eol-lf*
   "git.exe ‚Ì‰üsƒR[ƒh")
+
+(defvar *git-wrapper-bat* (merge-pathnames "~/xl-git/site-lisp/xl-git/git-wrapper.bat")
+                          ; (merge-pathnames "site-lisp/xl-git/git-wrapper.bat" (si:system-root))
+  "git-wrapper.bat ‚ÌƒpƒX(nil ‚È‚ç–³Œø)
+no-std-handles ‚ª t ‚ÌÛ‚É git-wrapper.bat ‚ğg—p‚·‚é")
 
 (defconstant *escape-code* (compile-regexp "\\[[0-9;]*[a-z]" t)
   "íœ‚·‚éƒGƒXƒP[ƒvƒR[ƒh")
@@ -75,7 +81,10 @@
 ’l2‚Éo—Í•¶š—ñ‚ğ•Ô‚·"
   (multiple-value-bind (cmdline dir)
       (git-command-line args exec-directory)
-    (values (call-process cmdline
+    (values (call-process (if (and *git-wrapper-bat*
+                                   no-std-handles)
+                              (format nil "\"~A\" ~A" (merge-pathnames *git-wrapper-bat*) cmdline)
+                            cmdline)
                           :environ (append *git-environ*
                                            environ)
                           :output outfile
@@ -83,13 +92,14 @@
                           :show show
                           :wait wait
                           :no-std-handles no-std-handles)
-            (save-excursion
-              (set-buffer output)
-              (let ((p (point-max)))
-                (goto-char p)
-                (insert-file outfile encoding)
-                (replace-buffer *escape-code* "" :regexp t)
-                (buffer-substring p (point-max)))))))
+            (unless no-std-handles
+              (save-excursion
+                (set-buffer output)
+                (let ((p (point-max)))
+                  (goto-char p)
+                  (insert-file outfile encoding)
+                  (replace-buffer *escape-code* "" :regexp t)
+                  (buffer-substring p (point-max))))))))
 
 (defun git-make-process (args &key environ
                               (output (selected-buffer))

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-15 02:55:51 DeaR>
+;; @timestamp   <2012-04-16 14:05:55 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -61,19 +61,14 @@
                          "")
                      dir)))
 
-(defun git-relative-pathnames (path)
-  ".gitからの相対パスに変換"
-  (let ((path (merge-pathnames path)))
-    (substring path
-               (length (append-trail-slash (git-top-dir (directory-namestring path)))))))
-
 (defmacro define-git-command (command &key symbol document prompt file-arg minor-mode no-std-handles)
   "シンプルなgitコマンド生成"
   (let ((name (if symbol
                   (string symbol)
-                (if (listp command)
-                    (format nil "git-~{~A~}" command)
-                  (concat "git-" (substitute-string command " " ""))))))
+                (substitute-string (if (listp command)
+                                       (format nil "git~{-~A~}" command)
+                                     (format nil "git-~A" command))
+                                   "[ -]+" "-"))))
     `(progn
        (export (intern ,name :git) :git)
        (defun ,(intern name :git) (&optional args)
@@ -100,25 +95,21 @@
                    (when file-arg
                      (format nil "\"~A\"" (file-namestring (get-buffer-file-name))))
                    ""))
-         (cmdline (format nil "~A ~A" command args))
-         (buffer (get-buffer-create *git-output-bufname*)))
-    (setup-temp-buffer buffer)
-    (set-default-directory dir buffer)
-    (set-buffer-fileio-encoding *git-process-encoding* buffer)
-    (set-buffer-eol-code *git-process-eol-code* buffer)
-    (erase-buffer buffer)
+         (cmdline (format nil "~A ~A" command args)))
     (if no-std-handles
-        (let ((exit-code (git-call-process cmdline :output buffer :no-std-handles t :wait t)))
-          (if (or (eq exit-code t)
-                  (= exit-code 0))
-              (msgbox "Success.")
-            (msgbox "Error! (~A)" exit-code))
-          exit-code)
-      (prog1
-          (git-make-process cmdline :output buffer)
-        (when (= (count-windows) 1)
-          (split-window nil *git-output-split-vertical-p*))
-        (pop-to-buffer buffer)
-        (git-output-mode minor-mode)))))
+        (git-call-process cmdline :no-std-handles t :wait t)
+      (let ((buffer (get-buffer-create *git-output-bufname*)))
+        (prog2
+            (progn
+              (setup-temp-buffer buffer)
+              (set-default-directory dir buffer)
+              (set-buffer-fileio-encoding *git-process-encoding* buffer)
+              (set-buffer-eol-code *git-process-eol-code* buffer)
+              (erase-buffer buffer))
+            (git-make-process cmdline :output buffer)
+          (when (= (count-windows) 1)
+            (split-window nil *git-output-split-vertical-p*))
+          (pop-to-buffer buffer)
+          (git-output-mode minor-mode))))))
 
 (provide "xl-git/utils")

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-14 01:18:23 DeaR>
+;; @timestamp   <2012-04-16 13:59:36 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -33,53 +33,43 @@
 
 
 (define-git-command ("flow" "init")
-  :symbol #:git-flow-init
   :document "Initialize a new git repo with support for the branching model.")
 
 
 
 (define-git-command ("flow" "feature" "list")
-  :symbol #:git-flow-feature-list
   :document "Manage your feature branches.")
 
 (define-git-command ("flow" "feature" "start")
-  :symbol #:git-flow-feature-start
   :document "Manage your feature branches."
   :prompt t)
 
 (define-git-command ("flow" "feature" "finish")
-  :symbol #:git-flow-feature-finish
   :document "Manage your feature branches."
   :prompt t)
 
 (define-git-command ("flow" "feature" "publish")
-  :symbol #:git-flow-feature-publish
   :document "Manage your feature branches."
   :prompt t)
 
 (define-git-command ("flow" "feature" "track")
-  :symbol #:git-flow-feature-track
   :document "Manage your feature branches."
   :prompt t)
 
 (define-git-command ("flow" "feature" "diff")
-  :symbol #:git-flow-feature-diff
   :document "Manage your feature branches."
   :prompt t)
 
 (define-git-command ("flow" "feature" "rebase")
-  :symbol #:git-flow-feature-rebase
   :document "Manage your feature branches."
   :prompt t
   :no-std-handles t)
 
 (define-git-command ("flow" "feature" "checkout")
-  :symbol #:git-flow-feature-checkout
   :document "Manage your feature branches."
   :prompt t)
 
 (define-git-command ("flow" "feature" "pull")
-  :symbol #:git-flow-feature-pull
   :document "Manage your feature branches."
   :prompt t
   :no-std-handles t)
@@ -87,65 +77,53 @@
 
 
 (define-git-command ("flow" "release" "list")
-  :symbol #:git-flow-release-list
   :document "Manage your release branches.")
 
 (define-git-command ("flow" "release" "start")
-  :symbol #:git-flow-release-start
   :document "Manage your release branches."
   :prompt t)
 
 (define-git-command ("flow" "release" "finish")
-  :symbol #:git-flow-release-finish
   :document "Manage your release branches."
   :prompt t)
 
 (define-git-command ("flow" "release" "publish")
-  :symbol #:git-flow-release-publish
   :document "Manage your release branches."
   :prompt t)
 
 (define-git-command ("flow" "release" "track")
-  :symbol #:git-flow-release-track
   :document "Manage your release branches."
   :prompt t)
 
 
 
 (define-git-command ("flow" "hotfix" "list")
-  :symbol #:git-flow-hotfix-list
   :document "Manage your hotfix branches.")
 
 (define-git-command ("flow" "hotfix" "start")
-  :symbol #:git-flow-hotfix-start
   :document "Manage your hotfix branches."
   :prompt t)
 
 (define-git-command ("flow" "hotfix" "finish")
-  :symbol #:git-flow-hotfix-finish
   :document "Manage your hotfix branches."
   :prompt t)
 
 (define-git-command ("flow" "hotfix" "publish")
-  :symbol #:git-flow-hotfix-publish
   :document "Manage your hotfix branches."
   :prompt t)
 
 
 
 (define-git-command ("flow" "support" "list")
-  :symbol #:git-flow-support-list
   :document "Manage your support branches.")
 
 (define-git-command ("flow" "support" "start")
-  :symbol #:git-flow-support-start
   :document "Manage your support branches."
   :prompt t)
 
 
 
 (define-git-command ("flow" "version")
-  :symbol #:git-flow-version
   :document "Shows version information.")
 
 

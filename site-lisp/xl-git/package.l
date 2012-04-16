@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-11 15:22:09 DeaR>
+;; @timestamp   <2012-04-16 14:09:10 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -25,11 +25,11 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package :git)
+  (unless (find-package :xl-git)
     (defpackage :xl-git
       (:nicknames :git)
       (:use :lisp :editor))
 
-    (use-package :git :user)))
+    (use-package :xl-git :user)))
 
 (provide "xl-git/package")

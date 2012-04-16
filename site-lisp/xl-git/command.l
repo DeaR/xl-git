@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-14 01:19:51 DeaR>
+;; @timestamp   <2012-04-16 13:58:39 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -26,14 +26,17 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (require "xl-git/package")
-  (require "xl-git/utils"))
+  (require "xl-git/utils")
+  (require "xl-git/commit")
+  (require "xl-git/diff")
+  (require "xl-git/log")
+  (require "xl-git/status"))
 
 (in-package :git)
 
 
 
 (define-git-command nil
-  :symbol #:git
   :document "Add file contents to the index."
   :prompt t)
 
@@ -41,20 +44,17 @@
   :document "Add file contents to the index."
   :file-arg t)
 
-(define-git-command ("add" "-u")
-  :symbol #:git-add-update
+(define-git-command ("add" "--update")
   :document "Add file contents to the index.
 Only match <filepattern> against already tracked files in the index rather than the working tree.
 That means that it will never stage new files, but that it will stage modified new contents of tracked files and that it will remove files from the index if the corresponding files in the working tree have been removed.")
 
-(define-git-command ("add" "-A")
-  :symbol #:git-add-all
+(define-git-command ("add" "--all")
   :document "Add file contents to the index.
 Like -u, but match <filepattern> against files in the working tree in addition to the index.
 That means that it will find new files as well as staging modified content and removing files that are no longer in the working tree.")
 
-(define-git-command ("add" "-p")
-  :symbol #:git-add-patch
+(define-git-command ("add" "--patch")
   :document "Add file contents to the index.
 Interactively choose hunks of patch between the index and the work tree and add them to the index.
 This gives the user a chance to review the difference before adding modified contents to the index."
@@ -88,20 +88,17 @@ This gives the user a chance to review the difference before adding modified con
 ; (define-git-command ("commit")
 ;   :document "Record changes to the repository.")
 ; 
-; (define-git-command ("commit" "-a")
-;   :symbol #:git-commit-all
+; (define-git-command ("commit" "--all")
 ;   :document "Record changes to the repository.
 ; Tell the command to automatically stage files that have been modified and deleted, but new files you have not told git about are not affected.")
 ; 
 ; (define-git-command ("commit" "--amend")
-;   :symbol #:git-commit-amend
 ;   :document "Record changes to the repository.
 ; Used to amend the tip of the current branch.
 ; Prepare the tree object you would want to replace the latest commit as usual (this includes the usual -i/-o and explicit paths), and the commit log editor is seeded with the commit message from the tip of the current branch.
 ; The commit you create replaces the current tip - if it was a merge, it will have the parents of the current tip as parents - so the current top commit is discarded.")
 
-(define-git-command ("commit" "-v")
-  :symbol #:git-commit-vervose
+(define-git-command ("commit" "--verbose")
   :document "Record changes to the repository.
 Show unified diff between the HEAD commit and what would be committed at the bottom of the commit message template.
 Note that this diff output doesnÅft have its lines prefixed with #."
@@ -155,20 +152,17 @@ Note that this diff output doesnÅft have its lines prefixed with #."
   :document "Update remote refs along with associated objects."
   :no-std-handles t)
 
-(define-git-command ("push ""matching")
-  :symbol #:git-push-matching
+(define-git-command ("push " "matching")
   :document "Update remote refs along with associated objects.
 Push all matching branches."
   :no-std-handles t)
 
 (define-git-command ("push" "tracking")
-  :symbol #:git-push-tracking
   :document "Update remote refs along with associated objects.
 Push the current branch to whatever it is tracking."
   :no-std-handles t)
 
 (define-git-command ("push" "current")
-  :symbol #:git-push-current
   :document "Update remote refs along with associated objects.
 Push the current branch."
   :no-std-handles t)
@@ -192,64 +186,56 @@ Push the current branch."
   :prompt t)
 
 (define-git-command ("stash" "save")
-  :symbol #:git-stash-save
   :document "Stash the changes in a dirty working directory away.
 Save your local modifications to a new stash, and run git reset --hard to revert them.
 The <message> part is optional and gives the description along with the stashed state.
 For quickly making a snapshot, you can omit both "save" and <message>, but giving only <message> does not trigger this action to prevent a misspelled subcommand from making an unwanted stash.")
 
 (define-git-command ("stash" "list")
-  :symbol #:git-stash-list
   :document "Stash the changes in a dirty working directory away.
 List the stashes that you currently have.
 Each stash is listed with its name (e.g. stash@{0} is the latest stash, stash@{1} is the one before, etc.), the name of the branch that was current when the stash was made, and a short description of the commit the stash was based on.")
 
 (define-git-command ("stash" "show")
-  :symbol #:git-stash-show
   :document "Stash the changes in a dirty working directory away.
 Show the changes recorded in the stash as a diff between the stashed state and its original parent.
 When no <stash> is given, shows the latest one.
 By default, the command shows the diffstat, but it will accept any format known to git diff (e.g., git stash show -p stash@{1} to view the second most recent stash in patch form).")
 
 (define-git-command ("stash" "pop")
-  :symbol #:git-stash-pop
   :document "Stash the changes in a dirty working directory away.
 Remove a single stashed state from the stash list and apply it on top of the current working tree state, i.e., do the inverse operation of git stash save.
 The working directory must match the index.")
 
 (define-git-command ("stash" "apply")
-  :symbol #:git-stash-apply
   :document "Stash the changes in a dirty working directory away.
 Like pop, but do not remove the state from the stash list.")
 
 (define-git-command ("stash" "branch")
-  :symbol #:git-stash-branch
   :document "Stash the changes in a dirty working directory away.
 Creates and checks out a new branch named <branchname> starting from the commit at which the <stash> was originally created, applies the changes recorded in <stash> to the new working tree and index, then drops the <stash> if that completes successfully.
 When no <stash> is given, applies the latest one."
   :prompt t)
 
 (define-git-command ("stash" "clear")
-  :symbol #:git-stash-clear
   :document "Stash the changes in a dirty working directory away.
 Remove all the stashed states.
 Note that those states will then be subject to pruning, and may be impossible to recover (see Examples below for a possible strategy).")
 
 (define-git-command ("stash" "drop")
-  :symbol #:git-stash-drop
   :document "Stash the changes in a dirty working directory away.
 Remove a single stashed state from the stash list.
 When no <stash> is given, it removes the latest one.
 i.e. stash@{0}")
 
 (define-git-command ("stash" "create")
-  :symbol #:git-stash-create
   :document "Stash the changes in a dirty working directory away.
 Create a stash (which is a regular commit object) and return its object name, without storing it anywhere in the ref namespace.")
 
-(define-git-command ("status")
-  :document "Show the working tree status."
-  :minor-mode #'git-status-mode)
+; -> status.l
+; (define-git-command ("status")
+;   :document "Show the working tree status."
+;   :minor-mode #'git-status-mode)
 
 (define-git-command ("tag")
   :document "Create, list, delete or verify a tag object signed with GPG.")

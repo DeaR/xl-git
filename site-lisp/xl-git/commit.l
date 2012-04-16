@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-13 17:33:30 DeaR>
+;; @timestamp   <2012-04-16 12:03:36 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -45,26 +45,26 @@
   "git commitÉÇÅ[Éh"
   (ed::toggle-mode '*git-commit-mode* arg sv))
 
-(defun git-commit ()
+(defun git-commit (&optional args)
   "Record changes to the repository."
   (interactive)
   (git-command-wrapper '("commit")
-                       nil :minor-mode #'git-commit-mode))
+                       args :minor-mode #'git-commit-mode))
 
-(defun git-commit-all ()
+(defun git-commit-all (&optional args)
   "Record changes to the repository.
 Tell the command to automatically stage files that have been modified and deleted, but new files you have not told git about are not affected."
   (interactive)
   (git-command-wrapper '("commit" "-a")
-                       nil :minor-mode #'git-commit-mode))
+                       args :minor-mode #'git-commit-mode))
 
-(defun git-commit-amend ()
+(defun git-commit-amend (&optional args)
   "Record changes to the repository.
 Used to amend the tip of the current branch.
 Prepare the tree object you would want to replace the latest commit as usual (this includes the usual -i/-o and explicit paths), and the commit log editor is seeded with the commit message from the tip of the current branch.
 The commit you create replaces the current tip - if it was a merge, it will have the parents of the current tip as parents - so the current top commit is discarded."
   (interactive)
   (git-command-wrapper '("commit" "--amend")
-                       nil :minor-mode #'git-commit-mode))
+                       args :minor-mode #'git-commit-mode))
 
 (provide "xl-git/commit")

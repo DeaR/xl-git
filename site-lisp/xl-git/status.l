@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-12 17:05:08 DeaR>
+;; @timestamp   <2012-04-16 12:03:10 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -25,7 +25,8 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (require "xl-git/package"))
+  (require "xl-git/package")
+  (require "xl-git/utils"))
 
 (in-package :git)
 
@@ -40,5 +41,11 @@
 (defun git-status-mode (&optional (arg nil sv))
   "git statusèoóÕÉÇÅ[Éh"
   (ed::toggle-mode '*git-status-mode* arg sv))
+
+(defun git-status (&optional args)
+  "Show the working tree status."
+  (interactive)
+  (git-command-wrapper '("status")
+                       args :minor-mode #'git-log-mode))
 
 (provide "xl-git/status")
