@@ -1,10 +1,10 @@
-;; -*- mode: lisp; package: user; encoding: shift_jis -*-
+;; -*- mode: lisp; package: git; encoding: shift_jis -*-
 
-;; @name        xl-git.l
+;; @name        xl-git/branch.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 15:32:04 DeaR>
+;; @timestamp   <2012-04-16 15:41:29 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -24,18 +24,40 @@
 ;; DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-(in-package :user)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (require "xl-git/package"))
 
-(require "xl-git/package")
-(require "xl-git/process")
-(require "xl-git/version")
-(require "xl-git/output")
-(require "xl-git/utils")
-(require "xl-git/branch")
-(require "xl-git/commit")
-(require "xl-git/diff")
-(require "xl-git/log")
-(require "xl-git/status")
-(require "xl-git/command")
+(in-package :git)
 
-(provide "xl-git")
+(export '(*git-branch-color-current*
+          *git-branch-color-remote*))
+
+
+
+(defvar *git-branch-color-current* '(:color 2)
+  "branchの現在ブランチの色")
+
+(defvar *git-branch-color-remote* '(:color 1)
+  "branchのリモートブランチの色")
+
+(defvar-local *git-branch-mode* nil
+  "git-branch-mode")
+(pushnew '(*git-branch-mode* . "branch") *minor-mode-alist* :key #'first)
+
+
+
+(defun git-branch-mode (&optional (arg nil sv))
+  "git branchモード"
+  (ed::toggle-mode '*git-branch-mode* arg sv)
+  (if *git-branch-mode*
+      (progn
+        (make-local-variable 'regexp-keyword-list)
+        (setf regexp-keyword-list
+              (compile-regexp-keyword-list
+               `(("^\\* \\(.*\\)$"
+                  nil ,*git-branch-color-current* nil 1)
+                 ("remotes/[^ ]+"
+                  nil ,*git-branch-color-remote*)))))
+    (kill-local-variable 'regexp-keyword-list)))
+
+(provide "xl-git/branch")

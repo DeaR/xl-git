@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 13:58:39 DeaR>
+;; @timestamp   <2012-04-16 15:27:48 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -69,7 +69,13 @@ This gives the user a chance to review the difference before adding modified con
   :prompt t)
 
 (define-git-command ("branch")
-  :document "List, create, or delete branches.")
+  :document "List, create, or delete branches."
+  :minor-mode #'git-branch-mode)
+
+(define-git-command ("branch" "--all")
+  :document "List, create, or delete branches.
+List both remote-tracking branches and local branches."
+  :minor-mode #'git-branch-mode)
 
 (define-git-command ("checkout")
   :document "Checkout a branch or paths to the working tree.")
