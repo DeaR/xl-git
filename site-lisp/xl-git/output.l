@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 16:36:33 DeaR>
+;; @timestamp   <2012-04-17 01:28:00 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -44,8 +44,9 @@
   (setf *git-output-mode-map* (make-sparse-keymap))
   (dotimes (n #x80)
     (define-key *git-output-mode-map* (code-char n) 'git-output-send-and-funcall))
-  (undefine-key *git-output-mode-map* #\C-x)
+  (undefine-key *git-output-mode-map* #\ESC)
   (undefine-key *git-output-mode-map* #\C-c)
+  (undefine-key *git-output-mode-map* #\C-x)
   (define-key *git-output-mode-map* '(#\C-c #\C-g) 'git-output-quit)
   (define-key *git-output-mode-map* '#\RET 'git-output-send-LFD-or-newline)
   (define-key *git-output-mode-map* '#\q 'git-output-send-or-quit))
@@ -72,9 +73,7 @@
       (delete-window))
     (delete-buffer buffer)))
 
-(defun git-output-send-and-funcall (&optional (send *last-command-char*)
-                                              func
-                                              (keymap *global-keymap*))
+(defun git-output-send-and-funcall (&optional (send *last-command-char*) func)
   "出力バッファのプロセスが動作中なら送り、終了していたら関数を実行"
   (interactive)
   (let ((proc (buffer-process (selected-buffer))))
@@ -82,7 +81,10 @@
                (eq (process-status proc) :run))
       (process-send-string proc (string send))))
   (unless func
-    (setf func (lookup-keymap keymap send)))
+    (find-if #'(lambda (keymap)
+                 (setf func (lookup-keymap keymap send)))
+               (append (minor-mode-map)
+                       (list *global-keymap*))))
   (when func
     (funcall func)))
 
