@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 20:34:04 DeaR>
+;; @timestamp   <2012-04-16 23:15:13 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -130,14 +130,17 @@
          (command (if (listp command)
                       (string-trim " " (format nil "~{ ~A~}" command))
                     command))
-         (args (or args
-                   (when (or prompt
-                             *prefix-args*
-                             (not (file-visited-p)))
-                     (read-string (format nil "git ~A: " command)))
-                   (when file-arg
-                     (format nil "\"~A\"" (file-namestring (get-buffer-file-name))))
-                   ""))
+         (args (cond (args
+                      args)
+                     ((or prompt
+                          *prefix-args*)
+                      (read-string (format nil "git ~A: " command)))
+                     (file-arg
+                      (if (file-visited-p)
+                          (format nil "\"~A\"" (file-namestring (get-buffer-file-name)))
+                        (read-file-name (format nil "git ~A: " command))))
+                     (t
+                      "")))
          (cmdline (format nil "~A ~A" command args)))
     (if no-std-handles
         (git-call-process cmdline :no-std-handles t :wait t)
