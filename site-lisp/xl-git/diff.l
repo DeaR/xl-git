@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-13 17:33:30 DeaR>
+;; @timestamp   <2012-04-16 22:14:35 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -64,6 +64,8 @@
         (setf regexp-keyword-list
               (compile-regexp-keyword-list
                `(("^diff .*$"
+                  nil ,*git-diff-color-header*)
+                 ("^index .*$"
                   nil ,*git-diff-color-header*)
                  ("^[+-]\\{3\\} .*$"
                   nil ,*git-diff-color-header*)

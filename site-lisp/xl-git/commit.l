@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 20:43:04 DeaR>
+;; @timestamp   <2012-04-16 22:30:39 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -28,7 +28,8 @@
   (require "xl-git/package")
   (require "xl-git/process")
   (require "xl-git/utils")
-  (require "xl-git/output"))
+  (require "xl-git/output")
+  (require "xl-git/diff"))
 
 (in-package :git)
 
@@ -90,7 +91,16 @@
               (git-call-process (append cmd '("--dry-run"))
                                 :output (get-buffer-create *git-temp-bufname*)
                                 :show :hide :wait t)
-            out)))
+            out)
+          (when (or (member "-v" cmd :test #'string=)
+                    (member "--verbose" cmd :test #'string=))
+            (multiple-value-bind (exec-code out)
+                (git-call-process `("diff" "--no-ext-diff" "--cached"
+                                    ,(when (member "--amend" cmd :test #'string=)
+                                       "HEAD^"))
+                                  :output (get-buffer-create *git-temp-bufname*)
+                                  :show :hide :wait t)
+              out))))
 
 (defun git-commit-0 (cmd args)
   "git-commitの実体"
@@ -151,6 +161,13 @@ The commit you create replaces the current tip - if it was a merge, it will have
   (interactive)
   (git-commit-0 '("commit" "--all" "--amend") args))
 
+(defun git-commit-verbose (&optional args)
+  "Record changes to the repository.
+Show unified diff between the HEAD commit and what would be committed at the bottom of the commit message template.
+Note that this diff output doesn’t have its lines prefixed with #."
+  (interactive)
+  (git-commit-0 '("commit" "--verbose") args))
+
 (defun git-commit-message-mode ()
   "コミットメッセージモード"
   (interactive)
@@ -162,7 +179,19 @@ The commit you create replaces the current tip - if it was a merge, it will have
   (setf regexp-keyword-list
         (compile-regexp-keyword-list
          `(("^#.*$"
-            nil :comment))))
+            nil :comment)
+           ("^diff .*$"
+            nil ,*git-diff-color-header*)
+           ("^index .*$"
+            nil ,*git-diff-color-header*)
+           ("^[+-]\\{3\\} .*$"
+            nil ,*git-diff-color-header*)
+           ("^\\+.*$"
+            nil ,*git-diff-color-add*)
+           ("^-.*$"
+            nil ,*git-diff-color-remove*)
+           ("^@@ .* @@.*$"
+            nil ,*git-diff-color-area*))))
   (run-hooks '*git-commit-message-mode-hook*))
 
 (defun git-commit-start ()

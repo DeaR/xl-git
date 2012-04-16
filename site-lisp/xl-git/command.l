@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 15:27:48 DeaR>
+;; @timestamp   <2012-04-16 22:08:57 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -57,8 +57,7 @@ That means that it will find new files as well as staging modified content and r
 (define-git-command ("add" "--patch")
   :document "Add file contents to the index.
 Interactively choose hunks of patch between the index and the work tree and add them to the index.
-This gives the user a chance to review the difference before adding modified contents to the index."
-  :no-std-handles t)
+This gives the user a chance to review the difference before adding modified contents to the index.")
 
 (define-git-command ("add")
   :document "Add file contents to the index."
@@ -103,12 +102,18 @@ List both remote-tracking branches and local branches."
 ; Used to amend the tip of the current branch.
 ; Prepare the tree object you would want to replace the latest commit as usual (this includes the usual -i/-o and explicit paths), and the commit log editor is seeded with the commit message from the tip of the current branch.
 ; The commit you create replaces the current tip - if it was a merge, it will have the parents of the current tip as parents - so the current top commit is discarded.")
-
-(define-git-command ("commit" "--verbose")
-  :document "Record changes to the repository.
-Show unified diff between the HEAD commit and what would be committed at the bottom of the commit message template.
-Note that this diff output doesnÅft have its lines prefixed with #."
-  :no-std-handles t)
+; 
+; (define-git-command ("commit" "--all" "--amend")
+;   :document "Record changes to the repository.
+; Tell the command to automatically stage files that have been modified and deleted, but new files you have not told git about are not affected.
+; Used to amend the tip of the current branch.
+; Prepare the tree object you would want to replace the latest commit as usual (this includes the usual -i/-o and explicit paths), and the commit log editor is seeded with the commit message from the tip of the current branch.
+; The commit you create replaces the current tip - if it was a merge, it will have the parents of the current tip as parents - so the current top commit is discarded.")
+; 
+; (define-git-command ("commit" "--verbose")
+;   :document "Record changes to the repository.
+; Show unified diff between the HEAD commit and what would be committed at the bottom of the commit message template.
+; Note that this diff output doesnÅft have its lines prefixed with #.")
 
 (define-git-command ("diff")
   :document "Show changes between commits, commit and working tree, etc."
