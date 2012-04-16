@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 20:34:05 DeaR>
+;; @timestamp   <2012-04-16 20:43:04 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -174,8 +174,7 @@ The commit you create replaces the current tip - if it was a merge, it will have
                           (substitute-string *git-commit-message-file* "^\\.\\.?/" "")))
         (buffer (switch-to-buffer *git-output-bufname*))
         (cmd *git-commit-command*))
-    (replace-buffer "^#.*\n" "" :regexp t)
     (write-file file t)
-    (git-command-wrapper cmd (format nil "-F ~A" file-rel))))
+    (git-command-wrapper cmd (format nil "-F ~A --cleanup=strip" file-rel))))
 
 (provide "xl-git/commit")
