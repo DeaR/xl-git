@@ -1,11 +1,13 @@
 # xl-git
 
-A front end for git in xyzzy.
+A front end for git in [xyzzy].
+
+  [xyzzy]: http://www.jsdlab.co.jp/~kamei/
 
 
 ## Install
 
-1. 解凍して$XYZZYにコピーして下さい
+1. 解凍して [xyzzy] のインストールディレクトリにコピーして下さい
 
 2. .xyzzy または siteinit.l に以下のコードを追加します
    
@@ -18,6 +20,7 @@ A front end for git in xyzzy.
 4. 上記の設定を反映させる為に再起動をします
    siteinit.l に設定した場合は再ダンプを行って下さい
 
+  [xyzzy]: http://www.jsdlab.co.jp/~kamei/
   [マルチフレーム版xyzzy]: https://bitbucket.org/mumurik/xyzzy/wiki/Home
   [NAXEL]: https://bitbucket.org/mumurik/xyzzy/wiki/NAXEL
 
