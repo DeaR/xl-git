@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-17 12:47:53 DeaR>
+;; @timestamp   <2012-04-17 13:05:53 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -88,6 +88,7 @@ List both remote-tracking branches and local branches."
 (define-git-command ("clone")
   :document "Clone a repository into a new directory."
   :prompt t
+  :dir-prompt t
   :no-std-handles t)
 
 ; -> commit.l
@@ -137,7 +138,8 @@ List both remote-tracking branches and local branches."
   :document "display help information about git.")
 
 (define-git-command ("init")
-  :document "Create an empty git repository or reinitialize an existing one.")
+  :document "Create an empty git repository or reinitialize an existing one."
+  :dir-prompt t)
 
 ; -> log.l
 ; (define-git-command ("log")
@@ -184,6 +186,12 @@ Push the current branch."
 
 (define-git-command ("reset")
   :document "Reset current HEAD to the specified state.")
+
+(define-git-command ("reset" "HEAD")
+  :symbol #:git-reset-head-file
+  :document "Reset current HEAD to the specified state.
+This form resets the index entries for all <paths> to their state at <commit>. (It does not affect the working tree, nor the current branch.)"
+  :file-arg t)
 
 (define-git-command ("rm")
   :document "Remove files from the working tree and from the index."

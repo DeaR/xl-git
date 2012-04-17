@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 23:15:13 DeaR>
+;; @timestamp   <2012-04-17 13:05:19 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -104,7 +104,7 @@
                         (match-string 3))))
             (split-string out #\LFD))))
 
-(defmacro define-git-command (command &key symbol document prompt file-arg minor-mode no-std-handles)
+(defmacro define-git-command (command &key symbol document prompt dir-prompt file-arg minor-mode no-std-handles)
   "シンプルなgitコマンド生成"
   (let ((name (if symbol
                   (string symbol)
@@ -119,14 +119,17 @@
          (interactive)
          (git::git-command-wrapper ',command args
                                    :prompt ,prompt
+                                   :dir-prompt ,dir-prompt
                                    :file-arg ,file-arg
                                    :minor-mode ,minor-mode
                                    :no-std-handles ,no-std-handles)))))
 (setf (get 'define-git-command 'lisp-indent-hook) 'defun)
 
-(defun git-command-wrapper (command args &key prompt file-arg minor-mode no-std-handles)
+(defun git-command-wrapper (command args &key prompt file-arg dir-prompt minor-mode no-std-handles)
   "シンプルなgitコマンド実体"
-  (let* ((dir (default-directory))
+  (let* ((dir (if dir-prompt
+                  (read-directory-name "directory :")
+                (default-directory)))
          (command (if (listp command)
                       (string-trim " " (format nil "~{ ~A~}" command))
                     command))
