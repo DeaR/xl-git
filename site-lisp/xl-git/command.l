@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-17 13:05:53 DeaR>
+;; @timestamp   <2012-04-17 14:03:49 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -59,10 +59,6 @@ That means that it will find new files as well as staging modified content and r
   :document "Add file contents to the index.
 Interactively choose hunks of patch between the index and the work tree and add them to the index.
 This gives the user a chance to review the difference before adding modified contents to the index.")
-
-(define-git-command ("add")
-  :document "Add file contents to the index."
-  :file-arg t)
 
 (define-git-command ("bisect")
   :document "Find by binary search the change that introduced a bug."
