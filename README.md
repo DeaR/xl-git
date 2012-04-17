@@ -6,33 +6,33 @@ A front end for git in [xyzzy].
 
 
 ## Install
-1. 解凍して [xyzzy] のインストールディレクトリにコピーして下さい
+1.  解凍して [xyzzy] のインストールディレクトリにコピーして下さい
 
-2. .xyzzy または siteinit.l に以下のコードを追加します
-   
-     ```lisp
-     (require "xl-git")
-     ```
+2.  .xyzzy または siteinit.l に以下のコードを追加します
+    
+    ```lisp
+    (require "xl-git")
+    ```
 
-3. 更に環境固有の設定も追加します
-   * [msysgit] を使用
-     
+3.  更に環境固有の設定も追加します
+    *   [msysgit] を使用
+        `$MSYSGIT` -- msysgit のインストールディレクトリ
+        
         ```lisp
-        ; $MSYSGIT -> msysgit のインストールディレクトリ
         (pushnew `("PATH" . ,(concat "$MSYSGIT/bin;$MSYSGIT/mingw/bin;$MSYSGIT/cmd;" 
                                      (si:getenv "PATH")))
                  *git-environ* :test #'equal)
         ```
-   * [msysgit] と [cygwin] が同居していて、 [msysgit] を使用
-     
+    *   [msysgit] と [cygwin] が同居していて、 [msysgit] を使用
+        
         ```lisp
         (pushnew '("CYGWIN" . "") *git-environ* :test #'equal)
         ```
 
-4. (必要ならば) バイトコンパイルします
+4.  (必要ならば) バイトコンパイルします
 
-5. 上記の設定を反映させる為に再起動をします
-   siteinit.l に設定した場合は再ダンプを行って下さい
+5.  上記の設定を反映させる為に再起動をします
+    siteinit.l に設定した場合は再ダンプを行って下さい
 
   [xyzzy]: http://www.jsdlab.co.jp/~kamei/
   [マルチフレーム版xyzzy]: https://bitbucket.org/mumurik/xyzzy/wiki/Home
@@ -42,39 +42,42 @@ A front end for git in [xyzzy].
 
 
 ## Usage
-- `M-x git-init`
-- `M-x git-add`
-- `M-x git-commit`
+-   `M-x git-init`
+-   `M-x git-add`
+-   `M-x git-commit`
 
 etc...
 
-- 実行すると `*Git*` バッファが開かれます
-  終了(モードラインに:Exit)の場合は `C-c C-g` もしくは `q` で、
-  実行中(モードラインに:Run)の場合は `C-c C-g` で、終了します
+-   実行すると `*Git*` バッファが開かれます
+    終了(モードラインに:Exit)の場合は `C-c C-g` もしくは `q` で、
+    実行中(モードラインに:Run)の場合は `C-c C-g` で、終了します
 
-- `git-commit` では `*Git*` バッファにコミットメッセージを入力し、
-  `C-c C-c` もしくは `C-x C-s` でコミットを実行、
-  `C-c C-g` でキャンセルします
+-   `git-commit` では `*Git*` バッファにコミットメッセージを入力し、
+    `C-c C-c` もしくは `C-x C-s` でコミットを実行、
+    `C-c C-g` でキャンセルします
 
 
 ## Setting
-- [git-flow] を利用したい
-  
+-   [git-flow] を利用したい
+    
     ```lisp
     (require "xl-git-flow")
     ```
 
-- 他のコマンドを関数として追加したい
-  * `git::define-git-command command &key :document :symbol :prompt :dir-prompt :minor-mode :no-std-handles`
-    + `command` -- gitコマンド
-    + `:document` -- 関数のドキュメントコメント
-    + `:symbol` -- 別の関数名を指定する
-    + `:prompt` -- 強制的に引数入力を行わせる
-    + `:dir-prompt` -- ディレクトリ入力を行わせる
-    + `:minor-mode` -- 指定のマイナーモードを使用する
-    + `:no-std-handles` -- 全て外部コマンドプロンプト上で動作させる
-    + 例:
-      
+-   他のコマンドを関数として追加したい
+    
+    ```lisp
+    git::define-git-command command &key :document :symbol :prompt :dir-prompt :minor-mode :no-std-handles
+    ```
+    *   `command` -- gitコマンド
+    *   `:document` -- 関数のドキュメントコメント
+    *   `:symbol` -- 別の関数名を指定する
+    *   `:prompt` -- 強制的に引数入力を行わせる
+    *   `:dir-prompt` -- ディレクトリ入力を行わせる
+    *   `:minor-mode` -- 指定のマイナーモードを使用する
+    *   `:no-std-handles` -- 全て外部コマンドプロンプト上で動作させる
+    *   例:
+        
         ```lisp
         ; (git-add)
         (define-git-command ("add")
@@ -107,8 +110,8 @@ REFERENCE.md を参照ください
 ## Issues
 下記のどちらかにでもご連絡下さい
 
-- [Issues - DeaR/xl-git](https://github.com/DeaR/xl-git/issues)
-- [@nayuri_aohime](http://twitter.com/nayuri_aohime/)
+-   [Issues - DeaR/xl-git](https://github.com/DeaR/xl-git/issues)
+-   [@nayuri_aohime](http://twitter.com/nayuri_aohime/)
 
 
 ## Author
