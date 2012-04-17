@@ -61,7 +61,6 @@ etc...
     ```
 
 - 他のコマンドを関数として追加したい
-  * `git::define-git-command` マクロを使えば大抵のコマンドは実装可能です
   * `git::define-git-command command &key :document :symbol :prompt :dir-prompt :minor-mode :no-std-handles`
     + `command` -- gitコマンド
     + `:document` -- 関数のドキュメントコメント
@@ -94,7 +93,7 @@ etc...
         ```
 
   [msysgit]: http://msysgit.github.com/
-  [cygwin]: http://msysgit.github.com/
+  [cygwin]: http://www.cygwin.com/
   [git-flow]: https://github.com/nvie/gitflow
 
 
