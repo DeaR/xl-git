@@ -14,14 +14,32 @@ A front end for git in [xyzzy].
      (require "xl-git")
      ```
 
-3. (必要ならば) バイトコンパイルします
+3. 更に環境固有の設定も追加します
+   * [msysgit] を使用
+     
+       ```lisp
+       (pushnew `("PATH" . ,(concat "$MSYSGIT/bin;$MSYSGIT/mingw/bin;$MSYSGIT/cmd;" 
+                                    (si:getenv "PATH")))
+                *git-environ* :test #'equal)
+       ```
+     $MSYSGIT -- [msysgit] のインストールディレクトリ
+   
+   * [msysgit] と [cygwin] が同居していて、 [msysgit] を使用
+     
+       ```lisp
+       (pushnew '("CYGWIN" . "") *git-environ* :test #'equal)
+       ```
 
-4. 上記の設定を反映させる為に再起動をします
+4. (必要ならば) バイトコンパイルします
+
+5. 上記の設定を反映させる為に再起動をします
    siteinit.l に設定した場合は再ダンプを行って下さい
 
   [xyzzy]: http://www.jsdlab.co.jp/~kamei/
   [マルチフレーム版xyzzy]: https://bitbucket.org/mumurik/xyzzy/wiki/Home
   [NAXEL]: https://bitbucket.org/mumurik/xyzzy/wiki/NAXEL
+  [msysgit]: http://msysgit.github.com/
+  [cygwin]: http://www.cygwin.com/
 
 
 ## Usage
@@ -41,21 +59,7 @@ etc...
 
 
 ## Setting
-- [msysgit] を使用
-  
-    ```lisp
-    (pushnew `("PATH" . ,(concat "$MSYSGIT/bin;$MSYSGIT/mingw/bin;$MSYSGIT/cmd;" (si:getenv "PATH")))
-             *git-environ* :test #'equal)
-    ```
-  $MSYSGIT -- [msysgit] のインストールディレクトリ
-
-- [msysgit] と [cygwin] が同居していて、 [msysgit] を使用
-  
-    ```lisp
-    (pushnew '("CYGWIN" . "") *git-environ* :test #'equal)
-    ```
-
-- [git-flow] を利用している
+- [git-flow] を利用したい
   
     ```lisp
     (require "xl-git-flow")
@@ -94,8 +98,6 @@ etc...
           :file-arg t)
         ```
 
-  [msysgit]: http://msysgit.github.com/
-  [cygwin]: http://www.cygwin.com/
   [git-flow]: https://github.com/nvie/gitflow
 
 
