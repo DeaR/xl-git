@@ -46,7 +46,7 @@ etc...
     ```lisp
     (pushnew `("PATH" . ,(concat "$MSYSGIT/bin;$MSYSGIT/mingw/bin;$MSYSGIT/cmd;" (si:getenv "PATH"))) *git-environ* :test #'equal)
     ```
-  $MSYSGIT は [msysgit] のインストールディレクトリに置換して下さい
+  $MSYSGIT -- [msysgit] のインストールディレクトリ
 
 - [msysgit] と [cygwin] が同居していて、 [msysgit] を使用
   
