@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-17 13:05:19 DeaR>
+;; @timestamp   <2012-04-17 19:32:54 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -146,7 +146,7 @@
                       "")))
          (cmdline (format nil "~A ~A" command args)))
     (if no-std-handles
-        (git-call-process cmdline :no-std-handles t :wait t)
+        (git-call-process cmdline :exec-directory dir :no-std-handles t :wait t)
       (let ((buffer (get-buffer-create *git-output-bufname*)))
         (when (= (count-windows) 1)
           (split-window nil *git-output-split-vertical-p*))
@@ -157,6 +157,6 @@
         (set-default-directory dir buffer)
         (set-buffer-fileio-encoding *git-process-encoding* buffer)
         (set-buffer-eol-code *git-process-eol-code* buffer)
-        (git-make-process cmdline :output buffer)))))
+        (git-make-process cmdline :exec-directory dir :output buffer)))))
 
 (provide "xl-git/utils")
