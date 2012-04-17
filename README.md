@@ -99,7 +99,7 @@ etc...
 
 
 ## Reference
-[REFERENCE.md](/REFERENCE.md/)
+[REFERENCE.md](./REFERENCE.md)
 
 
 ## Author
