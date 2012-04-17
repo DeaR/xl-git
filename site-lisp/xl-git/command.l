@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-17 14:03:49 DeaR>
+;; @timestamp   <2012-04-17 18:56:59 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -120,6 +120,24 @@ List both remote-tracking branches and local branches."
 (define-git-command ("diff")
   :symbol #:git-diff-file
   :document "Show changes between commits, commit and working tree, etc."
+  :file-arg t
+  :minor-mode #'git-diff-mode)
+
+(define-git-command ("diff" "--cached")
+  :document "Show changes between commits, commit and working tree, etc.
+This form is to view the changes you staged for the next commit relative to the named <commit>.
+Typically you would want comparison with the latest commit, so if you do not give <commit>, it defaults to HEAD.
+If HEAD does not exist (e.g. unborned branches) and <commit> is not given, it shows all staged changes.
+--staged is a synonym of --cached."
+  :minor-mode #'git-diff-mode)
+
+(define-git-command ("diff" "--cached")
+  :symbol #:git-diff-cached-file
+  :document "Show changes between commits, commit and working tree, etc.
+This form is to view the changes you staged for the next commit relative to the named <commit>.
+Typically you would want comparison with the latest commit, so if you do not give <commit>, it defaults to HEAD.
+If HEAD does not exist (e.g. unborned branches) and <commit> is not given, it shows all staged changes.
+--staged is a synonym of --cached."
   :file-arg t
   :minor-mode #'git-diff-mode)
 
