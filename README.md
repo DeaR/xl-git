@@ -6,7 +6,6 @@ A front end for git in [xyzzy].
 
 
 ## Install
-
 1. 解凍して [xyzzy] のインストールディレクトリにコピーして下さい
 
 2. .xyzzy または siteinit.l に以下のコードを追加します
@@ -26,7 +25,6 @@ A front end for git in [xyzzy].
 
 
 ## Usage
-
 - `M-x git-init`
 - `M-x git-add`
 - `M-x git-commit`
@@ -46,7 +44,8 @@ etc...
 - [msysgit] を使用
   
     ```lisp
-    (pushnew `("PATH" . ,(concat "$MSYSGIT/bin;$MSYSGIT/mingw/bin;$MSYSGIT/cmd;" (si:getenv "PATH"))) *git-environ* :test #'equal)
+    (pushnew `("PATH" . ,(concat "$MSYSGIT/bin;$MSYSGIT/mingw/bin;$MSYSGIT/cmd;" (si:getenv "PATH")))
+             *git-environ* :test #'equal)
     ```
   $MSYSGIT -- [msysgit] のインストールディレクトリ
 
@@ -90,7 +89,8 @@ etc...
         (define-git-command ("reset" "HEAD")
           :symbol #:git-reset-head-file
           :document "Reset current HEAD to the specified state.
-        This form resets the index entries for all <paths> to their state at <commit>. (It does not affect the working tree, nor the current branch.)"
+        This form resets the index entries for all <paths> to their state at <commit>.
+        (It does not affect the working tree, nor the current branch.)"
           :file-arg t)
         ```
 
