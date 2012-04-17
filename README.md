@@ -39,7 +39,6 @@ etc...
   `C-c C-g` でキャンセルします
 
 
-
 ## Setting
 - [msysgit] を使用
   

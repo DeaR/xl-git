@@ -269,23 +269,25 @@ $PROMPT -- ミニバッファで入力を行います
   * コミットメッセージモードのキーマップ
   * 初期値:
     
-    ```lisp
-    (define-key *git-commit-message-mode-map* '(#\C-x #\C-s) 'git-commit-start)
-    (define-key *git-commit-message-mode-map* '(#\C-c #\C-c) 'git-commit-start)
-    (define-key *git-commit-message-mode-map* '(#\C-c #\C-g) 'git-output-quit))
-    ```
+      ```lisp
+      (setf *git-commit-message-mode-map* (make-sparse-keymap))
+      (define-key *git-commit-message-mode-map* '(#\C-x #\C-s) 'git-commit-start)
+      (define-key *git-commit-message-mode-map* '(#\C-c #\C-c) 'git-commit-start)
+      (define-key *git-commit-message-mode-map* '(#\C-c #\C-g) 'git-output-quit))
+      ```
 
 - `*git-output-mode-map*`
   * 出力モードのキーマップ
   * 初期値:
     
-    ```lisp
-    (dotimes (n #x80)
-      (define-key *git-output-mode-map* (code-char n) 'git-output-send-and-funcall))
-    (undefine-key *git-output-mode-map* #\ESC)
-    (undefine-key *git-output-mode-map* #\C-c)
-    (undefine-key *git-output-mode-map* #\C-x)
-    (define-key *git-output-mode-map* '(#\C-c #\C-g) 'git-output-quit)
-    (define-key *git-output-mode-map* '#\RET 'git-output-send-LFD-or-newline)
-    (define-key *git-output-mode-map* '#\q 'git-output-send-or-quit))
-    ```
+      ```lisp
+      (setf *git-output-mode-map* (make-sparse-keymap))
+      (dotimes (n #x80)
+        (define-key *git-output-mode-map* (code-char n) 'git-output-send-and-funcall))
+      (undefine-key *git-output-mode-map* #\ESC)
+      (undefine-key *git-output-mode-map* #\C-c)
+      (undefine-key *git-output-mode-map* #\C-x)
+      (define-key *git-output-mode-map* '(#\C-c #\C-g) 'git-output-quit)
+      (define-key *git-output-mode-map* '#\RET 'git-output-send-LFD-or-newline)
+      (define-key *git-output-mode-map* '#\q 'git-output-send-or-quit))
+      ```
