@@ -99,7 +99,14 @@ etc...
 
 
 ## Reference
-REFERENCE.mdを参照ください
+REFERENCE.md を参照ください
+
+
+## Issues
+下記のどちらかにでもご連絡下さい
+
+- [Issues - DeaR/xl-git](https://github.com/DeaR/xl-git/issues)
+- [@nayuri_aohime](http://twitter.com/nayuri_aohime/)
 
 
 ## Author
@@ -109,5 +116,20 @@ DeaR (<nayuri@kuonn.mydns.jp>)
 
 
 ## License
-xl-gitのライセンスはMITライセンスです
-詳細はMIT.txtを参照ください
+    Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
+    
+    Permission is hereby granted, free of charge, to any person obtaining a copy of
+    this software and associated documentation files (the "Software"), to deal in
+    the Software without restriction, including without limitation the rights to
+    use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+    the Software, and to permit persons to whom the Software is furnished to do so,
+    subject to the following conditions:
+    
+    The above copyright notice and this permission notice shall be included in all copies
+    or substantial portions of the Software.
+    
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+    INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+    PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
