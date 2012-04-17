@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 20:05:33 DeaR>
+;; @timestamp   <2012-04-17 12:10:46 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -40,10 +40,7 @@
 (defvar *git-binary* "git.exe"
   "git.exe のパス")
 
-(defvar *git-environ* `(("PATH" . ,(concat "C:/msysgit/bin;C:/msysgit/mingw/bin;C:/msysgit/cmd;" (si:getenv "PATH")))
-                        ; ("GIT_SSH" . "C:/Apps/PuTTY/PLINK.EXE")
-                        ("GIT_EDITOR" . ,(concat (merge-pathnames "xyzzycli.exe" (si:system-root)) " -wait"))
-                        ("CYGWIN" . ""))
+(defvar *git-environ* `(("GIT_EDITOR" . ,(concat (merge-pathnames "xyzzycli.exe" (si:system-root)) " -wait")))
   "必ず設定する環境変数
 '((\"VARNAME\" . \"VAR\"))")
 
@@ -53,8 +50,7 @@
 (defvar *git-process-eol-code* *eol-lf*
   "git.exe の改行コード")
 
-(defvar *git-wrapper-bat* (merge-pathnames "~/xl-git/site-lisp/xl-git/git-wrapper.bat")
-                          ; (merge-pathnames "site-lisp/xl-git/git-wrapper.bat" (si:system-root))
+(defvar *git-wrapper-bat* (merge-pathnames "site-lisp/xl-git/git-wrapper.bat" (si:system-root))
   "git-wrapper.bat のパス(nil なら無効)
 no-std-handles が t の際に git-wrapper.bat を使用する")
 
