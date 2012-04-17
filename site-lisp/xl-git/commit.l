@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-17 15:59:13 DeaR>
+;; @timestamp   <2012-04-17 19:11:06 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -92,16 +92,7 @@
               (git-call-process (append cmd '("--dry-run"))
                                 :output (get-buffer-create *git-temp-bufname*)
                                 :show :hide :wait t)
-            out)
-          (when (or (member "-v" cmd :test #'string=)
-                    (member "--verbose" cmd :test #'string=))
-            (multiple-value-bind (exec-code out)
-                (git-call-process `("diff" "--no-ext-diff" "--cached"
-                                    ,(when (member "--amend" cmd :test #'string=)
-                                       "HEAD^"))
-                                  :output (get-buffer-create *git-temp-bufname*)
-                                  :show :hide :wait t)
-              out))))
+            out)))
 
 (defun git-commit-0 (cmd args)
   "git-commit‚ÌŽÀ‘Ì"
