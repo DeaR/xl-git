@@ -5,18 +5,18 @@ A front end for git in xyzzy.
 
 ## Install
 
-1. 解凍して$XYZZYにコピーして下さい。
+1. 解凍して$XYZZYにコピーして下さい
 
-2. .xyzzy または siteinit.l に以下のコードを追加します。
+2. .xyzzy または siteinit.l に以下のコードを追加します
    
      ```lisp
      (require "xl-git")
      ```
 
-3. (必要ならば) バイトコンパイルします。
+3. (必要ならば) バイトコンパイルします
 
-4. 上記の設定を反映させる為に再起動をします。
-   siteinit.l に設定した場合は再ダンプを行って下さい。
+4. 上記の設定を反映させる為に再起動をします
+   siteinit.l に設定した場合は再ダンプを行って下さい
 
   [マルチフレーム版xyzzy]: https://bitbucket.org/mumurik/xyzzy/wiki/Home
   [NAXEL]: https://bitbucket.org/mumurik/xyzzy/wiki/NAXEL
@@ -46,7 +46,7 @@ etc...
     ```lisp
     (pushnew `("PATH" . ,(concat "$MSYSGIT/bin;$MSYSGIT/mingw/bin;$MSYSGIT/cmd;" (si:getenv "PATH"))) *git-environ* :test #'equal)
     ```
-  $MSYSGIT は [msysgit] のインストールディレクトリに置換して下さい。
+  $MSYSGIT は [msysgit] のインストールディレクトリに置換して下さい
 
 - [msysgit] と [cygwin] が同居していて、 [msysgit] を使用
   
@@ -61,7 +61,7 @@ etc...
     ```
 
 - 他のコマンドを関数として追加したい
-  * `git::define-git-command` マクロを使えば大抵のコマンドは実装可能です。
+  * `git::define-git-command` マクロを使えば大抵のコマンドは実装可能です
   * `git::define-git-command command &key :document :symbol :prompt :dir-prompt :minor-mode :no-std-handles`
     + `command` -- gitコマンド
     + `:document` -- 関数のドキュメントコメント
@@ -99,7 +99,7 @@ etc...
 
 
 ## Reference
-[REFERENCE.md](./REFERENCE.md)
+REFERENCE.mdを参照ください
 
 
 ## Author
@@ -109,5 +109,5 @@ DeaR (<nayuri@kuonn.mydns.jp>)
 
 
 ## License
-xl-gitのライセンスはMITライセンスです。
-詳細はMIT.txtを参照ください。
+xl-gitのライセンスはMITライセンスです
+詳細はMIT.txtを参照ください
