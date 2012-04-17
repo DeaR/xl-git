@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-17 11:27:11 DeaR>
+;; @timestamp   <2012-04-17 15:59:13 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -198,12 +198,14 @@ Note that this diff output doesn’t have its lines prefixed with #."
 (defun git-commit-start ()
   "コミットの開始"
   (interactive)
-  (let ((file (merge-pathnames *git-commit-message-file*
-                               (git-top-dir)))
-        (file-rel (concat (append-trail-slash (git-top-dir-relative))
-                          (substitute-string *git-commit-message-file* "^\\.\\.?/" "")))
-        (buffer (switch-to-buffer *git-output-bufname*))
-        (cmd *git-commit-command*))
+  (let* ((file (merge-pathnames *git-commit-message-file*
+                                (git-top-dir)))
+         (rel (git-top-dir-relative))
+         (file-rel (concat (unless (string= rel "")
+                             (append-trail-slash rel))
+                           (substitute-string *git-commit-message-file* "^\\.\\.?/" "")))
+         (buffer (switch-to-buffer *git-output-bufname*))
+         (cmd *git-commit-command*))
     (write-file file t)
     (git-command-wrapper cmd (format nil "-F ~A --cleanup=strip" file-rel))))
 
