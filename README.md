@@ -16,14 +16,13 @@ A front end for git in [xyzzy].
 
 3. 更に環境固有の設定も追加します
    * [msysgit] を使用
-     
+       
        ```lisp
+       ; $MSYSGIT -> msysgit のインストールディレクトリ
        (pushnew `("PATH" . ,(concat "$MSYSGIT/bin;$MSYSGIT/mingw/bin;$MSYSGIT/cmd;" 
                                     (si:getenv "PATH")))
                 *git-environ* :test #'equal)
        ```
-     $MSYSGIT -- [msysgit] のインストールディレクトリ
-   
    * [msysgit] と [cygwin] が同居していて、 [msysgit] を使用
      
        ```lisp
