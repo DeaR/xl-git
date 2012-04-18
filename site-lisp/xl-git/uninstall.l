@@ -1,10 +1,10 @@
-;; -*- mode: lisp; package: user; encoding: shift_jis -*-
+;; -*- mode: lisp; package: git; encoding: shift_jis -*-
 
-;; @name        xl-git.l
+;; @name        xl-git/uninstall.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 18:23:38 DeaR>
+;; @timestamp   <2012-04-18 19:46:09 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -24,19 +24,23 @@
 ;; DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-(in-package :user)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (require "xl-git/package")
+  (require "xl-git/utils"))
 
-(require "xl-git/package")
-(require "xl-git/process")
-(require "xl-git/version")
-(require "xl-git/output")
-(require "xl-git/utils")
-(require "xl-git/branch")
-(require "xl-git/commit")
-(require "xl-git/diff")
-(require "xl-git/log")
-(require "xl-git/status")
-(require "xl-git/command")
-(require "xl-git/uninstall")
+(in-package :git)
 
-(provide "xl-git")
+
+
+(defun git-uninstall ()
+  "アンインストールする"
+  (unregister-history-variable *git-prompt-history*)
+
+  (setf #0=lisp::*modules*
+        (delete "xl-git" #0# :test #'string-equal))
+  (setf #0#
+        (delete "xl-git-flow" #0# :test #'string-equal))
+  (setf #0#
+        (delete "xl-git/.+" #0# :test #'string-match)))
+
+(provide "xl-git/uninstall")

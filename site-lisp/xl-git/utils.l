@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 19:04:25 DeaR>
+;; @timestamp   <2012-04-18 19:38:23 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -45,6 +45,9 @@
 
 (defvar *git-temp-bufname* " *Git Temp*"
   "作業バッファ名")
+
+(define-history-variable *git-prompt-history* nil
+  "プロンプトの履歴")
 
 
 
@@ -134,7 +137,8 @@
                       args)
                      ((or prompt
                           *prefix-args*)
-                      (read-string (format nil "git ~A: " command)))
+                      (read-string (format nil "git ~A: " command)
+                                   :history *git-prompt-history*))
                      (file-arg
                       (if (file-visited-p)
                           (format nil "\"~A\"" (file-namestring (get-buffer-file-name)))

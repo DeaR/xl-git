@@ -1,10 +1,10 @@
 ;; -*- mode: lisp; package: user; encoding: shift_jis -*-
 
-;; @name        xl-git.l
+;; @name        ni-before-uninstall/kuonn_witchcraft_museum/xl-git.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 18:23:38 DeaR>
+;; @timestamp   <2012-04-18 19:50:25 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -24,19 +24,5 @@
 ;; DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-(in-package :user)
-
-(require "xl-git/package")
-(require "xl-git/process")
-(require "xl-git/version")
-(require "xl-git/output")
-(require "xl-git/utils")
-(require "xl-git/branch")
-(require "xl-git/commit")
-(require "xl-git/diff")
-(require "xl-git/log")
-(require "xl-git/status")
-(require "xl-git/command")
 (require "xl-git/uninstall")
-
-(provide "xl-git")
+(git::git-uninstall)
