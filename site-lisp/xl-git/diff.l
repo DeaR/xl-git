@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 22:14:35 DeaR>
+;; @timestamp   <2012-04-18 15:55:56 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -58,23 +58,20 @@
 (defun git-diff-mode (&optional (arg nil sv))
   "git diffÉÇÅ[Éh"
   (ed::toggle-mode '*git-diff-mode* arg sv)
-  (if *git-diff-mode*
-      (progn
-        (make-local-variable 'regexp-keyword-list)
-        (setf regexp-keyword-list
-              (compile-regexp-keyword-list
-               `(("^diff .*$"
-                  nil ,*git-diff-color-header*)
-                 ("^index .*$"
-                  nil ,*git-diff-color-header*)
-                 ("^[+-]\\{3\\} .*$"
-                  nil ,*git-diff-color-header*)
-                 ("^\\+.*$"
-                  nil ,*git-diff-color-add*)
-                 ("^-.*$"
-                  nil ,*git-diff-color-remove*)
-                 ("^@@ .* @@.*$"
-                  nil ,*git-diff-color-area*)))))
-    (kill-local-variable 'regexp-keyword-list)))
+  (set-regexp-keyword-list
+   (compile-regexp-keyword-list
+    `(("^diff .*$"
+       nil ,*git-diff-color-header*)
+      ("^index .*$"
+       nil ,*git-diff-color-header*)
+      ("^[+-]\\{3\\} .*$"
+       nil ,*git-diff-color-header*)
+      ("^\\+.*$"
+       nil ,*git-diff-color-add*)
+      ("^-.*$"
+       nil ,*git-diff-color-remove*)
+      ("^@@ .* @@.*$"
+       nil ,*git-diff-color-area*)))
+   *git-diff-mode*))
 
 (provide "xl-git/diff")

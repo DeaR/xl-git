@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 12:03:20 DeaR>
+;; @timestamp   <2012-04-18 16:08:50 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -76,22 +76,19 @@
 (defun git-log-mode (&optional (arg nil sv))
   "git logÉÇÅ[Éh"
   (ed::toggle-mode '*git-log-mode* arg sv)
-  (if *git-log-mode*
-      (progn
-        (make-local-variable 'regexp-keyword-list)
-        (setf regexp-keyword-list
-              (compile-regexp-keyword-list
-               `(("^[ */|\\]+ "
-                  nil ,*git-log-color-line*)
-                 ("\\(commit[: ]+\\)?[0-9a-f]\\{4,40\\}"
-                  nil ,*git-log-color-sha*)
-                 ("(\\(HEAD,? ?\\)?\\(\\(tag: [^, ():]+,? ?\\)*\\)\\(\\(origin/[^, ():]+,? ?\\)*\\)\\(\\([^():]+\\)*\\))"
-                  nil ((0 . ,*git-log-color-brace*)
-                       (1 . ,*git-log-color-head*)
-                       (2 . ,*git-log-color-tag*)
-                       (4 . ,*git-log-color-remote-branch*)
-                       (6 . ,*git-log-color-branch*)))))))
-    (kill-local-variable 'regexp-keyword-list)))
+  (set-regexp-keyword-list
+   (compile-regexp-keyword-list
+    `(("^[ */|\\]+ "
+       nil ,*git-log-color-line*)
+      ("\\(commit[: ]+\\)?[0-9a-f]\\{4,40\\}"
+       nil ,*git-log-color-sha*)
+      ("(\\(HEAD,? ?\\)?\\(\\(tag: [^, ():]+,? ?\\)*\\)\\(\\(origin/[^, ():]+,? ?\\)*\\)\\(\\([^():]+\\)*\\))"
+       nil ((0 . ,*git-log-color-brace*)
+            (1 . ,*git-log-color-head*)
+            (2 . ,*git-log-color-tag*)
+            (4 . ,*git-log-color-remote-branch*)
+            (6 . ,*git-log-color-branch*)))))
+   *git-log-mode*))
 
 (defun git-log (&optional args)
   "Show commit logs."

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 15:41:29 DeaR>
+;; @timestamp   <2012-04-18 16:20:28 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -49,15 +49,12 @@
 (defun git-branch-mode (&optional (arg nil sv))
   "git branchÉÇÅ[Éh"
   (ed::toggle-mode '*git-branch-mode* arg sv)
-  (if *git-branch-mode*
-      (progn
-        (make-local-variable 'regexp-keyword-list)
-        (setf regexp-keyword-list
-              (compile-regexp-keyword-list
-               `(("^\\* \\(.*\\)$"
-                  nil ,*git-branch-color-current* nil 1)
-                 ("remotes/[^ ]+"
-                  nil ,*git-branch-color-remote*)))))
-    (kill-local-variable 'regexp-keyword-list)))
+  (set-regexp-keyword-list
+   (compile-regexp-keyword-list
+    `(("^\\* \\(.*\\)$"
+       nil ,*git-branch-color-current* nil 1)
+      ("remotes/[^ ]+"
+       nil ,*git-branch-color-remote*)))
+   *git-branch-mode*))
 
 (provide "xl-git/branch")

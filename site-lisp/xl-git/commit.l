@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-17 19:11:06 DeaR>
+;; @timestamp   <2012-04-18 16:15:45 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -165,25 +165,24 @@ Note that this diff output doesnÅft have its lines prefixed with #."
   (interactive)
   (kill-all-local-variables)
   (setf mode-name "GitMessage")
-  (set buffer-mode 'git-commit-message-mode)
+  (setf buffer-mode 'git-commit-message-mode)
+  (set-regexp-keyword-list
+   (compile-regexp-keyword-list
+    `(("^#.*$"
+       nil :comment)
+      ("^diff .*$"
+       nil ,*git-diff-color-header*)
+      ("^index .*$"
+       nil ,*git-diff-color-header*)
+      ("^[+-]\\{3\\} .*$"
+       nil ,*git-diff-color-header*)
+      ("^\\+.*$"
+       nil ,*git-diff-color-add*)
+      ("^-.*$"
+       nil ,*git-diff-color-remove*)
+      ("^@@ .* @@.*$"
+       nil ,*git-diff-color-area*))))
   (use-keymap *git-commit-message-mode-map*)
-  (make-local-variable 'regexp-keyword-list)
-  (setf regexp-keyword-list
-        (compile-regexp-keyword-list
-         `(("^#.*$"
-            nil :comment)
-           ("^diff .*$"
-            nil ,*git-diff-color-header*)
-           ("^index .*$"
-            nil ,*git-diff-color-header*)
-           ("^[+-]\\{3\\} .*$"
-            nil ,*git-diff-color-header*)
-           ("^\\+.*$"
-            nil ,*git-diff-color-add*)
-           ("^-.*$"
-            nil ,*git-diff-color-remove*)
-           ("^@@ .* @@.*$"
-            nil ,*git-diff-color-area*))))
   (run-hooks '*git-commit-message-mode-hook*))
 
 (defun git-commit-start ()
