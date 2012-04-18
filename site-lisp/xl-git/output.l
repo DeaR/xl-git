@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-17 01:28:00 DeaR>
+;; @timestamp   <2012-04-18 19:28:40 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -25,18 +25,13 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (require "xl-git/package")
-  (require "xl-git/process"))
+  (require "xl-git/package"))
 
 (in-package :git)
 
-(export '(*git-output-mode-hook*
-          *git-output-mode-map*))
+(export '(*git-output-mode-map*))
 
 
-
-(defvar *git-output-mode-hook* nil
-  "git-output-mode起動時に実行されます")
 
 (defvar *git-output-mode-map* nil
   "出力モードのキーマップ")
@@ -51,18 +46,19 @@
   (define-key *git-output-mode-map* '#\RET 'git-output-send-LFD-or-newline)
   (define-key *git-output-mode-map* '#\q 'git-output-send-or-quit))
 
+(defvar-local *git-output-mode* nil
+  "出力モード")
+(pushnew '(*git-output-mode* . "GitOutput") *minor-mode-alist* :key #'first)
 
 
-(defun git-output-mode (&optional minor-mode)
+
+(defun git-output-mode (&optional (arg nil sv))
   "出力モード"
   (interactive)
-  (kill-all-local-variables)
-  (setf mode-name "GitOutput")
-  (setf buffer-mode 'git-output-mode)
-  (use-keymap *git-output-mode-map*)
-  (when minor-mode
-    (funcall minor-mode))
-  (run-hooks '*git-output-mode-hook*))
+  (ed::toggle-mode '*git-output-mode* arg sv)
+  (if *git-output-mode*
+      (set-minor-mode-map *git-output-mode-map*)
+    (unset-minor-mode-map *git-output-mode-map*)))
 
 (defun git-output-quit ()
   "出力バッファを閉じる"
@@ -81,10 +77,12 @@
                (eq (process-status proc) :run))
       (process-send-string proc (string send))))
   (unless func
-    (find-if #'(lambda (keymap)
-                 (setf func (lookup-keymap keymap send)))
-               (append (minor-mode-map)
-                       (list *global-keymap*))))
+    (setf func (or (find-if #'(lambda (keymap)
+                                (unless (eq keymap *git-output-mode-map*)
+                                  (lookup-keymap keymap send)))
+                            (minor-mode-map))
+                   (lookup-keymap (local-keymap) send)
+                   (lookup-keymap *global-keymap* send))))
   (when func
     (funcall func)))
 
@@ -102,4 +100,4 @@
         (git-output-send-and-funcall)
       (git-output-quit))))
 
-(provide "xl-git/output")
+(provide "xl-git/process")

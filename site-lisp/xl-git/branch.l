@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 16:20:28 DeaR>
+;; @timestamp   <2012-04-18 19:08:27 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -30,7 +30,8 @@
 (in-package :git)
 
 (export '(*git-branch-color-current*
-          *git-branch-color-remote*))
+          *git-branch-color-remote*
+          *git-branch-mode-hook*))
 
 
 
@@ -40,21 +41,28 @@
 (defvar *git-branch-color-remote* '(:color 1)
   "branchのリモートブランチの色")
 
-(defvar-local *git-branch-mode* nil
-  "git-branch-mode")
-(pushnew '(*git-branch-mode* . "branch") *minor-mode-alist* :key #'first)
+(defvar *git-branch-mode-hook* nil
+  "git-branch-mode起動時に実行されます")
 
 
+
+(defun git-branch-regexp-keyword-list ()
+  "git branchモードのregexp-keyword-list"
+  (compile-regexp-keyword-list
+   `(("^\\* \\(.*\\)$"
+      nil ,*git-branch-color-current* nil 1)
+     ("remotes/[^ ]+"
+      nil ,*git-branch-color-remote*))))
 
 (defun git-branch-mode (&optional (arg nil sv))
   "git branchモード"
-  (ed::toggle-mode '*git-branch-mode* arg sv)
-  (set-regexp-keyword-list
-   (compile-regexp-keyword-list
-    `(("^\\* \\(.*\\)$"
-       nil ,*git-branch-color-current* nil 1)
-      ("remotes/[^ ]+"
-       nil ,*git-branch-color-remote*)))
-   *git-branch-mode*))
+  (interactive)
+  (kill-all-local-variables)
+  (setf mode-name "GitBranch")
+  (setf buffer-mode 'git-branch-mode)
+  (unless (local-variable-p '#0=regexp-keyword-list)
+    (make-local-variable '#0#))
+  (setf #0# (append #0# (git-branch-regexp-keyword-list)))
+  (run-hooks '*git-branch-mode-hook*))
 
 (provide "xl-git/branch")

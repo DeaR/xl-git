@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 16:08:50 DeaR>
+;; @timestamp   <2012-04-18 19:08:27 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -38,6 +38,7 @@
           *git-log-color-remote-branch*
           *git-log-color-tag*
           *git-log-default-limit*
+          *git-log-mode-hook*
           git-log
           git-glog))
 
@@ -67,34 +68,41 @@
 (defvar *git-log-default-limit* 100
   "logのデフォルト件数")
 
-(defvar-local *git-log-mode* nil
-  "git-log-mode")
-(pushnew '(*git-log-mode* . "Log") *minor-mode-alist* :key #'first)
+(defvar *git-log-mode-hook* nil
+  "git-log-mode起動時に実行されます")
 
 
+
+(defun git-log-regexp-keyword-list ()
+  "git logモードのregexp-keyword-list"
+  (compile-regexp-keyword-list
+   `(("^[ */|\\]+ "
+      nil ,*git-log-color-line*)
+     ("\\(commit[: ]+\\)?[0-9a-f]\\{4,40\\}"
+      nil ,*git-log-color-sha*)
+     ("(\\(HEAD,? ?\\)?\\(\\(tag: [^, ():]+,? ?\\)*\\)\\(\\(origin/[^, ():]+,? ?\\)*\\)\\(\\([^():]+\\)*\\))"
+      nil ((0 . ,*git-log-color-brace*)
+           (1 . ,*git-log-color-head*)
+           (2 . ,*git-log-color-tag*)
+           (4 . ,*git-log-color-remote-branch*)
+           (6 . ,*git-log-color-branch*))))))
 
 (defun git-log-mode (&optional (arg nil sv))
   "git logモード"
-  (ed::toggle-mode '*git-log-mode* arg sv)
-  (set-regexp-keyword-list
-   (compile-regexp-keyword-list
-    `(("^[ */|\\]+ "
-       nil ,*git-log-color-line*)
-      ("\\(commit[: ]+\\)?[0-9a-f]\\{4,40\\}"
-       nil ,*git-log-color-sha*)
-      ("(\\(HEAD,? ?\\)?\\(\\(tag: [^, ():]+,? ?\\)*\\)\\(\\(origin/[^, ():]+,? ?\\)*\\)\\(\\([^():]+\\)*\\))"
-       nil ((0 . ,*git-log-color-brace*)
-            (1 . ,*git-log-color-head*)
-            (2 . ,*git-log-color-tag*)
-            (4 . ,*git-log-color-remote-branch*)
-            (6 . ,*git-log-color-branch*)))))
-   *git-log-mode*))
+  (interactive)
+  (kill-all-local-variables)
+  (setf mode-name "GitLog")
+  (setf buffer-mode 'git-log-mode)
+  (unless (local-variable-p '#0=regexp-keyword-list)
+    (make-local-variable '#0#))
+  (setf #0# (append #0# (git-log-regexp-keyword-list)))
+  (run-hooks '*git-log-mode-hook*))
 
 (defun git-log (&optional args)
   "Show commit logs."
   (interactive)
   (git-command-wrapper `("log" ,(format nil "-~D" *git-log-default-limit*))
-                       args :minor-mode #'git-log-mode))
+                       args :mode #'git-log-mode))
 
 (defun git-glog (&optional args)
   "Show commit logs.
@@ -103,6 +111,6 @@ This may cause extra lines to be printed in between commits, in order for the gr
   (interactive)
   (git-command-wrapper `("log" ,(format nil "-~D" *git-log-default-limit*)
                          "--graph" "--oneline" "--decorate" "--branches")
-                       args :minor-mode #'git-log-mode))
+                       args :mode #'git-log-mode))
 
 (provide "xl-git/log")

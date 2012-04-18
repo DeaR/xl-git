@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 16:15:45 DeaR>
+;; @timestamp   <2012-04-18 19:14:30 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -42,7 +42,8 @@
           git-commit-all
           git-commit-amend
           git-commit-all-amend
-          git-commit-verbose))
+          git-commit-verbose
+          git-commit-start))
 
 
 
@@ -160,28 +161,33 @@ Note that this diff output doesn’t have its lines prefixed with #."
   (interactive)
   (git-commit-0 '("commit" "--verbose") args))
 
+(defun git-commit-message-regexp-keyword-list ()
+  "コミットメッセージモードのregexp-keyword-list"
+  (compile-regexp-keyword-list
+   `(("^#.*$"
+      nil :comment)
+     ("^diff .*$"
+      nil ,*git-diff-color-header*)
+     ("^index .*$"
+      nil ,*git-diff-color-header*)
+     ("^[+-]\\{3\\} .*$"
+      nil ,*git-diff-color-header*)
+     ("^\\+.*$"
+      nil ,*git-diff-color-add*)
+     ("^-.*$"
+      nil ,*git-diff-color-remove*)
+     ("^@@ .* @@.*$"
+      nil ,*git-diff-color-area*))))
+
 (defun git-commit-message-mode ()
   "コミットメッセージモード"
   (interactive)
   (kill-all-local-variables)
   (setf mode-name "GitMessage")
   (setf buffer-mode 'git-commit-message-mode)
-  (set-regexp-keyword-list
-   (compile-regexp-keyword-list
-    `(("^#.*$"
-       nil :comment)
-      ("^diff .*$"
-       nil ,*git-diff-color-header*)
-      ("^index .*$"
-       nil ,*git-diff-color-header*)
-      ("^[+-]\\{3\\} .*$"
-       nil ,*git-diff-color-header*)
-      ("^\\+.*$"
-       nil ,*git-diff-color-add*)
-      ("^-.*$"
-       nil ,*git-diff-color-remove*)
-      ("^@@ .* @@.*$"
-       nil ,*git-diff-color-area*))))
+  (unless (local-variable-p '#0=regexp-keyword-list)
+    (make-local-variable '#0#))
+  (setf #0# (append #0# (git-commit-message-regexp-keyword-list)))
   (use-keymap *git-commit-message-mode-map*)
   (run-hooks '*git-commit-message-mode-hook*))
 

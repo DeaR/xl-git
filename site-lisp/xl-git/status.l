@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 16:37:01 DeaR>
+;; @timestamp   <2012-04-18 18:58:35 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -30,24 +30,28 @@
 
 (in-package :git)
 
-(export '(git-status))
+(export '(*git-status-mode-hook*
+          git-status))
 
 
 
-(defvar-local *git-status-mode* nil
-  "git-status-mode")
-(pushnew '(*git-status-mode* . "Status") *minor-mode-alist* :key #'first)
+(defvar *git-status-mode-hook* nil
+  "git-status-mode起動時に実行されます")
 
 
 
 (defun git-status-mode (&optional (arg nil sv))
   "git statusモード"
-  (ed::toggle-mode '*git-status-mode* arg sv))
+  (interactive)
+  (kill-all-local-variables)
+  (setf mode-name "GitStatus")
+  (setf buffer-mode 'git-status-mode)
+  (run-hooks '*git-status-mode-hook*))
 
 (defun git-status (&optional args)
   "Show the working tree status."
   (interactive)
   (git-command-wrapper '("status")
-                       args :minor-mode #'git-status-mode))
+                       args :mode #'git-status-mode))
 
 (provide "xl-git/status")

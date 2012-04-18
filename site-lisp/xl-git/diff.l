@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 15:55:56 DeaR>
+;; @timestamp   <2012-04-18 19:08:27 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -32,7 +32,8 @@
 (export '(*git-diff-color-header*
           *git-diff-color-add*
           *git-diff-color-remove*
-          *git-diff-color-area*))
+          *git-diff-color-area*
+          *git-diff-mode-hook*))
 
 
 
@@ -49,29 +50,36 @@
   "diffの範囲情報の色
 @@ -R +R @@")
 
-(defvar-local *git-diff-mode* nil
-  "git-diff-mode")
-(pushnew '(*git-diff-mode* . "Diff") *minor-mode-alist* :key #'first)
+(defvar *git-diff-mode-hook* nil
+  "git-diff-mode起動時に実行されます")
 
 
+
+(defun git-diff-regexp-keyword-list ()
+  "git diffモードのregexp-keyword-list"
+  (compile-regexp-keyword-list
+   `(("^diff .*$"
+      nil ,*git-diff-color-header*)
+     ("^index .*$"
+      nil ,*git-diff-color-header*)
+     ("^[+-]\\{3\\} .*$"
+      nil ,*git-diff-color-header*)
+     ("^\\+.*$"
+      nil ,*git-diff-color-add*)
+     ("^-.*$"
+      nil ,*git-diff-color-remove*)
+     ("^@@ .* @@.*$"
+      nil ,*git-diff-color-area*))))
 
 (defun git-diff-mode (&optional (arg nil sv))
   "git diffモード"
-  (ed::toggle-mode '*git-diff-mode* arg sv)
-  (set-regexp-keyword-list
-   (compile-regexp-keyword-list
-    `(("^diff .*$"
-       nil ,*git-diff-color-header*)
-      ("^index .*$"
-       nil ,*git-diff-color-header*)
-      ("^[+-]\\{3\\} .*$"
-       nil ,*git-diff-color-header*)
-      ("^\\+.*$"
-       nil ,*git-diff-color-add*)
-      ("^-.*$"
-       nil ,*git-diff-color-remove*)
-      ("^@@ .* @@.*$"
-       nil ,*git-diff-color-area*)))
-   *git-diff-mode*))
+  (interactive)
+  (kill-all-local-variables)
+  (setf mode-name "GitDiff")
+  (setf buffer-mode 'git-diff-mode)
+  (unless (local-variable-p '#0=regexp-keyword-list)
+    (make-local-variable '#0#))
+  (setf #0# (append #0# (git-diff-regexp-keyword-list)))
+  (run-hooks '*git-diff-mode-hook*))
 
 (provide "xl-git/diff")

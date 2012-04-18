@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 16:13:36 DeaR>
+;; @timestamp   <2012-04-18 19:04:25 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -56,7 +56,7 @@
                         :exec-directory dir
                         :show :hide :wait t)
     (and (= exec-code 0)
-         (first (split-string out #\LFD)))))
+         (string-right-trim "\n" out))))
 
 (defun git-top-dir-relative (&optional (dir (default-directory)))
   "リポジトリのトップディレクトリを取得"
@@ -67,26 +67,12 @@
                         :show :hide :wait t)
     (unless (= exec-code 0)
       (error out))
-    (or (first (split-string out #\LFD))
-        "")))
+    (string-right-trim "\n" out)))
 
 (defun git-top-dir (&optional (dir (default-directory)))
   "リポジトリのトップディレクトリを取得"
   (merge-pathnames (git-top-dir-relative)
                    dir))
-
-(defun git-status-to-symbol (str)
-  "Short Formatの状態文字をシンボルに変換"
-  (case (character str)
-    (#\SPC :unmodified)
-    (#\M :modified)
-    (#\A :added)
-    (#\D :deleted)
-    (#\R :renamed)
-    (#\C :copied)
-    (#\U :unmerged)
-    (#\? :untracked)
-    (#\! :ignored)))
 
 (defun git-status-list (&optional (dir (default-directory)))
   "リポジトリの状態をリストで取得"
@@ -97,14 +83,25 @@
                         :show :hide :wait t)
     (unless (= exec-code 0)
       (error out))
-    (mapcar #'(lambda (l)
-                (when (string-match "\\(.\\)\\(.\\) \\(.*\\)$" l)
-                  (list (git-status-to-symbol (match-string 1))
-                        (git-status-to-symbol (match-string 2))
-                        (match-string 3))))
-            (split-string out #\LFD))))
+    (flet ((to-symbol (str)
+             (case (character str)
+               (#\SPC :unmodified)
+               (#\M :modified)
+               (#\A :added)
+               (#\D :deleted)
+               (#\R :renamed)
+               (#\C :copied)
+               (#\U :unmerged)
+               (#\? :untracked)
+               (#\! :ignored))))
+      (mapcar #'(lambda (l)
+                  (when (string-match "\\(.\\)\\(.\\) \\(.*\\)$" l)
+                    (list (to-symbol (match-string 1))
+                          (to-symbol (match-string 2))
+                          (match-string 3))))
+              (split-string out #\LFD)))))
 
-(defmacro define-git-command (command &key symbol document prompt dir-prompt file-arg minor-mode no-std-handles)
+(defmacro define-git-command (command &key symbol document prompt dir-prompt file-arg mode no-std-handles)
   "シンプルなgitコマンド生成"
   (let ((name (if symbol
                   (string symbol)
@@ -121,11 +118,11 @@
                                    :prompt ,prompt
                                    :dir-prompt ,dir-prompt
                                    :file-arg ,file-arg
-                                   :minor-mode ,minor-mode
+                                   :mode ,mode
                                    :no-std-handles ,no-std-handles)))))
 (setf (get 'define-git-command 'lisp-indent-hook) 'defun)
 
-(defun git-command-wrapper (command args &key prompt file-arg dir-prompt minor-mode no-std-handles)
+(defun git-command-wrapper (command args &key prompt file-arg dir-prompt mode no-std-handles)
   "シンプルなgitコマンド実体"
   (let* ((dir (if dir-prompt
                   (read-directory-name "directory :")
@@ -152,43 +149,13 @@
           (split-window nil *git-output-split-vertical-p*))
         (pop-to-buffer buffer)
         (erase-buffer buffer)
-        (git-output-mode minor-mode)
+        (when mode
+          (funcall mode))
+        (git-output-mode)
         (setup-temp-buffer buffer)
         (set-default-directory dir buffer)
         (set-buffer-fileio-encoding *git-process-encoding* buffer)
         (set-buffer-eol-code *git-process-eol-code* buffer)
         (git-make-process cmdline :exec-directory dir :output buffer)))))
-
-(defun equal-regexp (x y)
-  "正規表現が同じならばtを、そうでなければnilを返します"
-  (and (string= (if (regexpp x)
-                    (compiled-regexp-source x)
-                  x)
-                (if (regexpp y)
-                    (compiled-regexp-source y)
-                  y))
-       (eq (and (regexpp x)
-                (compiled-regexp-case-fold-p x))
-           (and (regexpp y)
-                (compiled-regexp-case-fold-p y)))))
-
-(defun set-regexp-keyword-list (kwd-list &optional (enable t))
-  "regexp-keyword-listを登録したり削除したりする"
-  (if enable
-      (progn
-        (unless (local-variable-p '#0=regexp-keyword-list)
-          (make-local-variable '#0#))
-        (setf #0# (append #0# kwd-list)))
-    (progn
-      (when #0#
-        (mapc #'(lambda (kwd)
-                  (setf #0# (delete (first kwd) #0#
-                                    :from-end t
-                                    :test #'equal-regexp
-                                    :key #'first)))
-              kwd-list)
-        (if #0#
-            #0#
-          (kill-local-variable '#0#))))))
 
 (provide "xl-git/utils")

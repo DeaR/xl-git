@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-17 12:10:46 DeaR>
+;; @timestamp   <2012-04-18 19:03:20 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -31,9 +31,9 @@
 
 (export '(*git-binary*
           *git-environ*
+          *git-wrapper-bat*
           *git-process-encoding*
-          *git-process-eol-code*
-          *git-wrapper-bat*))
+          *git-process-eol-code*))
 
 
 
@@ -44,15 +44,15 @@
   "•K‚¸İ’è‚·‚éŠÂ‹«•Ï”
 '((\"VARNAME\" . \"VAR\"))")
 
+(defvar *git-wrapper-bat* (merge-pathnames "site-lisp/xl-git/git-wrapper.bat" (si:system-root))
+  "git-wrapper.bat ‚ÌƒpƒX(nil ‚È‚ç–³Œø)
+no-std-handles ‚ª t ‚ÌÛ‚É git-wrapper.bat ‚ğg—p‚·‚é")
+
 (defvar *git-process-encoding* *encoding-utf8n*
   "git.exe ‚Ì•¶šƒR[ƒh")
 
 (defvar *git-process-eol-code* *eol-lf*
   "git.exe ‚Ì‰üsƒR[ƒh")
-
-(defvar *git-wrapper-bat* (merge-pathnames "site-lisp/xl-git/git-wrapper.bat" (si:system-root))
-  "git-wrapper.bat ‚ÌƒpƒX(nil ‚È‚ç–³Œø)
-no-std-handles ‚ª t ‚ÌÛ‚É git-wrapper.bat ‚ğg—p‚·‚é")
 
 (defconstant *escape-code* (compile-regexp "\\[[0-9;]*[a-z]" t)
   "íœ‚·‚éƒGƒXƒP[ƒvƒR[ƒh")

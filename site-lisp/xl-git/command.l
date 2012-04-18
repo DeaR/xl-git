@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-17 18:56:59 DeaR>
+;; @timestamp   <2012-04-18 18:43:14 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -66,12 +66,12 @@ This gives the user a chance to review the difference before adding modified con
 
 (define-git-command ("branch")
   :document "List, create, or delete branches."
-  :minor-mode #'git-branch-mode)
+  :mode #'git-branch-mode)
 
 (define-git-command ("branch" "--all")
   :document "List, create, or delete branches.
 List both remote-tracking branches and local branches."
-  :minor-mode #'git-branch-mode)
+  :mode #'git-branch-mode)
 
 (define-git-command ("checkout")
   :document "Checkout a branch or paths to the working tree.")
@@ -115,13 +115,13 @@ List both remote-tracking branches and local branches."
 
 (define-git-command ("diff")
   :document "Show changes between commits, commit and working tree, etc."
-  :minor-mode #'git-diff-mode)
+  :mode #'git-diff-mode)
 
 (define-git-command ("diff")
   :symbol #:git-diff-file
   :document "Show changes between commits, commit and working tree, etc."
   :file-arg t
-  :minor-mode #'git-diff-mode)
+  :mode #'git-diff-mode)
 
 (define-git-command ("diff" "--cached")
   :document "Show changes between commits, commit and working tree, etc.
@@ -129,7 +129,7 @@ This form is to view the changes you staged for the next commit relative to the 
 Typically you would want comparison with the latest commit, so if you do not give <commit>, it defaults to HEAD.
 If HEAD does not exist (e.g. unborned branches) and <commit> is not given, it shows all staged changes.
 --staged is a synonym of --cached."
-  :minor-mode #'git-diff-mode)
+  :mode #'git-diff-mode)
 
 (define-git-command ("diff" "--cached")
   :symbol #:git-diff-cached-file
@@ -139,7 +139,7 @@ Typically you would want comparison with the latest commit, so if you do not giv
 If HEAD does not exist (e.g. unborned branches) and <commit> is not given, it shows all staged changes.
 --staged is a synonym of --cached."
   :file-arg t
-  :minor-mode #'git-diff-mode)
+  :mode #'git-diff-mode)
 
 (define-git-command ("fetch")
   :document "Download objects and refs from another repository."
@@ -158,12 +158,12 @@ If HEAD does not exist (e.g. unborned branches) and <commit> is not given, it sh
 ; -> log.l
 ; (define-git-command ("log")
 ;   :document "Show commit logs."
-;   :minor-mode #'git-log-mode)
+;   :mode #'git-log-mode)
 ; 
 ; (define-git-command ("log" "--graph" "--oneline" "--decorate" "--branches")
 ;   :symbol #:git-glog
 ;   :document "Show commit logs."
-;   :minor-mode #'git-log-mode)
+;   :mode #'git-log-mode)
 
 (define-git-command ("merge")
   :document "Join two or more development histories together.")
@@ -269,7 +269,7 @@ Create a stash (which is a regular commit object) and return its object name, wi
 ; -> status.l
 ; (define-git-command ("status")
 ;   :document "Show the working tree status."
-;   :minor-mode #'git-status-mode)
+;   :mode #'git-status-mode)
 
 (define-git-command ("tag")
   :document "Create, list, delete or verify a tag object signed with GPG.")
