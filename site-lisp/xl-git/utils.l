@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-17 19:32:54 DeaR>
+;; @timestamp   <2012-04-18 16:13:36 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -158,5 +158,37 @@
         (set-buffer-fileio-encoding *git-process-encoding* buffer)
         (set-buffer-eol-code *git-process-eol-code* buffer)
         (git-make-process cmdline :exec-directory dir :output buffer)))))
+
+(defun equal-regexp (x y)
+  "ê≥ãKï\åªÇ™ìØÇ∂Ç»ÇÁÇŒtÇÅAÇªÇ§Ç≈Ç»ÇØÇÍÇŒnilÇï‘ÇµÇ‹Ç∑"
+  (and (string= (if (regexpp x)
+                    (compiled-regexp-source x)
+                  x)
+                (if (regexpp y)
+                    (compiled-regexp-source y)
+                  y))
+       (eq (and (regexpp x)
+                (compiled-regexp-case-fold-p x))
+           (and (regexpp y)
+                (compiled-regexp-case-fold-p y)))))
+
+(defun set-regexp-keyword-list (kwd-list &optional (enable t))
+  "regexp-keyword-listÇìoò^ÇµÇΩÇËçÌèúÇµÇΩÇËÇ∑ÇÈ"
+  (if enable
+      (progn
+        (unless (local-variable-p '#0=regexp-keyword-list)
+          (make-local-variable '#0#))
+        (setf #0# (append #0# kwd-list)))
+    (progn
+      (when #0#
+        (mapc #'(lambda (kwd)
+                  (setf #0# (delete (first kwd) #0#
+                                    :from-end t
+                                    :test #'equal-regexp
+                                    :key #'first)))
+              kwd-list)
+        (if #0#
+            #0#
+          (kill-local-variable '#0#))))))
 
 (provide "xl-git/utils")
