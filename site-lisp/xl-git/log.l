@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-19 15:08:20 DeaR>
+;; @timestamp   <2012-04-19 22:36:32 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -72,21 +72,6 @@
   "git-log-mode起動時に実行されます")
 
 
-
-(defun git-log (&optional args)
-  "Show commit logs."
-  (interactive)
-  (git-command-0 `("log" ,(format nil "-~D" *git-log-default-limit*))
-                       args :mode #'git-log-mode))
-
-(defun git-glog (&optional args)
-  "Show commit logs.
-Draw a text-based graphical representation of the commit history on the left hand side of the output.
-This may cause extra lines to be printed in between commits, in order for the graph history to be drawn properly."
-  (interactive)
-  (git-command-0 `("log" ,(format nil "-~D" *git-log-default-limit*)
-                   "--graph" "--oneline" "--decorate" "--branches")
-                 args :mode #'git-log-mode))
 
 (defun git-log-regexp-keyword-list ()
   "git logモードのregexp-keyword-list"

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-19 17:51:32 DeaR>
+;; @timestamp   <2012-04-19 23:41:47 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -40,7 +40,7 @@
 (defvar *git-binary* "git.exe"
   "git.exe のパス")
 
-(defvar *git-environ* `(("GIT_EDITOR" . ,(concat (merge-pathnames "xyzzycli.exe" (si:system-root)) " -wait")))
+(defvar *git-environ* nil
   "必ず設定する環境変数
 '((\"VARNAME\" . \"VAR\"))")
 
@@ -82,8 +82,8 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
                                    no-std-handles)
                               (format nil "\"~A\" ~A" (merge-pathnames *git-wrapper-bat*) cmdline)
                             cmdline)
-                          :environ (append *git-environ*
-                                           environ)
+                          :environ (append environ
+                                           *git-environ*)
                           :output outfile
                           :exec-directory dir
                           :show show
@@ -110,8 +110,8 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
       (git-command-line binary args exec-directory)
     (prog1
         (make-process cmdline
-                      :environ (append *git-environ*
-                                       environ)
+                      :environ (append environ
+                                       *git-environ*)
                       :output output
                       :exec-directory dir
                       :incode encoding

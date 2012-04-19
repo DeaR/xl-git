@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-19 18:01:55 DeaR>
+;; @timestamp   <2012-04-20 01:18:50 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -28,7 +28,6 @@
   (require "xl-git/package")
   (require "xl-git/utils")
   (require "xl-git/branch")
-  (require "xl-git/commit")
   (require "xl-git/diff")
   (require "xl-git/log")
   (require "xl-git/status"))
@@ -38,16 +37,15 @@
 
 
 (define-git-command nil
-  :document "Add file contents to the index."
-  :prompt t)
+  :document "Add file contents to the index.")
 
 (define-git-command ("add")
+  :document "Add file contents to the index.")
+
+(define-git-command ("add")
+  :symbol :git-add-file
   :document "Add file contents to the index."
   :file-arg t)
-
-(define-git-command ("bisect")
-  :document "Find by binary search the change that introduced a bug."
-  :prompt t)
 
 (define-git-command ("branch")
   :document "List, create, or delete branches."
@@ -57,26 +55,24 @@
   :document "Checkout a branch or paths to the working tree.")
 
 (define-git-command ("checkout")
-  :symbol #:git-checkout-file
+  :symbol :git-checkout-file
   :document "Checkout a branch or paths to the working tree."
   :file-arg t)
 
 (define-git-command ("clone")
   :document "Clone a repository into a new directory."
-  :prompt t
   :dir-prompt t
   :no-std-handles t)
 
-; -> commit.l
-; (define-git-command ("commit")
-;   :document "Record changes to the repository.")
+(define-git-command ("commit")
+  :document "Record changes to the repository.")
 
 (define-git-command ("diff")
   :document "Show changes between commits, commit and working tree, etc."
   :mode #'git-diff-mode)
 
 (define-git-command ("diff")
-  :symbol #:git-diff-file
+  :symbol :git-diff-file
   :document "Show changes between commits, commit and working tree, etc."
   :file-arg t
   :mode #'git-diff-mode)
@@ -95,20 +91,24 @@
   :document "Create an empty git repository or reinitialize an existing one."
   :dir-prompt t)
 
-; -> log.l
-; (define-git-command ("log")
-;   :document "Show commit logs."
-;   :mode #'git-log-mode)
-; 
-; (define-git-command ("log" "--graph" "--oneline" "--decorate" "--branches")
-;   :symbol #:git-glog
-;   :document "Show commit logs."
-;   :mode #'git-log-mode)
+(define-git-command ("log" (format nil "-~D" *git-log-default-limit*))
+  :symbol :git-log
+  :document "Show commit logs."
+  :mode #'git-log-mode)
+
+(define-git-command ("log" (format nil "-~D" *git-log-default-limit*) "--graph" "--oneline" "--decorate" "--branches")
+  :symbol :git-glog
+  :document "Show commit logs."
+  :mode #'git-log-mode)
 
 (define-git-command ("merge")
   :document "Join two or more development histories together.")
 
 (define-git-command ("mv")
+  :document "Move or rename a file, a directory, or a symlink.")
+
+(define-git-command ("mv")
+  :symbol :git-mv-file
   :document "Move or rename a file, a directory, or a symlink."
   :file-arg t)
 
@@ -142,28 +142,30 @@ Push the current branch."
   :document "Reset current HEAD to the specified state.")
 
 (define-git-command ("reset")
-  :symbol #:git-reset-file
+  :symbol :git-reset-file
   :document "Reset current HEAD to the specified state.
 This form resets the index entries for all <paths> to their state at <commit>. (It does not affect the working tree, nor the current branch.)"
   :file-arg t)
 
 (define-git-command ("rm")
+  :document "Remove files from the working tree and from the index.")
+
+(define-git-command ("rm")
+  :symbol :git-rm-file
   :document "Remove files from the working tree and from the index."
   :file-arg t)
 
 (define-git-command ("show")
-  :document "Show various types of objects."
-  :prompt t)
+  :document "Show various types of objects.")
 
 (define-git-command ("stash")
-  :document "Stash the changes in a dirty working directory away."
-  :prompt t)
+  :document "Stash the changes in a dirty working directory away.")
 
 (define-git-command ("stash" "save")
   :document "Stash the changes in a dirty working directory away.
 Save your local modifications to a new stash, and run git reset --hard to revert them.
 The <message> part is optional and gives the description along with the stashed state.
-For quickly making a snapshot, you can omit both "save" and <message>, but giving only <message> does not trigger this action to prevent a misspelled subcommand from making an unwanted stash.")
+For quickly making a snapshot, you can omit both \"save\" and <message>, but giving only <message> does not trigger this action to prevent a misspelled subcommand from making an unwanted stash.")
 
 (define-git-command ("stash" "list")
   :document "Stash the changes in a dirty working directory away.
@@ -188,8 +190,7 @@ Like pop, but do not remove the state from the stash list.")
 (define-git-command ("stash" "branch")
   :document "Stash the changes in a dirty working directory away.
 Creates and checks out a new branch named <branchname> starting from the commit at which the <stash> was originally created, applies the changes recorded in <stash> to the new working tree and index, then drops the <stash> if that completes successfully.
-When no <stash> is given, applies the latest one."
-  :prompt t)
+When no <stash> is given, applies the latest one.")
 
 (define-git-command ("stash" "clear")
   :document "Stash the changes in a dirty working directory away.

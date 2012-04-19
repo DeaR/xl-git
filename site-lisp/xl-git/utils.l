@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-19 19:47:22 DeaR>
+;; @timestamp   <2012-04-20 00:45:08 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -119,14 +119,13 @@
        (defun ,(intern name :git) (&optional args)
          ,document
          (interactive)
-         (git::git-command-0 ',command args
+         (git::git-command-0 (list ,@command) args
                              :completion ,completion
                              :dir-prompt ,dir-prompt
                              :no-prompt ,no-prompt
                              :file-arg ,file-arg
                              :mode ,mode
                              :no-std-handles ,no-std-handles)))))
-(setf (get 'define-git-command 'lisp-indent-hook) 'defun)
 
 (defun git-command-0 (command args &key completion dir-prompt no-prompt file-arg mode no-std-handles)
   "シンプルなgitコマンド実体"
@@ -174,5 +173,9 @@
       (when (string-match "^[ \t\r\n]*$" read)
         (return (string-left-trim " " (format nil "~{ ~A~}" (nreverse args)))))
       (push read args))))
+
+
+
+(setf (get 'define-git-command 'lisp-indent-hook) 'defun)
 
 (provide "xl-git/utils")
