@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 00:45:08 DeaR>
+;; @timestamp   <2012-04-20 01:34:43 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -48,8 +48,6 @@
 
 (define-history-variable *git-prompt-history* nil
   "ƒvƒƒ“ƒvƒg‚Ì—š—ğ")
-(setf (get 'git-prompt 'ed::minibuffer-history-variable)
-      '*git-prompt-history*)
 
 
 
@@ -176,6 +174,7 @@
 
 
 
+(setf (get 'git-prompt 'ed::minibuffer-history-variable) '*git-prompt-history*)
 (setf (get 'define-git-command 'lisp-indent-hook) 'defun)
 
 (provide "xl-git/utils")

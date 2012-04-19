@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 01:13:56 DeaR>
+;; @timestamp   <2012-04-20 01:36:04 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -50,11 +50,6 @@
 
 (defvar *git-editmsg-mode-map* nil
   "メッセージ編集モードのキーマップ")
-(unless *git-editmsg-mode-map*
-  (setf *git-editmsg-mode-map* (make-sparse-keymap))
-  (define-key *git-editmsg-mode-map* '(#\C-x #\C-s) 'git-editmsg-end)
-  (define-key *git-editmsg-mode-map* '(#\C-c #\C-c) 'git-editmsg-end)
-  (define-key *git-editmsg-mode-map* '(#\C-c #\C-g) 'git-editmsg-abort))
 
 
 
@@ -95,5 +90,10 @@
 (pushnew '("COMMIT_EDITMSG" . git-editmsg-mode) ed::*auto-mode-alist* :test #'equal)
 (pushnew '("TAG_EDITMSG" . git-editmsg-mode) ed::*auto-mode-alist* :test #'equal)
 (pushnew '("git-rebase-todo" . git-editmsg-mode) ed::*auto-mode-alist* :test #'equal)
+(unless *git-editmsg-mode-map*
+  (setf *git-editmsg-mode-map* (make-sparse-keymap))
+  (define-key *git-editmsg-mode-map* '(#\C-x #\C-s) 'git-editmsg-end)
+  (define-key *git-editmsg-mode-map* '(#\C-c #\C-c) 'git-editmsg-end)
+  (define-key *git-editmsg-mode-map* '(#\C-c #\C-g) 'git-editmsg-abort))
 
 (provide "xl-git/editmsg")

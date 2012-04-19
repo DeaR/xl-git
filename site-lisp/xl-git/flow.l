@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-17 13:06:03 DeaR>
+;; @timestamp   <2012-04-20 01:38:26 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -42,37 +42,28 @@
   :document "Manage your feature branches.")
 
 (define-git-command ("flow" "feature" "start")
-  :document "Manage your feature branches."
-  :prompt t)
+  :document "Manage your feature branches.")
 
 (define-git-command ("flow" "feature" "finish")
-  :document "Manage your feature branches."
-  :prompt t)
+  :document "Manage your feature branches.")
 
 (define-git-command ("flow" "feature" "publish")
-  :document "Manage your feature branches."
-  :prompt t)
+  :document "Manage your feature branches.")
 
 (define-git-command ("flow" "feature" "track")
-  :document "Manage your feature branches."
-  :prompt t)
+  :document "Manage your feature branches.")
 
 (define-git-command ("flow" "feature" "diff")
-  :document "Manage your feature branches."
-  :prompt t)
+  :document "Manage your feature branches.")
 
 (define-git-command ("flow" "feature" "rebase")
-  :document "Manage your feature branches."
-  :prompt t
-  :no-std-handles t)
+  :document "Manage your feature branches.")
 
 (define-git-command ("flow" "feature" "checkout")
-  :document "Manage your feature branches."
-  :prompt t)
+  :document "Manage your feature branches.")
 
 (define-git-command ("flow" "feature" "pull")
   :document "Manage your feature branches."
-  :prompt t
   :no-std-handles t)
 
 
@@ -81,20 +72,16 @@
   :document "Manage your release branches.")
 
 (define-git-command ("flow" "release" "start")
-  :document "Manage your release branches."
-  :prompt t)
+  :document "Manage your release branches.")
 
 (define-git-command ("flow" "release" "finish")
-  :document "Manage your release branches."
-  :prompt t)
+  :document "Manage your release branches.")
 
 (define-git-command ("flow" "release" "publish")
-  :document "Manage your release branches."
-  :prompt t)
+  :document "Manage your release branches.")
 
 (define-git-command ("flow" "release" "track")
-  :document "Manage your release branches."
-  :prompt t)
+  :document "Manage your release branches.")
 
 
 
@@ -102,16 +89,13 @@
   :document "Manage your hotfix branches.")
 
 (define-git-command ("flow" "hotfix" "start")
-  :document "Manage your hotfix branches."
-  :prompt t)
+  :document "Manage your hotfix branches.")
 
 (define-git-command ("flow" "hotfix" "finish")
-  :document "Manage your hotfix branches."
-  :prompt t)
+  :document "Manage your hotfix branches.")
 
 (define-git-command ("flow" "hotfix" "publish")
-  :document "Manage your hotfix branches."
-  :prompt t)
+  :document "Manage your hotfix branches.")
 
 
 
@@ -119,8 +103,7 @@
   :document "Manage your support branches.")
 
 (define-git-command ("flow" "support" "start")
-  :document "Manage your support branches."
-  :prompt t)
+  :document "Manage your support branches.")
 
 
 

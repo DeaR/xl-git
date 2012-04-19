@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-17 22:06:34 DeaR>
+;; @timestamp   <2012-04-20 01:40:09 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -43,11 +43,11 @@
   "バージョンを多値で返します
 値1: xl-gitのバージョン
 値2: git versionの結果"
-  (multiple-value-bind (exec-code out)
-      (git-call-process '("version")
-                        :output (get-buffer-create *git-temp-bufname*)
-                        :show :hide :wait t)
-    (values +git-version+
-            (string-trim "\n" out))))
+  (values +git-version+
+          (multiple-value-bind (exec-code out)
+              (git-call-process '("version")
+                                :output (get-buffer-create *git-temp-bufname*)
+                                :show :hide :wait t)
+            (string-right-trim "\n" out))))
 
 (provide "xl-git/version")

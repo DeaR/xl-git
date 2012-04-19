@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 19:28:40 DeaR>
+;; @timestamp   <2012-04-20 01:36:13 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -35,16 +35,6 @@
 
 (defvar *git-output-mode-map* nil
   "出力モードのキーマップ")
-(unless *git-output-mode-map*
-  (setf *git-output-mode-map* (make-sparse-keymap))
-  (dotimes (n #x80)
-    (define-key *git-output-mode-map* (code-char n) 'git-output-send-and-funcall))
-  (undefine-key *git-output-mode-map* #\ESC)
-  (undefine-key *git-output-mode-map* #\C-c)
-  (undefine-key *git-output-mode-map* #\C-x)
-  (define-key *git-output-mode-map* '(#\C-c #\C-g) 'git-output-quit)
-  (define-key *git-output-mode-map* '#\RET 'git-output-send-LFD-or-newline)
-  (define-key *git-output-mode-map* '#\q 'git-output-send-or-quit))
 
 (defvar-local *git-output-mode* nil
   "出力モード")
@@ -99,5 +89,18 @@
              (eq (process-status proc) :run))
         (git-output-send-and-funcall)
       (git-output-quit))))
+
+
+
+(unless *git-output-mode-map*
+  (setf *git-output-mode-map* (make-sparse-keymap))
+  (dotimes (n #x80)
+    (define-key *git-output-mode-map* (code-char n) 'git-output-send-and-funcall))
+  (undefine-key *git-output-mode-map* #\ESC)
+  (undefine-key *git-output-mode-map* #\C-c)
+  (undefine-key *git-output-mode-map* #\C-x)
+  (define-key *git-output-mode-map* '(#\C-c #\C-g) 'git-output-quit)
+  (define-key *git-output-mode-map* '#\RET 'git-output-send-LFD-or-newline)
+  (define-key *git-output-mode-map* '#\q 'git-output-send-or-quit))
 
 (provide "xl-git/process")
