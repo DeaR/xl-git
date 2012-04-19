@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 01:18:50 DeaR>
+;; @timestamp   <2012-04-20 01:24:52 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -37,7 +37,7 @@
 
 
 (define-git-command nil
-  :document "Add file contents to the index.")
+  :document "Git is a fast, scalable, distributed revision control system with an unusually rich command set that provides both high-level operations and full access to internals.")
 
 (define-git-command ("add")
   :document "Add file contents to the index.")
