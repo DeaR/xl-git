@@ -15,18 +15,27 @@ A front end for git in [xyzzy].
 	```
 
 3.	更に環境固有の設定も追加します
-	*	[msysgit] を使用
-		`$MSYSGIT` -- msysgit のインストールディレクトリ
+	*	[msysgit] を使用する場合
 		
 		```lisp
-		(pushnew `("PATH" . ,(concat "$MSYSGIT/bin;$MSYSGIT/mingw/bin;$MSYSGIT/cmd;" 
-		                             (si:getenv "PATH")))
-		         *git-environ* :test #'equal)
+		; $MSYSGIT_DIR を msysgit のインストールディレクトリに置換して下さい
+		(push `("PATH" . ,(concat "$MSYSGIT_DIR/bin;$MSYSGIT_DIR/mingw/bin;$MSYSGIT_DIR/cmd;" 
+		                          (si:getenv "PATH")))
+		      *git-environ*)
+		
+		; cygwin をインストールしている場合、下記を設定して下さい
+		(push '("CYGWIN" . "") *git-environ*)
 		```
-	*	[msysgit] と [cygwin] が同居していて、 [msysgit] を使用
+	*	[cygwin] を使用する場合
 		
 		```lisp
-		(pushnew '("CYGWIN" . "") *git-environ* :test #'equal)
+		; $CYGWIN_DIR を cygwin のインストールディレクトリに置換して下さい
+		(push `("PATH" . ,(concat "$CYGWIN_DIR/usr/local/bin;$CYGWIN_DIR/usr/bin;$CYGWIN_DIR/bin;" 
+		                          (si:getenv "PATH")))
+		      *git-environ*)
+		
+		; Windowsが95,98,Me以外の場合、下記を設定して下さい
+		(push '("CYGWIN" . "ntsec") *git-environ*)
 		```
 
 4.	(必要ならば) バイトコンパイルします
@@ -35,8 +44,6 @@ A front end for git in [xyzzy].
 	siteinit.l に設定した場合は再ダンプを行って下さい
 
   [xyzzy]: http://www.jsdlab.co.jp/~kamei/
-  [マルチフレーム版xyzzy]: https://bitbucket.org/mumurik/xyzzy/wiki/Home
-  [NAXEL]: https://bitbucket.org/mumurik/xyzzy/wiki/NAXEL
   [msysgit]: http://msysgit.github.com/
   [cygwin]: http://www.cygwin.com/
 
@@ -102,10 +109,6 @@ etc...
 		```
 
   [git-flow]: https://github.com/nvie/gitflow
-
-
-## Reference
-REFERENCE.md を参照ください
 
 
 ## Issue
