@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 19:03:20 DeaR>
+;; @timestamp   <2012-04-19 17:51:32 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -59,14 +59,15 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
 
 
 
-(defun git-command-line (args dir)
+(defun git-command-line (binary args dir)
   "gitのコマンドラインの生成"
   (values (if (listp args)
-              (format nil "~A~{ ~A~}" *git-binary* args)
-            (format nil "~A ~A" *git-binary* args))
+              (format nil "~A~{ ~A~}" binary args)
+            (format nil "~A ~A" binary args))
           dir))
 
 (defun git-call-process (args &key environ
+                              (binary *git-binary*)
                               (output (selected-buffer))
                               (outfile (make-temp-file-name))
                               (exec-directory (default-directory))
@@ -76,7 +77,7 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
   "gitのプロセスを実行
 値2に出力文字列を返す"
   (multiple-value-bind (cmdline dir)
-      (git-command-line args exec-directory)
+      (git-command-line binary args exec-directory)
     (values (call-process (if (and *git-wrapper-bat*
                                    no-std-handles)
                               (format nil "\"~A\" ~A" (merge-pathnames *git-wrapper-bat*) cmdline)
@@ -98,6 +99,7 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
                   (buffer-substring p (point-max))))))))
 
 (defun git-make-process (args &key environ
+                              (binary *git-binary*)
                               (output (selected-buffer))
                               (exec-directory (default-directory))
                               (encoding *git-process-encoding*)
@@ -105,7 +107,7 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
                               (show :hide))
   "gitのプロセスを開始"
   (multiple-value-bind (cmdline dir)
-      (git-command-line args exec-directory)
+      (git-command-line binary args exec-directory)
     (prog1
         (make-process cmdline
                       :environ (append *git-environ*

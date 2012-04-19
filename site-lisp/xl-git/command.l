@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 18:43:14 DeaR>
+;; @timestamp   <2012-04-19 18:01:55 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -45,32 +45,12 @@
   :document "Add file contents to the index."
   :file-arg t)
 
-(define-git-command ("add" "--update")
-  :document "Add file contents to the index.
-Only match <filepattern> against already tracked files in the index rather than the working tree.
-That means that it will never stage new files, but that it will stage modified new contents of tracked files and that it will remove files from the index if the corresponding files in the working tree have been removed.")
-
-(define-git-command ("add" "--all")
-  :document "Add file contents to the index.
-Like -u, but match <filepattern> against files in the working tree in addition to the index.
-That means that it will find new files as well as staging modified content and removing files that are no longer in the working tree.")
-
-(define-git-command ("add" "--patch")
-  :document "Add file contents to the index.
-Interactively choose hunks of patch between the index and the work tree and add them to the index.
-This gives the user a chance to review the difference before adding modified contents to the index.")
-
 (define-git-command ("bisect")
   :document "Find by binary search the change that introduced a bug."
   :prompt t)
 
 (define-git-command ("branch")
   :document "List, create, or delete branches."
-  :mode #'git-branch-mode)
-
-(define-git-command ("branch" "--all")
-  :document "List, create, or delete branches.
-List both remote-tracking branches and local branches."
   :mode #'git-branch-mode)
 
 (define-git-command ("checkout")
@@ -90,28 +70,6 @@ List both remote-tracking branches and local branches."
 ; -> commit.l
 ; (define-git-command ("commit")
 ;   :document "Record changes to the repository.")
-; 
-; (define-git-command ("commit" "--all")
-;   :document "Record changes to the repository.
-; Tell the command to automatically stage files that have been modified and deleted, but new files you have not told git about are not affected.")
-; 
-; (define-git-command ("commit" "--amend")
-;   :document "Record changes to the repository.
-; Used to amend the tip of the current branch.
-; Prepare the tree object you would want to replace the latest commit as usual (this includes the usual -i/-o and explicit paths), and the commit log editor is seeded with the commit message from the tip of the current branch.
-; The commit you create replaces the current tip - if it was a merge, it will have the parents of the current tip as parents - so the current top commit is discarded.")
-; 
-; (define-git-command ("commit" "--all" "--amend")
-;   :document "Record changes to the repository.
-; Tell the command to automatically stage files that have been modified and deleted, but new files you have not told git about are not affected.
-; Used to amend the tip of the current branch.
-; Prepare the tree object you would want to replace the latest commit as usual (this includes the usual -i/-o and explicit paths), and the commit log editor is seeded with the commit message from the tip of the current branch.
-; The commit you create replaces the current tip - if it was a merge, it will have the parents of the current tip as parents - so the current top commit is discarded.")
-; 
-; (define-git-command ("commit" "--verbose")
-;   :document "Record changes to the repository.
-; Show unified diff between the HEAD commit and what would be committed at the bottom of the commit message template.
-; Note that this diff output doesnÅft have its lines prefixed with #.")
 
 (define-git-command ("diff")
   :document "Show changes between commits, commit and working tree, etc."
@@ -120,24 +78,6 @@ List both remote-tracking branches and local branches."
 (define-git-command ("diff")
   :symbol #:git-diff-file
   :document "Show changes between commits, commit and working tree, etc."
-  :file-arg t
-  :mode #'git-diff-mode)
-
-(define-git-command ("diff" "--cached")
-  :document "Show changes between commits, commit and working tree, etc.
-This form is to view the changes you staged for the next commit relative to the named <commit>.
-Typically you would want comparison with the latest commit, so if you do not give <commit>, it defaults to HEAD.
-If HEAD does not exist (e.g. unborned branches) and <commit> is not given, it shows all staged changes.
---staged is a synonym of --cached."
-  :mode #'git-diff-mode)
-
-(define-git-command ("diff" "--cached")
-  :symbol #:git-diff-cached-file
-  :document "Show changes between commits, commit and working tree, etc.
-This form is to view the changes you staged for the next commit relative to the named <commit>.
-Typically you would want comparison with the latest commit, so if you do not give <commit>, it defaults to HEAD.
-If HEAD does not exist (e.g. unborned branches) and <commit> is not given, it shows all staged changes.
---staged is a synonym of --cached."
   :file-arg t
   :mode #'git-diff-mode)
 
@@ -201,8 +141,8 @@ Push the current branch."
 (define-git-command ("reset")
   :document "Reset current HEAD to the specified state.")
 
-(define-git-command ("reset" "HEAD")
-  :symbol #:git-reset-head-file
+(define-git-command ("reset")
+  :symbol #:git-reset-file
   :document "Reset current HEAD to the specified state.
 This form resets the index entries for all <paths> to their state at <commit>. (It does not affect the working tree, nor the current branch.)"
   :file-arg t)

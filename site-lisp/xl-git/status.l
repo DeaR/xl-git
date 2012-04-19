@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 18:58:35 DeaR>
+;; @timestamp   <2012-04-19 17:22:24 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -51,7 +51,7 @@
 (defun git-status (&optional args)
   "Show the working tree status."
   (interactive)
-  (git-command-wrapper '("status")
-                       args :mode #'git-status-mode))
+  (git-command-0 '("status")
+                 args :mode #'git-status-mode))
 
 (provide "xl-git/status")

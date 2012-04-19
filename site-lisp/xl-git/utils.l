@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 19:38:23 DeaR>
+;; @timestamp   <2012-04-19 18:11:05 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -48,6 +48,8 @@
 
 (define-history-variable *git-prompt-history* nil
   "プロンプトの履歴")
+(setf (get 'git-prompt 'ed::minibuffer-history-variable)
+      '*git-prompt-history*)
 
 
 
@@ -104,7 +106,7 @@
                           (match-string 3))))
               (split-string out #\LFD)))))
 
-(defmacro define-git-command (command &key symbol document prompt dir-prompt file-arg mode no-std-handles)
+(defmacro define-git-command (command &key symbol document dir-prompt no-prompt file-arg mode no-std-handles)
   "シンプルなgitコマンド生成"
   (let ((name (if symbol
                   (string symbol)
@@ -117,35 +119,31 @@
        (defun ,(intern name :git) (&optional args)
          ,document
          (interactive)
-         (git::git-command-wrapper ',command args
-                                   :prompt ,prompt
-                                   :dir-prompt ,dir-prompt
-                                   :file-arg ,file-arg
-                                   :mode ,mode
-                                   :no-std-handles ,no-std-handles)))))
+         (git::git-command-0 ',command args
+                             :dir-prompt ,dir-prompt
+                             :no-prompt ,no-prompt
+                             :file-arg ,file-arg
+                             :mode ,mode
+                             :no-std-handles ,no-std-handles)))))
 (setf (get 'define-git-command 'lisp-indent-hook) 'defun)
 
-(defun git-command-wrapper (command args &key prompt file-arg dir-prompt mode no-std-handles)
+(defun git-command-0 (command args &key dir-prompt no-prompt file-arg mode no-std-handles)
   "シンプルなgitコマンド実体"
   (let* ((dir (if dir-prompt
-                  (read-directory-name "directory :")
+                  (read-directory-name "Exec directory: ")
                 (default-directory)))
          (command (if (listp command)
-                      (string-trim " " (format nil "~{ ~A~}" command))
-                    command))
-         (args (cond (args
-                      args)
-                     ((or prompt
-                          *prefix-args*)
-                      (read-string (format nil "git ~A: " command)
-                                   :history *git-prompt-history*))
-                     (file-arg
-                      (if (file-visited-p)
-                          (format nil "\"~A\"" (file-namestring (get-buffer-file-name)))
-                        (read-file-name (format nil "git ~A: " command))))
-                     (t
-                      "")))
-         (cmdline (format nil "~A ~A" command args)))
+                      (string-left-trim " " (format nil "~{ ~A~}" command))
+                    (string command)))
+         (args (or args
+                   (unless no-prompt
+                     (git-read-args command))))
+         (cmdline (if file-arg
+                      (format nil "~A ~A \"~A\"" command args
+                              (file-namestring (if (file-visited-p)
+                                                   (get-buffer-file-name)
+                                                 (read-file-name "File: "))))
+                    (format nil "~A ~A" command args))))
     (if no-std-handles
         (git-call-process cmdline :exec-directory dir :no-std-handles t :wait t)
       (let ((buffer (get-buffer-create *git-output-bufname*)))
@@ -161,5 +159,19 @@
         (set-buffer-fileio-encoding *git-process-encoding* buffer)
         (set-buffer-eol-code *git-process-eol-code* buffer)
         (git-make-process cmdline :exec-directory dir :output buffer)))))
+
+(defun git-read-args (command &optional completion)
+  "argsをプロンプトで取得"
+  (let ((command (if (listp command)
+                     (string-left-trim " " (format nil "~{ ~A~}" command))
+                   (string command)))
+        (read) (args))
+    (loop
+      (setf read (completing-read (format nil "git~[~:; ~]~A~{ ~A~}: " (length command) command (reverse args))
+                                  completion
+                                  :history 'git-prompt))
+      (when (string-match "^[ \t\r\n]*$" read)
+        (return (string-left-trim " " (format nil "~{ ~A~}" (nreverse args)))))
+      (push read args))))
 
 (provide "xl-git/utils")

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 19:46:09 DeaR>
+;; @timestamp   <2012-04-19 17:16:30 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -34,7 +34,7 @@
 
 (defun git-uninstall ()
   "アンインストールする"
-  (unregister-history-variable *git-prompt-history*)
+  (unregister-history-variable '*git-prompt-history*)
 
   (setf #0=lisp::*modules*
         (delete "xl-git" #0# :test #'string-equal))

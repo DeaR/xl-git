@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 19:14:30 DeaR>
+;; @timestamp   <2012-04-19 19:06:36 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -39,10 +39,6 @@
           *git-commit-message-mode-hook*
           *git-commit-message-mode-map*
           git-commit
-          git-commit-all
-          git-commit-amend
-          git-commit-all-amend
-          git-commit-verbose
           git-commit-start))
 
 
@@ -68,116 +64,146 @@
   (define-key *git-commit-message-mode-map* '(#\C-c #\C-c) 'git-commit-start)
   (define-key *git-commit-message-mode-map* '(#\C-c #\C-g) 'git-output-quit))
 
+(defvar *git-commit-argl* nil
+  "git-commitの引数保存用")
 
 
-(defun git-commit-template (cmd)
-  "commit templateの取得"
-  (concat (if (member "--amend" cmd :test #'string=)
-              (multiple-value-bind (exec-code out)
-                  (git-call-process '("log" "-1" "--format='%B'")
-                                    :output (get-buffer-create *git-temp-bufname*)
-                                    :show :hide :wait t)
-                out)
-            (let ((ct (git-config "commit.template"))
-                  (file))
-              (concat (and ct
-                           (file-exist-p (setf file (merge-pathnames ct (git-top-dir))))
-                           (save-excursion
-                             (let ((buffer (switch-to-buffer *git-temp-bufname*)))
-                               (read-file file *git-commit-message-encoding* t)
-                               (buffer-substring (point-min) (point-max)))))
-                      "\n")))
-          "# Please enter the commit message for your changes. Lines starting\n"
-          "# with '#' will be ignored, and an empty message aborts the commit.\n"
-          (multiple-value-bind (exec-code out)
-              (git-call-process (append cmd '("--dry-run"))
-                                :output (get-buffer-create *git-temp-bufname*)
-                                :show :hide :wait t)
-            out)))
-
-(defun git-commit-0 (cmd args)
-  "git-commitの実体"
-  (if (and (not args)
-           (not *prefix-args*)
-           (or (member "-a" cmd :test #'string=)
-               (member "--all" cmd :test #'string=)
-               (member "--amend" cmd :test #'string=)
-               (assoc-if #'(lambda (k)
-                             (not (or (eq k :unmodified)
-                                      (eq k :untracked)
-                                      (eq k :ignored))))
-                         (git-status-list))))
-      (let ((dir (default-directory))
-            (file (merge-pathnames *git-commit-message-file*
-                                   (git-top-dir)))
-            (buffer (get-buffer-create *git-output-bufname*)))
-        (when (= (count-windows) 1)
-          (split-window nil *git-output-split-vertical-p*))
-        (pop-to-buffer buffer)
-        (git-commit-message-mode)
-        (setup-temp-buffer buffer)
-        (set-default-directory dir buffer)
-        (set-buffer-fileio-encoding *git-process-encoding* buffer)
-        (set-buffer-eol-code *git-process-eol-code* buffer)
-        (make-local-variable '*git-commit-command*)
-        (setf *git-commit-command* cmd)
-        (erase-buffer buffer)
-        (insert (git-commit-template cmd))
-        (goto-char (point-min)))
-    (git-command-wrapper cmd args)))
 
 (defun git-commit (&optional args)
   "Record changes to the repository."
   (interactive)
-  (git-commit-0 '("commit") args))
+  (git-commit-0 "commit" args))
 
-(defun git-commit-all (&optional args)
-  "Record changes to the repository.
-Tell the command to automatically stage files that have been modified and deleted, but new files you have not told git about are not affected."
-  (interactive)
-  (git-commit-0 '("commit" "--all") args))
+(defun git-commit-0 (cmd &optional args)
+  "git-commitの実体"
+  (let* ((args (or args
+                   (git-read-args cmd)))
+         (argl (split-string args #\SPC))
+         (all (or (member "-a" argl :test #'string=)
+                  (member "--all" argl :test #'string=)))
+         (amend (member "--amend" argl :test #'string=))
+         (file (or (second (member "-F" argl :test #'string=))
+                   (and (member "--file=\\(.*\\)" argl :test #'string-match)
+                        (match-string 1))))
+         (edit (or (member "-e" argl :test #'string=)
+                   (member "--edit" argl :test #'string=)))
+         (message (or (second (member "-m" argl :test #'string=))
+                      (and (member "--message=\\(.*\\)" argl :test #'string-match)
+                           (match-string 1))))
+         (reuse-message (or (second (member "-C" argl :test #'string=))
+                            (and (member "--reuse-message=\\(.*\\)" argl :test #'string-match)
+                                 (match-string 1))))
+         (reedit-message (or (second (member "-c" argl :test #'string=))
+                             (and (member "--reedit-message=\\(.*\\)" argl :test #'string-match)
+                                  (match-string 1))))
+         (trackd (assoc-if #'(lambda (k)
+                               (or (eq k :modified)
+                                   (eq k :added)
+                                   (eq k :deleted)
+                                   (eq k :renamed)
+                                   (eq k :copied)))
+                           (git-status-list))))
+    (if (and (or edit
+                 reedit-message
+                 (and (not file)
+                      (not message)
+                      (not reuse-message)))
+             (or all
+                 amend
+                 tracked))
+        (let ((dir (default-directory))
+              (file (merge-pathnames *git-commit-message-file*
+                                     (git-top-dir)))
+              (buffer (get-buffer-create *git-output-bufname*)))
+          (when (= (count-windows) 1)
+            (split-window nil *git-output-split-vertical-p*))
+          (pop-to-buffer buffer)
+          (git-commit-message-mode)
+          (setup-temp-buffer buffer)
+          (set-default-directory dir buffer)
+          (set-buffer-fileio-encoding *git-process-encoding* buffer)
+          (set-buffer-eol-code *git-process-eol-code* buffer)
+          (erase-buffer buffer)
+          (insert (git-commit-template argl))
+          (make-local-variable '*git-commit-argl*)
+          (setf *git-commit-argl*
+                (dotimes (idx (length argl) (delete nil argl))
+                  (let ((arg (nth idx argl)))
+                    (cond ((eq arg nil))
+                          ((or (string-equal "-c" arg)
+                               (string= "-F" arg)
+                               (string= "-m" arg)
+                               (string= "-t" arg))
+                           (setf (nth idx argl) nil
+                                 (nth (1+ idx) argl) nil))
+                          ((or (string= "-e" arg)
+                               (string-match "--file=.*" arg)
+                               (string-match "--message=.*" arg)
+                               (string-match "--reuse-message=.*" arg)
+                               (string-match "--reedit-message=.*" arg)
+                               (string-match "--template=.*" arg))
+                           (setf (nth idx argl) nil))))))
+          (goto-char (point-min)))
+      (git-command-0 cmd args))))
 
-(defun git-commit-amend (&optional args)
-  "Record changes to the repository.
-Used to amend the tip of the current branch.
-Prepare the tree object you would want to replace the latest commit as usual (this includes the usual -i/-o and explicit paths), and the commit log editor is seeded with the commit message from the tip of the current branch.
-The commit you create replaces the current tip - if it was a merge, it will have the parents of the current tip as parents - so the current top commit is discarded."
-  (interactive)
-  (git-commit-0 '("commit" "--amend") args))
-
-(defun git-commit-all-amend (&optional args)
-  "Record changes to the repository.
-Tell the command to automatically stage files that have been modified and deleted, but new files you have not told git about are not affected.
-Used to amend the tip of the current branch.
-Prepare the tree object you would want to replace the latest commit as usual (this includes the usual -i/-o and explicit paths), and the commit log editor is seeded with the commit message from the tip of the current branch.
-The commit you create replaces the current tip - if it was a merge, it will have the parents of the current tip as parents - so the current top commit is discarded."
-  (interactive)
-  (git-commit-0 '("commit" "--all" "--amend") args))
-
-(defun git-commit-verbose (&optional args)
-  "Record changes to the repository.
-Show unified diff between the HEAD commit and what would be committed at the bottom of the commit message template.
-Note that this diff output doesn’t have its lines prefixed with #."
-  (interactive)
-  (git-commit-0 '("commit" "--verbose") args))
+(defun git-commit-template (argl)
+  "commit templateの取得"
+  (let ((amend (member "--amend" argl :test #'string=))
+        (file (or (second (member "-F" argl :test #'string=))
+                  (and (member "--file=\\(.*\\)" argl :test #'string-match)
+                       (match-string 1))))
+        (message (or (second (member "-m" argl :test #'string=))
+                     (and (member "--message=\\(.*\\)" argl :test #'string-match)
+                          (match-string 1))))
+        (reuse (or (second (member "-c" argl :test #'string-equal))
+                   (and (member "--\\(reuse\\|reedit\\)-message=\\(.*\\)" argl :test #'string-match)
+                        (match-string 2))))
+        (template (or (second (member "-t" argl :test #'string=))
+                      (and (member "--template=\\(.*\\)" argl :test #'string-match)
+                           (match-string 1))
+                      (string-right-trim "\n" (git-config "commit.template")))))
+    (concat (cond (amend
+                   (multiple-value-bind (exec-code out)
+                       (git-call-process '("log" "-1" "--format='%B'")
+                                         :output (get-buffer-create *git-temp-bufname*)
+                                         :show :hide :wait t)
+                     out))
+                  (reuse
+                   (multiple-value-bind (exec-code out)
+                       (git-call-process '("log" "-1" "--format='%B'" (string-trim "'\"" reuse))
+                                         :output (get-buffer-create *git-temp-bufname*)
+                                         :show :hide :wait t)
+                     out))
+                  (message
+                   (format nil "~A~%" (string-trim "'\"" message)))
+                  (file
+                   (multiple-value-bind (exec-code out)
+                       (git-call-process (string-trim "'\"" file)
+                                         :binary "cat"
+                                         :output (get-buffer-create *git-temp-bufname*)
+                                         :show :hide :wait t)
+                     (format nil "~A~%" out)))
+                  (t
+                   (multiple-value-bind (exec-code out)
+                       (git-call-process (string-trim "'\"" template)
+                                         :binary "cat"
+                                         :output (get-buffer-create *git-temp-bufname*)
+                                         :show :hide :wait t)
+                     (format nil "~A~%" out))))
+            "# Please enter the commit message for your changes. Lines starting\n"
+            "# with '#' will be ignored, and an empty message aborts the commit.\n"
+            (multiple-value-bind (exec-code out)
+                (git-call-process (append '("commit" "--dry-run") argl)
+                                  :output (get-buffer-create *git-temp-bufname*)
+                                  :show :hide :wait t)
+              out))))
 
 (defun git-commit-message-regexp-keyword-list ()
   "コミットメッセージモードのregexp-keyword-list"
-  (compile-regexp-keyword-list
-   `(("^#.*$"
-      nil :comment)
-     ("^diff .*$"
-      nil ,*git-diff-color-header*)
-     ("^index .*$"
-      nil ,*git-diff-color-header*)
-     ("^[+-]\\{3\\} .*$"
-      nil ,*git-diff-color-header*)
-     ("^\\+.*$"
-      nil ,*git-diff-color-add*)
-     ("^-.*$"
-      nil ,*git-diff-color-remove*)
-     ("^@@ .* @@.*$"
-      nil ,*git-diff-color-area*))))
+  (append (compile-regexp-keyword-list
+           `(("^#.*$"
+              nil :comment)))
+          (git-diff-regexp-keyword-list)))
 
 (defun git-commit-message-mode ()
   "コミットメッセージモード"
@@ -200,9 +226,9 @@ Note that this diff output doesn’t have its lines prefixed with #."
          (file-rel (concat (unless (string= rel "")
                              (append-trail-slash rel))
                            (substitute-string *git-commit-message-file* "^\\.\\.?/" "")))
-         (buffer (switch-to-buffer *git-output-bufname*))
-         (cmd *git-commit-command*))
+         (buffer (switch-to-buffer *git-output-bufname*)))
     (write-file file t)
-    (git-command-wrapper cmd (format nil "-F ~A --cleanup=strip" file-rel))))
+    (git-command-0 "commit" (format nil "~{~A ~}-F ~A --cleanup=strip"
+                                    *git-commit-argl* file-rel))))
 
 (provide "xl-git/commit")

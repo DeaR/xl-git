@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 19:08:27 DeaR>
+;; @timestamp   <2012-04-19 15:08:20 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -73,6 +73,21 @@
 
 
 
+(defun git-log (&optional args)
+  "Show commit logs."
+  (interactive)
+  (git-command-0 `("log" ,(format nil "-~D" *git-log-default-limit*))
+                       args :mode #'git-log-mode))
+
+(defun git-glog (&optional args)
+  "Show commit logs.
+Draw a text-based graphical representation of the commit history on the left hand side of the output.
+This may cause extra lines to be printed in between commits, in order for the graph history to be drawn properly."
+  (interactive)
+  (git-command-0 `("log" ,(format nil "-~D" *git-log-default-limit*)
+                   "--graph" "--oneline" "--decorate" "--branches")
+                 args :mode #'git-log-mode))
+
 (defun git-log-regexp-keyword-list ()
   "git logÉÇÅ[ÉhÇÃregexp-keyword-list"
   (compile-regexp-keyword-list
@@ -97,20 +112,5 @@
     (make-local-variable '#0#))
   (setf #0# (append #0# (git-log-regexp-keyword-list)))
   (run-hooks '*git-log-mode-hook*))
-
-(defun git-log (&optional args)
-  "Show commit logs."
-  (interactive)
-  (git-command-wrapper `("log" ,(format nil "-~D" *git-log-default-limit*))
-                       args :mode #'git-log-mode))
-
-(defun git-glog (&optional args)
-  "Show commit logs.
-Draw a text-based graphical representation of the commit history on the left hand side of the output.
-This may cause extra lines to be printed in between commits, in order for the graph history to be drawn properly."
-  (interactive)
-  (git-command-wrapper `("log" ,(format nil "-~D" *git-log-default-limit*)
-                         "--graph" "--oneline" "--decorate" "--branches")
-                       args :mode #'git-log-mode))
 
 (provide "xl-git/log")
