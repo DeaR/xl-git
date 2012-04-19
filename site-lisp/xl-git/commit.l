@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-19 20:35:38 DeaR>
+;; @timestamp   <2012-04-19 20:48:20 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -100,10 +100,13 @@
                      (match-string 1)))
          (squash (and (find "--squash=\\(.*\\)" argl :test #'string-match)
                       (match-string 1)))
+         (signoff (or (find "-s" argl :test #'string=)
+                      (find "--signoff" argl :test #'string=)))
          (template (or (second (member "-t" argl :test #'string=))
                        (and (find "--template=\\(.*\\)" argl :test #'string-match)
                             (match-string 1))
                        (git-config "commit.template")))
+         (dry-run (find "--dry-run" argl :test #'string=))
          (tracked (assoc-if #'(lambda (k)
                                 (or (eq k :modified)
                                     (eq k :added)
@@ -111,7 +114,8 @@
                                     (eq k :renamed)
                                     (eq k :copied)))
                             (git-status-list))))
-    (if (and (or amend
+    (if (and (not dry-run)
+             (or amend
                  edit
                  reedit
                  squash
@@ -190,8 +194,8 @@
           (set-buffer-fileio-encoding *git-process-encoding* buffer)
           (set-buffer-eol-code *git-process-eol-code* buffer)
           (erase-buffer buffer)
-          (insert (git-commit-template argl all amend file edit message reuse
-                                       reedit fixup squash template tracked))
+          (insert (git-commit-template argl all amend file edit message reuse reedit
+                                       fixup squash signoff template dry-run tracked))
           (make-local-variable '*git-commit-argl*)
           (setf *git-commit-argl*
                 (dotimes (idx (length argl) (delete nil argl))
@@ -205,6 +209,8 @@
                                  (nth (1+ idx) argl) nil))
                           ((or (string= "-e" arg)
                                (string= "--edit" arg)
+                               (string= "-s" arg)
+                               (string= "--signoff" arg)
                                (string-match "--file=.*" arg)
                                (string-match "--message=.*" arg)
                                (string-match "--reuse-message=.*" arg)
@@ -216,7 +222,8 @@
           (goto-char (point-min)))
       (git-command-0 cmd args))))
 
-(defun git-commit-template (argl all amend file edit message reuse reedit fixup squash template tracked)
+(defun git-commit-template (argl all amend file edit message reuse reedit
+                                 fixup squash signoff template dry-run tracked)
   "commit template�̎擾"
   (concat (cond (amend
                  (multiple-value-bind (exec-code out)
@@ -266,6 +273,10 @@
                  (format nil "~A~%" (string-trim "'\"" message)))
                 (t
                  "\n"))
+          (when signoff
+            (format nil "Sined-off-by: ~A <~A>~%~%"
+                    (git-config "user.name")
+                    (git-config "user.email")))
           "# Please enter the commit message for your changes. Lines starting\n"
           "# with '#' will be ignored, and an empty message aborts the commit.\n"
           (multiple-value-bind (exec-code out)
