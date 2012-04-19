@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-19 19:06:36 DeaR>
+;; @timestamp   <2012-04-19 19:25:42 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -125,24 +125,25 @@
           (set-buffer-eol-code *git-process-eol-code* buffer)
           (erase-buffer buffer)
           (insert (git-commit-template argl))
+          (dotimes (idx (length argl))
+            (let ((arg (nth idx argl)))
+              (cond ((eq arg nil))
+                    ((or (string-equal "-c" arg)
+                         (string= "-F" arg)
+                         (string= "-m" arg)
+                         (string= "-t" arg))
+                     (setf (nth idx argl) nil
+                           (nth (1+ idx) argl) nil))
+                    ((or (string= "-e" arg)
+                         (string= "--edit" arg)
+                         (string-match "--file=.*" arg)
+                         (string-match "--message=.*" arg)
+                         (string-match "--reuse-message=.*" arg)
+                         (string-match "--reedit-message=.*" arg)
+                         (string-match "--template=.*" arg))
+                     (setf (nth idx argl) nil)))))
           (make-local-variable '*git-commit-argl*)
-          (setf *git-commit-argl*
-                (dotimes (idx (length argl) (delete nil argl))
-                  (let ((arg (nth idx argl)))
-                    (cond ((eq arg nil))
-                          ((or (string-equal "-c" arg)
-                               (string= "-F" arg)
-                               (string= "-m" arg)
-                               (string= "-t" arg))
-                           (setf (nth idx argl) nil
-                                 (nth (1+ idx) argl) nil))
-                          ((or (string= "-e" arg)
-                               (string-match "--file=.*" arg)
-                               (string-match "--message=.*" arg)
-                               (string-match "--reuse-message=.*" arg)
-                               (string-match "--reedit-message=.*" arg)
-                               (string-match "--template=.*" arg))
-                           (setf (nth idx argl) nil))))))
+          (setf *git-commit-argl* (delete nil argl))
           (goto-char (point-min)))
       (git-command-0 cmd args))))
 
@@ -161,7 +162,7 @@
         (template (or (second (member "-t" argl :test #'string=))
                       (and (member "--template=\\(.*\\)" argl :test #'string-match)
                            (match-string 1))
-                      (string-right-trim "\n" (git-config "commit.template")))))
+                      (git-config "commit.template"))))
     (concat (cond (amend
                    (multiple-value-bind (exec-code out)
                        (git-call-process '("log" "-1" "--format='%B'")
@@ -183,13 +184,15 @@
                                          :output (get-buffer-create *git-temp-bufname*)
                                          :show :hide :wait t)
                      (format nil "~A~%" out)))
-                  (t
+                  (template
                    (multiple-value-bind (exec-code out)
-                       (git-call-process (string-trim "'\"" template)
+                       (git-call-process (string-trim "'\"\n" template)
                                          :binary "cat"
                                          :output (get-buffer-create *git-temp-bufname*)
                                          :show :hide :wait t)
-                     (format nil "~A~%" out))))
+                     (format nil "~A~%" out)))
+                  (t
+                   "\n"))
             "# Please enter the commit message for your changes. Lines starting\n"
             "# with '#' will be ignored, and an empty message aborts the commit.\n"
             (multiple-value-bind (exec-code out)
