@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-19 19:25:42 DeaR>
+;; @timestamp   <2012-04-19 20:35:38 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -79,41 +79,107 @@
   (let* ((args (or args
                    (git-read-args cmd)))
          (argl (split-string args #\SPC))
-         (all (or (member "-a" argl :test #'string=)
-                  (member "--all" argl :test #'string=)))
-         (amend (member "--amend" argl :test #'string=))
+         (all (or (find "-a" argl :test #'string=)
+                  (find "--all" argl :test #'string=)))
+         (amend (find "--amend" argl :test #'string=))
          (file (or (second (member "-F" argl :test #'string=))
-                   (and (member "--file=\\(.*\\)" argl :test #'string-match)
+                   (and (find "--file=\\(.*\\)" argl :test #'string-match)
                         (match-string 1))))
-         (edit (or (member "-e" argl :test #'string=)
-                   (member "--edit" argl :test #'string=)))
+         (edit (or (find "-e" argl :test #'string=)
+                   (find "--edit" argl :test #'string=)))
          (message (or (second (member "-m" argl :test #'string=))
-                      (and (member "--message=\\(.*\\)" argl :test #'string-match)
+                      (and (find "--message=\\(.*\\)" argl :test #'string-match)
                            (match-string 1))))
-         (reuse-message (or (second (member "-C" argl :test #'string=))
-                            (and (member "--reuse-message=\\(.*\\)" argl :test #'string-match)
-                                 (match-string 1))))
-         (reedit-message (or (second (member "-c" argl :test #'string=))
-                             (and (member "--reedit-message=\\(.*\\)" argl :test #'string-match)
-                                  (match-string 1))))
-         (trackd (assoc-if #'(lambda (k)
-                               (or (eq k :modified)
-                                   (eq k :added)
-                                   (eq k :deleted)
-                                   (eq k :renamed)
-                                   (eq k :copied)))
-                           (git-status-list))))
-    (if (and (or edit
-                 reedit-message
+         (reuse (or (second (member "-C" argl :test #'string=))
+                    (and (find "--reuse-message=\\(.*\\)" argl :test #'string-match)
+                         (match-string 1))))
+         (reedit (or (second (member "-c" argl :test #'string=))
+                     (and (find "--reedit-message=\\(.*\\)" argl :test #'string-match)
+                          (match-string 1))))
+         (fixup (and (find "--fixup=\\(.*\\)" argl :test #'string-match)
+                     (match-string 1)))
+         (squash (and (find "--squash=\\(.*\\)" argl :test #'string-match)
+                      (match-string 1)))
+         (template (or (second (member "-t" argl :test #'string=))
+                       (and (find "--template=\\(.*\\)" argl :test #'string-match)
+                            (match-string 1))
+                       (git-config "commit.template")))
+         (tracked (assoc-if #'(lambda (k)
+                                (or (eq k :modified)
+                                    (eq k :added)
+                                    (eq k :deleted)
+                                    (eq k :renamed)
+                                    (eq k :copied)))
+                            (git-status-list))))
+    (if (and (or amend
+                 edit
+                 reedit
+                 squash
                  (and (not file)
                       (not message)
-                      (not reuse-message)))
+                      (not reuse)
+                      (not fixup)))
              (or all
                  amend
-                 tracked))
+                 tracked)
+             (or (not template)
+                 (= 0 (git-call-process (concat "-f " (string-trim "'\"\n" template))
+                                        :binary "test"
+                                        :output (get-buffer-create *git-temp-bufname*)
+                                        :show :hide :wait t)))
+             (or (not file)
+                 (= 0 (git-call-process (concat "-f " (string-trim "'\"" file))
+                                        :binary "test"
+                                        :output (get-buffer-create *git-temp-bufname*)
+                                        :show :hide :wait t))
+                 (not (or reuse
+                          reedit
+                          fixup
+                          squash
+                          message)))
+             (or (not reuse)
+                 (= 0 (git-call-process '("log" "-1" "--format='%B'" (string-trim "'\"" reuse))
+                                        :output (get-buffer-create *git-temp-bufname*)
+                                        :show :hide :wait t))
+                 (not (or file
+                          reedit
+                          fixup
+                          squash
+                          message)))
+             (or (not reedit)
+                 (= 0 (git-call-process '("log" "-1" "--format='%B'" (string-trim "'\"" reedit))
+                                        :output (get-buffer-create *git-temp-bufname*)
+                                        :show :hide :wait t))
+                 (not (or file
+                          reuse
+                          fixup
+                          squash
+                          message)))
+             (or (not fixup)
+                 (= 0 (git-call-process '("log" "-1" "--format='%B'" (string-trim "'\"" fixup))
+                                        :output (get-buffer-create *git-temp-bufname*)
+                                        :show :hide :wait t))
+                 (not (or file
+                          reuse
+                          reedit
+                          squash
+                          message)))
+             (or (not squash)
+                 (= 0 (git-call-process '("log" "-1" "--format='%B'" (string-trim "'\"" squash))
+                                        :output (get-buffer-create *git-temp-bufname*)
+                                        :show :hide :wait t))
+                 (not (or file
+                          reuse
+                          reedit
+                          fixup
+                          message)))
+             (or (not message)
+                 (not (or file
+                          reuse
+                          reedit
+                          fixup
+                          squash))))
         (let ((dir (default-directory))
-              (file (merge-pathnames *git-commit-message-file*
-                                     (git-top-dir)))
               (buffer (get-buffer-create *git-output-bufname*)))
           (when (= (count-windows) 1)
             (split-window nil *git-output-split-vertical-p*))
@@ -124,82 +190,89 @@
           (set-buffer-fileio-encoding *git-process-encoding* buffer)
           (set-buffer-eol-code *git-process-eol-code* buffer)
           (erase-buffer buffer)
-          (insert (git-commit-template argl))
-          (dotimes (idx (length argl))
-            (let ((arg (nth idx argl)))
-              (cond ((eq arg nil))
-                    ((or (string-equal "-c" arg)
-                         (string= "-F" arg)
-                         (string= "-m" arg)
-                         (string= "-t" arg))
-                     (setf (nth idx argl) nil
-                           (nth (1+ idx) argl) nil))
-                    ((or (string= "-e" arg)
-                         (string= "--edit" arg)
-                         (string-match "--file=.*" arg)
-                         (string-match "--message=.*" arg)
-                         (string-match "--reuse-message=.*" arg)
-                         (string-match "--reedit-message=.*" arg)
-                         (string-match "--template=.*" arg))
-                     (setf (nth idx argl) nil)))))
+          (insert (git-commit-template argl all amend file edit message reuse
+                                       reedit fixup squash template tracked))
           (make-local-variable '*git-commit-argl*)
-          (setf *git-commit-argl* (delete nil argl))
+          (setf *git-commit-argl*
+                (dotimes (idx (length argl) (delete nil argl))
+                  (let ((arg (nth idx argl)))
+                    (cond ((eq arg nil))
+                          ((or (string-equal "-c" arg)
+                               (string= "-F" arg)
+                               (string= "-m" arg)
+                               (string= "-t" arg))
+                           (setf (nth idx argl) nil
+                                 (nth (1+ idx) argl) nil))
+                          ((or (string= "-e" arg)
+                               (string= "--edit" arg)
+                               (string-match "--file=.*" arg)
+                               (string-match "--message=.*" arg)
+                               (string-match "--reuse-message=.*" arg)
+                               (string-match "--reedit-message=.*" arg)
+                               (string-match "--fixup=.*" arg)
+                               (string-match "--squash=.*" arg)
+                               (string-match "--template=.*" arg))
+                           (setf (nth idx argl) nil))))))
           (goto-char (point-min)))
       (git-command-0 cmd args))))
 
-(defun git-commit-template (argl)
+(defun git-commit-template (argl all amend file edit message reuse reedit fixup squash template tracked)
   "commit templateの取得"
-  (let ((amend (member "--amend" argl :test #'string=))
-        (file (or (second (member "-F" argl :test #'string=))
-                  (and (member "--file=\\(.*\\)" argl :test #'string-match)
-                       (match-string 1))))
-        (message (or (second (member "-m" argl :test #'string=))
-                     (and (member "--message=\\(.*\\)" argl :test #'string-match)
-                          (match-string 1))))
-        (reuse (or (second (member "-c" argl :test #'string-equal))
-                   (and (member "--\\(reuse\\|reedit\\)-message=\\(.*\\)" argl :test #'string-match)
-                        (match-string 2))))
-        (template (or (second (member "-t" argl :test #'string=))
-                      (and (member "--template=\\(.*\\)" argl :test #'string-match)
-                           (match-string 1))
-                      (git-config "commit.template"))))
-    (concat (cond (amend
-                   (multiple-value-bind (exec-code out)
-                       (git-call-process '("log" "-1" "--format='%B'")
-                                         :output (get-buffer-create *git-temp-bufname*)
-                                         :show :hide :wait t)
-                     out))
-                  (reuse
-                   (multiple-value-bind (exec-code out)
-                       (git-call-process '("log" "-1" "--format='%B'" (string-trim "'\"" reuse))
-                                         :output (get-buffer-create *git-temp-bufname*)
-                                         :show :hide :wait t)
-                     out))
-                  (message
-                   (format nil "~A~%" (string-trim "'\"" message)))
-                  (file
-                   (multiple-value-bind (exec-code out)
-                       (git-call-process (string-trim "'\"" file)
-                                         :binary "cat"
-                                         :output (get-buffer-create *git-temp-bufname*)
-                                         :show :hide :wait t)
-                     (format nil "~A~%" out)))
-                  (template
-                   (multiple-value-bind (exec-code out)
-                       (git-call-process (string-trim "'\"\n" template)
-                                         :binary "cat"
-                                         :output (get-buffer-create *git-temp-bufname*)
-                                         :show :hide :wait t)
-                     (format nil "~A~%" out)))
-                  (t
-                   "\n"))
-            "# Please enter the commit message for your changes. Lines starting\n"
-            "# with '#' will be ignored, and an empty message aborts the commit.\n"
-            (multiple-value-bind (exec-code out)
-                (git-call-process (append '("commit" "--dry-run") argl)
-                                  :output (get-buffer-create *git-temp-bufname*)
-                                  :show :hide :wait t)
-              out))))
+  (concat (cond (amend
+                 (multiple-value-bind (exec-code out)
+                     (git-call-process '("log" "-1" "--format='%B'")
+                                       :output (get-buffer-create *git-temp-bufname*)
+                                       :show :hide :wait t)
+                   out))
+                (reuse
+                 (multiple-value-bind (exec-code out)
+                     (git-call-process '("log" "-1" "--format='%B'" (string-trim "'\"" reuse))
+                                       :output (get-buffer-create *git-temp-bufname*)
+                                       :show :hide :wait t)
+                   out))
+                (reedit
+                 (multiple-value-bind (exec-code out)
+                     (git-call-process '("log" "-1" "--format='%B'" (string-trim "'\"" reedit))
+                                       :output (get-buffer-create *git-temp-bufname*)
+                                       :show :hide :wait t)
+                   out))
+                (fixup
+                 (multiple-value-bind (exec-code out)
+                     (git-call-process '("log" "-1" "--format='%B'" (string-trim "'\"" fixup))
+                                       :output (get-buffer-create *git-temp-bufname*)
+                                       :show :hide :wait t)
+                   (concat "fixup! " out)))
+                (squash
+                 (multiple-value-bind (exec-code out)
+                     (git-call-process '("log" "-1" "--format='%B'" (string-trim "'\"" squash))
+                                       :output (get-buffer-create *git-temp-bufname*)
+                                       :show :hide :wait t)
+                   (concat "squash! " out)))
+                (file
+                 (multiple-value-bind (exec-code out)
+                     (git-call-process (string-trim "'\"" file)
+                                       :binary "cat"
+                                       :output (get-buffer-create *git-temp-bufname*)
+                                       :show :hide :wait t)
+                   (format nil "~A~%" out)))
+                (template
+                 (multiple-value-bind (exec-code out)
+                     (git-call-process (string-trim "'\"\n" template)
+                                       :binary "cat"
+                                       :output (get-buffer-create *git-temp-bufname*)
+                                       :show :hide :wait t)
+                   (format nil "~A~%" out)))
+                (message
+                 (format nil "~A~%" (string-trim "'\"" message)))
+                (t
+                 "\n"))
+          "# Please enter the commit message for your changes. Lines starting\n"
+          "# with '#' will be ignored, and an empty message aborts the commit.\n"
+          (multiple-value-bind (exec-code out)
+              (git-call-process (append '("commit" "--dry-run") argl)
+                                :output (get-buffer-create *git-temp-bufname*)
+                                :show :hide :wait t)
+            out)))
 
 (defun git-commit-message-regexp-keyword-list ()
   "コミットメッセージモードのregexp-keyword-list"

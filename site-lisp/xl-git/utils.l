@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-19 18:11:05 DeaR>
+;; @timestamp   <2012-04-19 19:47:22 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -106,7 +106,7 @@
                           (match-string 3))))
               (split-string out #\LFD)))))
 
-(defmacro define-git-command (command &key symbol document dir-prompt no-prompt file-arg mode no-std-handles)
+(defmacro define-git-command (command &key symbol document completion dir-prompt no-prompt file-arg mode no-std-handles)
   "シンプルなgitコマンド生成"
   (let ((name (if symbol
                   (string symbol)
@@ -120,6 +120,7 @@
          ,document
          (interactive)
          (git::git-command-0 ',command args
+                             :completion ,completion
                              :dir-prompt ,dir-prompt
                              :no-prompt ,no-prompt
                              :file-arg ,file-arg
@@ -127,7 +128,7 @@
                              :no-std-handles ,no-std-handles)))))
 (setf (get 'define-git-command 'lisp-indent-hook) 'defun)
 
-(defun git-command-0 (command args &key dir-prompt no-prompt file-arg mode no-std-handles)
+(defun git-command-0 (command args &key completion dir-prompt no-prompt file-arg mode no-std-handles)
   "シンプルなgitコマンド実体"
   (let* ((dir (if dir-prompt
                   (read-directory-name "Exec directory: ")
@@ -137,7 +138,7 @@
                     (string command)))
          (args (or args
                    (unless no-prompt
-                     (git-read-args command))))
+                     (git-read-args command completion))))
          (cmdline (if file-arg
                       (format nil "~A ~A \"~A\"" command args
                               (file-namestring (if (file-visited-p)
