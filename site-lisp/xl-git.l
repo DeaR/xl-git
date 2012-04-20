@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 16:30:17 DeaR>
+;; @timestamp   <2012-04-20 19:14:13 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -30,6 +30,8 @@
 (require "xl-git/process")
 (require "xl-git/output")
 (require "xl-git/utils")
+(require "xl-git/install")
+
 (require "xl-git/branch")
 (require "xl-git/diff")
 (require "xl-git/log")
@@ -44,7 +46,6 @@
 (require "xl-git/command/low-sync")
 (require "xl-git/command/low-helper")
 
-(require "xl-git/uninstall")
 (require "xl-git/version")
 
 (provide "xl-git")

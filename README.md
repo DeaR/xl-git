@@ -12,6 +12,7 @@ A front end for git in [xyzzy].
 	
 	```lisp
 	(require "xl-git")
+	(git-install)
 	```
 
 3.	更に環境固有の設定も追加します
@@ -69,11 +70,19 @@ etc...
 
 
 ## Setting
--	[git-flow] を利用したい
+-	`git-install` の任意引数
 	
 	```lisp
-	(require "xl-git-flow")
+	git-install &rest options
 	```
+	*	`:bisect` -- 詳細な `git-bisect` のコマンドを利用する
+	*	`:stash` -- 詳細な `git-stash` のコマンドを利用する
+	*	`:flow` -- [git-flow] のコマンドを利用する
+	*	例:
+		
+		```lisp
+		(git-install :bisect :stash)
+		```
 
 -	他のコマンドを関数として追加したい
 	

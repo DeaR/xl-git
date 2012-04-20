@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 17:58:31 DeaR>
+;; @timestamp   <2012-04-20 19:22:11 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -76,16 +76,6 @@
           git-shortlog
           git-show
           git-stash
-          git-stash-apply
-          git-stash-apply
-          git-stash-branch
-          git-stash-clear
-          git-stash-create
-          git-stash-drop
-          git-stash-list
-          git-stash-pop
-          git-stash-save
-          git-stash-show
           ; git-status
           git-submodule
           git-tag))
@@ -113,231 +103,214 @@ an unusually rich command set that provides both high-level operations and full 
   (:file-arg t))
 
 (define-git-command ("am")
-  (:documentation "Apply a series of patches from a mailbox."))
+  (:documentation "Apply a series of patches from a mailbox.")
+  (:completion "-s" "--signoff" "-k" "--keep" "--keep-cr" "--no-keep-cr" "-c" "--scissors"
+   "--no-scissors" "-q" "--quiet" "-u" "--utf8" "--no-utf8" "-3" "--3way" "--ignore-date"
+   "--ignore-space-change" "--ignore-whitespace" "--whitespace=" "-C" "-p" "--directory="
+   "--reject" "-i" "--interactive" "--committer-date-is-author-date" "--ignore-date" "--skip"
+   "--continue" "-r" "--resolved" "--resolvemsg=" "--abort"))
 
 (define-git-command ("archive")
-  (:documentation "Create an archive of files from a named tree."))
+  (:documentation "Create an archive of files from a named tree.")
+  (:completion "--format=" "-l" "--list" "-v" "--verbose" "--prefix=" "-o" "--output="
+   "--worktree-attributes" "--remote=" "--exec="))
 
 (define-git-command ("bisect")
-  (:documentation "Find by binary search the change that introduced a bug."))
+  (:documentation "Find by binary search the change that introduced a bug.")
+  (:completion "bad" "good" "help" "log" "replay" "reset" "run" "skip" "start" "--no-checkout" "view" "visualize" "-p" "--stat"))
 
 (define-git-command ("branch")
   (:documentation "List, create, or delete branches.")
+  (:completion "-d" "-D" "-l" "-f" "--force" "-m" "-M" "--color" "--no-color" "-r" "-a"
+   "-v" "--verbose" "--abbrev=" "--no-abbrev" "-t" "--track" "--no-track" "--set-upstream"
+   "--contains" "--merged" "--no-merged")
   (:mode git-branch-mode))
 
 (define-git-command ("bundle")
-  (:documentation "Move objects and refs by archive."))
+  (:documentation "Move objects and refs by archive.")
+  (:completion ))
 
 (define-git-command ("checkout")
-  (:documentation "Checkout a branch or paths to the working tree."))
+  (:documentation "Checkout a branch or paths to the working tree.")
+  (:completion ))
 
 (define-git-command ("checkout")
   (:name :git-checkout-file)
   (:documentation "Checkout a branch or paths to the working tree.")
+  (:completion )
   (:file-arg t))
 
 (define-git-command ("cherry-pick")
-  (:documentation "Apply the changes introduced by some existing commits."))
+  (:documentation "Apply the changes introduced by some existing commits.")
+  (:completion ))
 
 (define-git-command ("clean")
-  (:documentation "Remove untracked files from the working tree."))
+  (:documentation "Remove untracked files from the working tree.")
+  (:completion ))
 
 (define-git-command ("clone")
   (:documentation "Clone a repository into a new directory.")
+  (:completion )
   (:dir-prompt t)
   (:no-std-handles t))
 
 (define-git-command ("commit")
-  (:documentation "Record changes to the repository."))
+  (:documentation "Record changes to the repository.")
+  (:completion ))
 
 (define-git-command ("describe")
-  (:documentation "Show the most recent tag that is reachable from a commit."))
+  (:documentation "Show the most recent tag that is reachable from a commit.")
+  (:completion ))
 
 (define-git-command ("diff")
   (:documentation "Show changes between commits, commit and working tree, etc.")
+  (:completion )
   (:mode git-diff-mode))
 
 (define-git-command ("diff")
   (:name :git-diff-file)
   (:documentation "Show changes between commits, commit and working tree, etc.")
+  (:completion )
   (:file-arg t)
   (:mode git-diff-mode))
 
 (define-git-command ("fetch")
   (:documentation "Download objects and refs from another repository.")
+  (:completion )
   (:no-std-handles t))
 
 (define-git-command ("format-patch")
-  (:documentation "Prepare patches for e-mail submission."))
+  (:documentation "Prepare patches for e-mail submission.")
+  (:completion ))
 
 (define-git-command ("gc")
-  (:documentation "Cleanup unnecessary files and optimize the local repository."))
+  (:documentation "Cleanup unnecessary files and optimize the local repository.")
+  (:completion ))
 
 (define-git-command ("grep")
-  (:documentation "Print lines matching a pattern."))
+  (:documentation "Print lines matching a pattern.")
+  (:completion ))
 
 (define-git-command ("init")
   (:documentation "Create an empty git repository or reinitialize an existing one.")
+  (:completion )
   (:dir-prompt t))
 
 (define-git-command ("log" (format nil "-~D" *git-log-default-limit*))
   (:name :git-log)
   (:documentation "Show commit logs.")
+  (:completion )
   (:mode git-log-mode))
 
 (define-git-command ("log" (format nil "-~D" *git-log-default-limit*)
                      "--graph" "--oneline" "--decorate" "--branches")
   (:name :git-glog)
   (:documentation "Show commit logs.")
+  (:completion )
   (:mode git-log-mode))
 
 (define-git-command ("merge")
-  (:documentation "Join two or more development histories together."))
+  (:documentation "Join two or more development histories together.")
+  (:completion ))
 
 (define-git-command ("mv")
-  (:documentation "Move or rename a file, a directory, or a symlink."))
+  (:documentation "Move or rename a file, a directory, or a symlink.")
+  (:completion ))
 
 (define-git-command ("mv")
   (:name :git-mv-file)
   (:documentation "Move or rename a file, a directory, or a symlink.")
+  (:completion )
   (:file-arg 2))
 
 (define-git-command ("notes")
-  (:documentation "Add or inspect object notes."))
+  (:documentation "Add or inspect object notes.")
+  (:completion ))
 
 (define-git-command ("pull")
   (:documentation "Fetch from and merge with another repository or a local branch.")
+  (:completion )
   (:no-std-handles t))
 
 (define-git-command ("push")
   (:documentation "Update remote refs along with associated objects.")
+  (:completion )
   (:no-std-handles t))
 
 (define-git-command ("push " "matching")
   (:documentation "Update remote refs along with associated objects.
 
 Push all matching branches.")
+  (:completion )
   (:no-std-handles t))
 
 (define-git-command ("push" "tracking")
   (:documentation "Update remote refs along with associated objects.
 
 Push the current branch to whatever it is tracking.")
+  (:completion )
   (:no-std-handles t))
 
 (define-git-command ("push" "current")
   (:documentation "Update remote refs along with associated objects.
 
 Push the current branch.")
+  (:completion )
   (:no-std-handles t))
 
 (define-git-command ("rebase")
-  (:documentation "Forward-port local commits to the updated upstream head."))
+  (:documentation "Forward-port local commits to the updated upstream head.")
+  (:completion ))
 
 (define-git-command ("reset")
-  (:documentation "Reset current HEAD to the specified state."))
+  (:documentation "Reset current HEAD to the specified state.")
+  (:completion ))
 
 (define-git-command ("reset")
   (:name :git-reset-file)
   (:documentation "Reset current HEAD to the specified state.")
+  (:completion )
   (:file-arg t))
 
 (define-git-command ("revert")
-  (:documentation "Revert some existing commits."))
+  (:documentation "Revert some existing commits.")
+  (:completion ))
 
 (define-git-command ("rm")
-  (:documentation "Remove files from the working tree and from the index."))
+  (:documentation "Remove files from the working tree and from the index.")
+  (:completion ))
 
 (define-git-command ("rm")
   (:name :git-rm-file)
   (:documentation "Remove files from the working tree and from the index.")
+  (:completion )
   (:file-arg t))
 
 (define-git-command ("shortlog")
-  (:documentation "Summarize git log output."))
+  (:documentation "Summarize git log output.")
+  (:completion ))
 
 (define-git-command ("show")
-  (:documentation "Show various types of objects."))
+  (:documentation "Show various types of objects.")
+  (:completion ))
 
 (define-git-command ("stash")
-  (:documentation "Stash the changes in a dirty working directory away."))
-
-(define-git-command ("stash" "save")
-  (:documentation "Stash the changes in a dirty working directory away.
-
-Save your local modifications to a new stash, and run git reset --hard to revert them.
-The <message> part is optional and gives the description along with the stashed state.
-For quickly making a snapshot, you can omit both \"save\" and <message>,
-but giving only <message> does not trigger this action to
-prevent a misspelled subcommand from making an unwanted stash."))
-
-(define-git-command ("stash" "list")
-  (:documentation "Stash the changes in a dirty working directory away.
-
-List the stashes that you currently have.
-Each stash is listed with its name
-(e.g. stash@{0} is the latest stash, stash@{1} is the one before, etc.),
-the name of the branch that was current when the stash was made,
-and a short description of the commit the stash was based on."))
-
-(define-git-command ("stash" "show")
-  (:documentation "Stash the changes in a dirty working directory away.
-
-Show the changes recorded in the stash as a diff between the stashed state and its original parent.
-When no <stash> is given, shows the latest one.
-By default, the command shows the diffstat, but it will accept any format known to git diff
-(e.g., git stash show -p stash@{1} to view the second most recent stash in patch form)."))
-
-(define-git-command ("stash" "pop")
-  (:documentation "Stash the changes in a dirty working directory away.
-
-Remove a single stashed state from the stash list and apply it on top of the current working tree state,
-i.e., do the inverse operation of git stash save.
-The working directory must match the index."))
-
-(define-git-command ("stash" "apply")
-  (:documentation "Stash the changes in a dirty working directory away.
-
-Like pop, but do not remove the state from the stash list."))
-
-(define-git-command ("stash" "branch")
-  (:documentation "Stash the changes in a dirty working directory away.
-
-Creates and checks out a new branch named <branchname> starting from
-the commit at which the <stash> was originally created,
-applies the changes recorded in <stash> to the new working tree and index,
-then drops the <stash> if that completes successfully.
-When no <stash> is given, applies the latest one."))
-
-(define-git-command ("stash" "clear")
-  (:documentation "Stash the changes in a dirty working directory away.
-
-Remove all the stashed states.
-Note that those states will then be subject to pruning, and may be impossible to recover
-(see Examples below for a possible strategy)."))
-
-(define-git-command ("stash" "drop")
-  (:documentation "Stash the changes in a dirty working directory away.
-
-Remove a single stashed state from the stash list.
-When no <stash> is given, it removes the latest one.
-i.e. stash@{0}"))
-
-(define-git-command ("stash" "create")
-  (:documentation "Stash the changes in a dirty working directory away.
-
-Create a stash (which is a regular commit object) and return its object name,
-without storing it anywhere in the ref namespace."))
+  (:documentation "Stash the changes in a dirty working directory away.")
+  (:completion ))
 
 ; -> xl-git/status.l
 ; (define-git-command ("status")
 ;   (:documentation "Show the working tree status.")
+;   (:completion "-s" "--short" "-b" "--branch" "--porcelain" "-u" "--untracked-files"
+;    "--ignore-submodules" "--ignored" "-z")
 ;   (:mode git-status-mode))
 
 (define-git-command ("submodule")
-  (:documentation "Initialize, update or inspect submodules."))
+  (:documentation "Initialize, update or inspect submodules.")
+  (:completion ))
 
 (define-git-command ("tag")
-  (:documentation "Create, list, delete or verify a tag object signed with GPG."))
+  (:documentation "Create, list, delete or verify a tag object signed with GPG.")
+  (:completion ))
 
 (provide "xl-git/command/high-main")

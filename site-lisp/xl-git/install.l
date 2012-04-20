@@ -1,10 +1,10 @@
-;; -*- mode: lisp; package: user; encoding: shift_jis -*-
+;; -*- mode: lisp; package: git; encoding: shift_jis -*-
 
-;; @name        xl-git-flow.l
+;; @name        xl-git/install.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-16 14:41:37 DeaR>
+;; @timestamp   <2012-04-20 19:39:43 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -24,8 +24,38 @@
 ;; DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-(in-package :user)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (require "xl-git/package")
+  (require "xl-git/utils"))
 
-(require "xl-git/flow")
+(in-package :git)
 
-(provide "xl-git-flow")
+(export '(git-install
+          git-uninstall))
+
+
+
+(defun git-install (&rest options)
+  "インストールする
+:bisect	: 詳細な git-bisect のコマンドを利用する
+:stash	: 詳細な git-stash のコマンドを利用する
+:flow	: git-flow のコマンドを利用する"
+  (when (find :bisect options)
+    (require "xl-git/command/bisect"))
+  (when (find :stash options)
+    (require "xl-git/command/stash"))
+  (when (find :flow options)
+    (require "xl-git/command/flow")))
+
+(defun git-uninstall ()
+  "アンインストールする"
+  (unregister-history-variable '*git-prompt-history*)
+
+  (setf #0=lisp::*modules*
+        (delete "xl-git" #0# :test #'string-equal))
+  (setf #0#
+        (delete "xl-git-flow" #0# :test #'string-equal))
+  (setf #0#
+        (delete "xl-git/.+" #0# :test #'string-match)))
+
+(provide "xl-git/install")
