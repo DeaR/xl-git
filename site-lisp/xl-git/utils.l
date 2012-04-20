@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 12:46:56 DeaR>
+;; @timestamp   <2012-04-20 13:35:17 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -104,7 +104,7 @@
         (set-default-directory dir buffer)
         (set-buffer-fileio-encoding *git-process-encoding* buffer)
         (set-buffer-eol-code *git-process-eol-code* buffer)
-        (git-make-process cmdline :exec-directory dir :output buffer)))))
+        (git-make-process cmdline :exec-directory dir :output buffer :show :hide)))))
 
 (defun git-read-args (command &optional completion)
   "args‚ğƒvƒƒ“ƒvƒg‚Åæ“¾"

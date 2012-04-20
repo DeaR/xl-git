@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 12:42:47 DeaR>
+;; @timestamp   <2012-04-20 14:59:21 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -129,11 +129,6 @@
 
 (define-git-command ("flow" "support" "start")
   (:documentation "Manage your support branches."))
-
-
-
-(define-git-command ("flow" "version")
-  (:documentation "Shows version information."))
 
 
 

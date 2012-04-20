@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-19 23:41:47 DeaR>
+;; @timestamp   <2012-04-20 15:14:39 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -59,12 +59,14 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
 
 
 
-(defun git-command-line (binary args dir)
+(defun git-command-line (binary args dir &optional port-shell-command-line)
   "gitのコマンドラインの生成"
-  (values (if (listp args)
-              (format nil "~A~{ ~A~}" binary args)
-            (format nil "~A ~A" binary args))
-          dir))
+  (let ((cmdline (if (listp args)
+                     (format nil "~A~{ ~A~}" binary args)
+                   (format nil "~A ~A" binary args))))
+    (if port-shell-command-line
+        (ed::shell-command-line cmdline dir)
+      (values cmdline dir))))
 
 (defun git-call-process (args &key environ
                               (binary *git-binary*)
@@ -77,7 +79,7 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
   "gitのプロセスを実行
 値2に出力文字列を返す"
   (multiple-value-bind (cmdline dir)
-      (git-command-line binary args exec-directory)
+      (git-command-line binary args exec-directory (not no-std-handles))
     (values (call-process (if (and *git-wrapper-bat*
                                    no-std-handles)
                               (format nil "\"~A\" ~A" (merge-pathnames *git-wrapper-bat*) cmdline)
@@ -89,14 +91,15 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
                           :show show
                           :wait wait
                           :no-std-handles no-std-handles)
-            (unless no-std-handles
+            (when (and wait
+                       (not no-std-handles))
               (save-excursion
                 (set-buffer output)
-                (let ((p (point-max)))
-                  (goto-char p)
+                (let ((point (point-max)))
+                  (goto-char point)
                   (insert-file outfile encoding)
                   (replace-buffer *escape-code* "" :regexp t)
-                  (buffer-substring p (point-max))))))))
+                  (buffer-substring point (point-max))))))))
 
 (defun git-make-process (args &key environ
                               (binary *git-binary*)
@@ -104,7 +107,7 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
                               (exec-directory (default-directory))
                               (encoding *git-process-encoding*)
                               (eol-code *git-process-eol-code*)
-                              (show :hide))
+                              show wait)
   "gitのプロセスを開始"
   (multiple-value-bind (cmdline dir)
       (git-command-line binary args exec-directory)
@@ -118,11 +121,11 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
                       :outcode encoding
                       :eol-code eol-code
                       :show show)
-      (save-excursion
-        (let* ((buffer (switch-to-buffer output))
-               (proc (buffer-process buffer)))
-          (set-process-filter proc #'git-process-filter)
-          (set-process-sentinel proc #'git-process-sentinel)
+      (let ((proc (buffer-process output)))
+        (set-process-filter proc #'git-process-filter)
+        (set-process-sentinel proc #'git-process-sentinel)
+        (save-excursion
+          (set-buffer output)
           (make-local-variable '*before-delete-buffer-hook*)
           (add-hook '*before-delete-buffer-hook* 'git-kill-process))))))
 
