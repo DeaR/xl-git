@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 15:58:07 DeaR>
+;; @timestamp   <2012-04-20 16:17:19 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -87,9 +87,10 @@
                      (let ((out (list (or (get-buffer-file-name)
                                           (read-file-name "File: ")))))
                        (when (numberp file-arg)
-                         (dotimes (i (1- file-arg) out)
+                         (dotimes (i (1- file-arg))
                            (push (read-file-name (format nil "File ~D: " (+ i 2)))
-                                 out))))))
+                                 out)))
+                       (nreverse out))))
          (cmdline (format nil "~A ~A~{ \"~A\"~}"
                           command args file-arg)))
     (if no-std-handles
