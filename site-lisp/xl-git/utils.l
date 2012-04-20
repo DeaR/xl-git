@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 01:34:43 DeaR>
+;; @timestamp   <2012-04-20 12:46:56 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -51,83 +51,30 @@
 
 
 
-(defun git-config (key &optional (dir (default-directory)))
-  "設定を取得"
-  (multiple-value-bind (exec-code out)
-      (git-call-process `("config" ,key)
-                        :output (get-buffer-create *git-temp-bufname*)
-                        :exec-directory dir
-                        :show :hide :wait t)
-    (and (= exec-code 0)
-         (string-right-trim "\n" out))))
-
-(defun git-top-dir-relative (&optional (dir (default-directory)))
-  "リポジトリのトップディレクトリを取得"
-  (multiple-value-bind (exec-code out)
-      (git-call-process '("rev-parse" "--show-cdup")
-                        :output (get-buffer-create *git-temp-bufname*)
-                        :exec-directory dir
-                        :show :hide :wait t)
-    (unless (= exec-code 0)
-      (error out))
-    (string-right-trim "\n" out)))
-
-(defun git-top-dir (&optional (dir (default-directory)))
-  "リポジトリのトップディレクトリを取得"
-  (merge-pathnames (git-top-dir-relative)
-                   dir))
-
-(defun git-status-list (&optional (dir (default-directory)))
-  "リポジトリの状態をリストで取得"
-  (multiple-value-bind (exec-code out)
-      (git-call-process '("status" "--porcelain")
-                        :output (get-buffer-create *git-temp-bufname*)
-                        :exec-directory dir
-                        :show :hide :wait t)
-    (unless (= exec-code 0)
-      (error out))
-    (flet ((to-symbol (str)
-             (case (character str)
-               (#\SPC :unmodified)
-               (#\M :modified)
-               (#\A :added)
-               (#\D :deleted)
-               (#\R :renamed)
-               (#\C :copied)
-               (#\U :unmerged)
-               (#\? :untracked)
-               (#\! :ignored))))
-      (mapcar #'(lambda (l)
-                  (when (string-match "\\(.\\)\\(.\\) \\(.*\\)$" l)
-                    (list (to-symbol (match-string 1))
-                          (to-symbol (match-string 2))
-                          (match-string 3))))
-              (split-string out #\LFD)))))
-
-(defmacro define-git-command (command &key symbol document completion dir-prompt no-prompt file-arg mode no-std-handles)
+(defmacro define-git-command (command &rest options)
   "シンプルなgitコマンド生成"
-  (let ((name (if symbol
-                  (string symbol)
-                (substitute-string (if (listp command)
-                                       (format nil "git~{-~A~}" command)
-                                     (format nil "git-~A" command))
-                                   "[ -]+" "-"))))
+  (let ((name (or (second (assoc :name options))
+                  (substitute-string (if (listp command)
+                                         (format nil "git~{-~A~}" command)
+                                       (format nil "git-~A" command))
+                                     "[ -]+" "-")))
+        (documentation (second (assoc :documentation options))))
     `(progn
-       (export (intern ,name :git) :git)
-       (defun ,(intern name :git) (&optional args)
-         ,document
+       (defun ,(intern (string name)) (&optional args)
+         ,documentation
          (interactive)
-         (git::git-command-0 (list ,@command) args
-                             :completion ,completion
-                             :dir-prompt ,dir-prompt
-                             :no-prompt ,no-prompt
-                             :file-arg ,file-arg
-                             :mode ,mode
-                             :no-std-handles ,no-std-handles)))))
+         (apply #'git::git-command-0
+                (list ,@command) args '(,@options))))))
 
-(defun git-command-0 (command args &key completion dir-prompt no-prompt file-arg mode no-std-handles)
+(defun git-command-0 (command args &rest options)
   "シンプルなgitコマンド実体"
-  (let* ((dir (if dir-prompt
+  (let* ((completion (rest (assoc :completion options)))
+         (dir-prompt (second (assoc :dir-prompt options)))
+         (no-prompt (second (assoc :no-prompt options)))
+         (file-arg (second (assoc :file-arg options)))
+         (mode (second (assoc :mode options)))
+         (no-std-handles (second (assoc :no-std-handles options)))
+         (dir (if dir-prompt
                   (read-directory-name "Exec directory: ")
                 (default-directory)))
          (command (if (listp command)
@@ -136,12 +83,13 @@
          (args (or args
                    (unless no-prompt
                      (git-read-args command completion))))
-         (cmdline (if file-arg
-                      (format nil "~A ~A \"~A\"" command args
-                              (file-namestring (if (file-visited-p)
-                                                   (get-buffer-file-name)
-                                                 (read-file-name "File: "))))
-                    (format nil "~A ~A" command args))))
+         (cmdline (concat command
+                          " "
+                          args
+                          (when file-arg
+                            (format nil " \"~A\""
+                                    (file-namestring (or (get-buffer-file-name)
+                                                         (read-file-name "File: "))))))))
     (if no-std-handles
         (git-call-process cmdline :exec-directory dir :no-std-handles t :wait t)
       (let ((buffer (get-buffer-create *git-output-bufname*)))

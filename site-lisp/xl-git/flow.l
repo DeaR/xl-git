@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 01:38:26 DeaR>
+;; @timestamp   <2012-04-20 12:42:47 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -26,89 +26,114 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (require "xl-git/package")
-  (require "xl-git/utils"))
+  (require "xl-git/utils")
+  (require "xl-git/diff"))
 
 (in-package :git)
+
+(export '(git-flow-init
+          git-flow-feature-list
+          git-flow-feature-start
+          git-flow-feature-finish
+          git-flow-feature-publish
+          git-flow-feature-track
+          git-flow-feature-diff
+          git-flow-feature-rebase
+          git-flow-feature-checkout
+          git-flow-feature-pull
+          git-flow-release-list
+          git-flow-release-start
+          git-flow-release-finish
+          git-flow-release-publish
+          git-flow-release-track
+          git-flow-hotfix-list
+          git-flow-hotfix-start
+          git-flow-hotfix-finish
+          git-flow-hotfix-publish
+          git-flow-support-list
+          git-flow-support-start
+          git-flow-version))
 
 
 
 (define-git-command ("flow" "init")
-  :document "Initialize a new git repo with support for the branching model."
-  :dir-prompt t)
+  (:documentation "Initialize a new git repo with support for the branching model.")
+  (:dir-prompt t))
 
 
 
 (define-git-command ("flow" "feature" "list")
-  :document "Manage your feature branches.")
+  (:documentation "Manage your feature branches."))
 
 (define-git-command ("flow" "feature" "start")
-  :document "Manage your feature branches.")
+  (:documentation "Manage your feature branches."))
 
 (define-git-command ("flow" "feature" "finish")
-  :document "Manage your feature branches.")
+  (:documentation "Manage your feature branches."))
 
 (define-git-command ("flow" "feature" "publish")
-  :document "Manage your feature branches.")
+  (:documentation "Manage your feature branches."))
 
 (define-git-command ("flow" "feature" "track")
-  :document "Manage your feature branches.")
+  (:documentation "Manage your feature branches."))
 
 (define-git-command ("flow" "feature" "diff")
-  :document "Manage your feature branches.")
+  (:documentation "Manage your feature branches.")
+  (:mode git-diff-mode))
 
 (define-git-command ("flow" "feature" "rebase")
-  :document "Manage your feature branches.")
+  (:documentation "Manage your feature branches."))
 
 (define-git-command ("flow" "feature" "checkout")
-  :document "Manage your feature branches.")
+  (:documentation "Manage your feature branches."))
 
 (define-git-command ("flow" "feature" "pull")
-  :document "Manage your feature branches."
-  :no-std-handles t)
+  (:documentation "Manage your feature branches.")
+  (:no-std-handles t))
 
 
 
 (define-git-command ("flow" "release" "list")
-  :document "Manage your release branches.")
+  (:documentation "Manage your release branches."))
 
 (define-git-command ("flow" "release" "start")
-  :document "Manage your release branches.")
+  (:documentation "Manage your release branches."))
 
 (define-git-command ("flow" "release" "finish")
-  :document "Manage your release branches.")
+  (:documentation "Manage your release branches."))
 
 (define-git-command ("flow" "release" "publish")
-  :document "Manage your release branches.")
+  (:documentation "Manage your release branches."))
 
 (define-git-command ("flow" "release" "track")
-  :document "Manage your release branches.")
+  (:documentation "Manage your release branches."))
 
 
 
 (define-git-command ("flow" "hotfix" "list")
-  :document "Manage your hotfix branches.")
+  (:documentation "Manage your hotfix branches."))
 
 (define-git-command ("flow" "hotfix" "start")
-  :document "Manage your hotfix branches.")
+  (:documentation "Manage your hotfix branches."))
 
 (define-git-command ("flow" "hotfix" "finish")
-  :document "Manage your hotfix branches.")
+  (:documentation "Manage your hotfix branches."))
 
 (define-git-command ("flow" "hotfix" "publish")
-  :document "Manage your hotfix branches.")
+  (:documentation "Manage your hotfix branches."))
 
 
 
 (define-git-command ("flow" "support" "list")
-  :document "Manage your support branches.")
+  (:documentation "Manage your support branches."))
 
 (define-git-command ("flow" "support" "start")
-  :document "Manage your support branches.")
+  (:documentation "Manage your support branches."))
 
 
 
 (define-git-command ("flow" "version")
-  :document "Shows version information.")
+  (:documentation "Shows version information."))
 
 
 
