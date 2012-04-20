@@ -21,7 +21,8 @@ A front end for git in [xyzzy].
 		```lisp
 		; $MSYSGIT_DIR を msysgit のインストールディレクトリに置換して下さい
 		(push (cons "PATH"
-		             (format nil "$MSYSGIT_DIR\\bin;$MSYSGIT_DIR\\mingw\\bin;$MSYSGIT_DIR\\cmd;~A;~A"
+		             (format nil 
+		                     "$MSYSGIT_DIR\\bin;$MSYSGIT_DIR\\mingw\\bin;$MSYSGIT_DIR\\cmd;~A;~A"
 		                     (map-slash-to-backslash (si:system-root)) (si:getenv "PATH")))
 		      *git-environ*)
 		(push '("GIT_EDITOR" . "xyzzycli.exe -wait") *git-environ*)
@@ -34,7 +35,8 @@ A front end for git in [xyzzy].
 		```lisp
 		; $CYGWIN_DIR を cygwin のインストールディレクトリに置換して下さい
 		(push (cons "PATH"
-		            (format nil "$CYGWIN_DIR\\usr\\local\\bin;$CYGWIN_DIR\\usr\\bin;$CYGWIN_DIR\\bin;~A;~A"
+		            (format nil 
+		                    "$CYGWIN_DIR\\usr\\local\\bin;$CYGWIN_DIR\\usr\\bin;$CYGWIN_DIR\\bin;~A;~A"
 		                    (map-slash-to-backslash (si:system-root)) (si:getenv "PATH")))
 		      *git-environ*)
 		(push '("GIT_EDITOR" . "xyzzycli.exe -wait") *git-environ*)
@@ -87,38 +89,26 @@ etc...
 -	他のコマンドを関数として追加したい
 	
 	```lisp
-	git::define-git-command command &key :document :symbol :prompt :dir-prompt
-	                                     :minor-mode :no-std-handles
+	git::define-git-command command &rest options
 	```
 	*	`command` -- gitコマンド
-	*	`:document` -- 関数のドキュメントコメント
-	*	`:symbol` -- 別の関数名を指定する
-	*	`:prompt` -- 強制的に引数入力を行わせる
+	*	`:name` -- 別の関数名を指定する
+	*	`:documentation` -- 関数のドキュメントコメント
+	*	`:completion` -- 補完候補
 	*	`:dir-prompt` -- ディレクトリ入力を行わせる
-	*	`:minor-mode` -- 指定のマイナーモードを使用する
+	*	`:no-prompt` -- 引数入力を行わない
+	*	`:mode` -- 指定のメジャーモードを使用する
 	*	`:no-std-handles` -- 全て外部コマンドプロンプト上で動作させる
 	*	例:
 		
 		```lisp
-		; (git-add)
-		(define-git-command ("add")
-		  :document "Add file contents to the index."
-		  :file-arg t)
-		
-		; (git-clone)
-		(define-git-command ("clone")
-		  :document "Clone a repository into a new directory."
-		  :prompt t
-		  :dir-prompt t
-		  :no-std-handles t)
-		
-		; (git-reset-head-file)
-		(define-git-command ("reset" "HEAD")
-		  :symbol #:git-reset-head-file
-		  :document "Reset current HEAD to the specified state.
-		This form resets the index entries for all <paths> to their state at <commit>.
-		(It does not affect the working tree, nor the current branch.)"
-		  :file-arg t)
+		; (git-add-file)
+		(git::define-git-command ("add")
+		  (:name :git-add-file)
+		  (:documentation "Add file contents to the index.")
+		  (:completion "--version" "--help" "-c" "--exec-path" "--html-path" "--man-path" "--info-path"
+		   "-p" "--paginate" "--no-pager" "--git-dir=" "--work-tree=" "--bare" "--no-replace-objects")
+		   (:file-arg t))
 		```
 
   [git-flow]: https://github.com/nvie/gitflow
