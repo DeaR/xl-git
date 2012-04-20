@@ -1,10 +1,10 @@
-;; -*- mode: lisp; package: user; encoding: shift_jis -*-
+;; -*- mode: lisp; package: git; encoding: shift_jis -*-
 
-;; @name        xl-git.l
+;; @name        xl-git/command/low-sync.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 16:30:17 DeaR>
+;; @timestamp   <2012-04-20 16:32:42 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -24,27 +24,12 @@
 ;; DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-(in-package :user)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (require "xl-git/package")
+  (require "xl-git/utils"))
 
-(require "xl-git/package")
-(require "xl-git/process")
-(require "xl-git/output")
-(require "xl-git/utils")
-(require "xl-git/branch")
-(require "xl-git/diff")
-(require "xl-git/log")
-(require "xl-git/status")
-(require "xl-git/editmsg")
+(in-package :git)
 
-(require "xl-git/command/high-main")
-(require "xl-git/command/high-anc")
-(require "xl-git/command/high-others")
-(require "xl-git/command/low-mnp")
-(require "xl-git/command/low-inter")
-(require "xl-git/command/low-sync")
-(require "xl-git/command/low-helper")
 
-(require "xl-git/uninstall")
-(require "xl-git/version")
 
-(provide "xl-git")
+(provide "xl-git/command/low-sync")

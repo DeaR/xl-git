@@ -1,10 +1,10 @@
 ;; -*- mode: lisp; package: git; encoding: shift_jis -*-
 
-;; @name        xl-git/command.l
+;; @name        xl-git/command/high-main.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 15:36:42 DeaR>
+;; @timestamp   <2012-04-20 17:16:41 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -37,63 +37,93 @@
 (export '(git
           git-add
           git-add-file
+          git-am
+          git-archive
+          git-bisect
           git-branch
+          git-bundle
           git-checkout
           git-checkout-file
+          git-cherry-pick
+          git-clean
           git-clone
           git-commit
+          git-describe
           git-diff
           git-diff-file
           git-fetch
+          git-format-patch
+          git-gc
+          git-glog
           git-grep
-          git-help
           git-init
           git-log
-          git-glog
           git-merge
           git-mv
           git-mv-file
+          git-notes
           git-pull
           git-push
+          git-push-current
           git-push-matching
           git-push-tracking
-          git-push-current
           git-rebase
           git-reset
           git-reset-file
+          git-revert
           git-rm
           git-rm-file
+          git-shortlog
           git-show
           git-stash
-          git-stash-save
-          git-stash-list
-          git-stash-show
-          git-stash-pop
           git-stash-apply
           git-stash-apply
           git-stash-branch
           git-stash-clear
-          git-stash-drop
           git-stash-create
+          git-stash-drop
+          git-stash-list
+          git-stash-pop
+          git-stash-save
+          git-stash-show
           ; git-status
+          git-submodule
           git-tag))
 
 
 
 (define-git-command nil
-  (:documentation "Git is a fast, scalable, distributed revision control system with an unusually rich command set that provides both high-level operations and full access to internals."))
+  (:documentation "Git is a fast, scalable, distributed revision control system with an unusually rich command set that provides both high-level operations and full access to internals.")
+  (:completion "--version" "--help" "-c" "--exec-path" "--html-path" "--man-path" "--info-path"
+   "-p" "--paginate" "--no-pager" "--git-dir=" "--work-tree=" "--bare" "--no-replace-objects"))
 
 (define-git-command ("add")
-  (:documentation "Add file contents to the index."))
+  (:documentation "Add file contents to the index.")
+  (:completion "-n" "--dry-run" "-v" "--verbose" "-f" "--force" "-i" "--interactive" "-p" "--patch"
+   "-e, --edit" "-u" "--update" "-A" "--all" "-N" "--intent-to-add" "--refresh" "--ignore-errors" "--ignore-missing" "--"))
 
 (define-git-command ("add")
   (:name :git-add-file)
   (:documentation "Add file contents to the index.")
+  (:completion "-n" "--dry-run" "-v" "--verbose" "-f" "--force" "-i" "--interactive" "-p" "--patch"
+   "-e, --edit" "-u" "--update" "-A" "--all" "-N" "--intent-to-add" "--refresh" "--ignore-errors" "--ignore-missing" "--")
   (:file-arg t))
+
+(define-git-command ("am")
+  (:documentation "Apply a series of patches from a mailbox."))
+
+(define-git-command ("archive")
+  (:documentation "Create an archive of files from a named tree."))
+
+(define-git-command ("bisect")
+  (:documentation "Find by binary search the change that introduced a bug."))
 
 (define-git-command ("branch")
   (:documentation "List, create, or delete branches.")
   (:mode git-branch-mode))
+
+(define-git-command ("bundle")
+  (:documentation "Move objects and refs by archive."))
 
 (define-git-command ("checkout")
   (:documentation "Checkout a branch or paths to the working tree."))
@@ -103,6 +133,12 @@
   (:documentation "Checkout a branch or paths to the working tree.")
   (:file-arg t))
 
+(define-git-command ("cherry-pick")
+  (:documentation "Apply the changes introduced by some existing commits."))
+
+(define-git-command ("clean")
+  (:documentation "Remove untracked files from the working tree."))
+
 (define-git-command ("clone")
   (:documentation "Clone a repository into a new directory.")
   (:dir-prompt t)
@@ -110,6 +146,9 @@
 
 (define-git-command ("commit")
   (:documentation "Record changes to the repository."))
+
+(define-git-command ("describe")
+  (:documentation "Show the most recent tag that is reachable from a commit."))
 
 (define-git-command ("diff")
   (:documentation "Show changes between commits, commit and working tree, etc.")
@@ -125,11 +164,14 @@
   (:documentation "Download objects and refs from another repository.")
   (:no-std-handles t))
 
+(define-git-command ("format-patch")
+  (:documentation "Prepare patches for e-mail submission."))
+
+(define-git-command ("gc")
+  (:documentation "Cleanup unnecessary files and optimize the local repository."))
+
 (define-git-command ("grep")
   (:documentation "Print lines matching a pattern."))
-
-(define-git-command ("help")
-  (:documentation "display help information about git."))
 
 (define-git-command ("init")
   (:documentation "Create an empty git repository or reinitialize an existing one.")
@@ -155,6 +197,9 @@
   (:name :git-mv-file)
   (:documentation "Move or rename a file, a directory, or a symlink.")
   (:file-arg 2))
+
+(define-git-command ("notes")
+  (:documentation "Add or inspect object notes."))
 
 (define-git-command ("pull")
   (:documentation "Fetch from and merge with another repository or a local branch.")
@@ -191,6 +236,9 @@ Push the current branch.")
 This form resets the index entries for all <paths> to their state at <commit>. (It does not affect the working tree, nor the current branch.)")
   (:file-arg t))
 
+(define-git-command ("revert")
+  (:documentation "Revert some existing commits."))
+
 (define-git-command ("rm")
   (:documentation "Remove files from the working tree and from the index."))
 
@@ -198,6 +246,9 @@ This form resets the index entries for all <paths> to their state at <commit>. (
   (:name :git-rm-file)
   (:documentation "Remove files from the working tree and from the index.")
   (:file-arg t))
+
+(define-git-command ("shortlog")
+  (:documentation "Summarize git log output."))
 
 (define-git-command ("show")
   (:documentation "Show various types of objects."))
@@ -251,14 +302,15 @@ i.e. stash@{0}"))
   (:documentation "Stash the changes in a dirty working directory away.
 Create a stash (which is a regular commit object) and return its object name, without storing it anywhere in the ref namespace."))
 
-; -> status.l
+; -> xl-git/status.l
 ; (define-git-command ("status")
 ;   (:documentation "Show the working tree status.")
 ;   (:mode git-status-mode))
 
+(define-git-command ("submodule")
+  (:documentation "Initialize, update or inspect submodules."))
+
 (define-git-command ("tag")
   (:documentation "Create, list, delete or verify a tag object signed with GPG."))
 
-
-
-(provide "xl-git/command")
+(provide "xl-git/command/high-main")

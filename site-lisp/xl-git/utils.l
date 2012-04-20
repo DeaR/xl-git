@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 16:17:19 DeaR>
+;; @timestamp   <2012-04-20 17:02:38 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -33,7 +33,8 @@
 
 (export '(*git-output-bufname*
           *git-output-split-vertical-p*
-          *git-temp-bufname*))
+          *git-temp-bufname*
+          *git-completing-prompt*))
 
 
 
@@ -45,6 +46,11 @@
 
 (defvar *git-temp-bufname* " *Git Temp*"
   "作業バッファ名")
+
+(defvar *git-completing-prompt* t
+  "引数入力を補完入力にする
+non-nil なら completing-read
+nil なら read-string")
 
 (define-history-variable *git-prompt-history* nil
   "プロンプトの履歴")
@@ -116,9 +122,11 @@
                    (string command)))
         (read) (args))
     (loop
-      (setf read (completing-read (format nil "git~[~:; ~]~A~{ ~A~}: " (length command) command (reverse args))
-                                  completion
-                                  :history 'git-prompt))
+      (if *git-completing-prompt*
+          (setf read (completing-read (format nil "git~[~:; ~]~A~{ ~A~}: " (length command) command (reverse args))
+                                      completion :history 'git-prompt))
+        (setf read (read-string (format nil "git~[~:; ~]~A~{ ~A~}: " (length command) command (reverse args))
+                                :history 'git-prompt)))
       (when (string-match "^[ \t\r\n]*$" read)
         (return (string-left-trim " " (format nil "~{ ~A~}" (nreverse args)))))
       (push read args))))
