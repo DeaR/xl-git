@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 17:16:41 DeaR>
+;; @timestamp   <2012-04-20 17:33:52 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -93,20 +93,23 @@
 
 
 (define-git-command nil
-  (:documentation "Git is a fast, scalable, distributed revision control system with an unusually rich command set that provides both high-level operations and full access to internals.")
+  (:documentation "Git is a fast, scalable, distributed revision control system with
+an unusually rich command set that provides both high-level operations and full access to internals.")
   (:completion "--version" "--help" "-c" "--exec-path" "--html-path" "--man-path" "--info-path"
    "-p" "--paginate" "--no-pager" "--git-dir=" "--work-tree=" "--bare" "--no-replace-objects"))
 
 (define-git-command ("add")
   (:documentation "Add file contents to the index.")
   (:completion "-n" "--dry-run" "-v" "--verbose" "-f" "--force" "-i" "--interactive" "-p" "--patch"
-   "-e, --edit" "-u" "--update" "-A" "--all" "-N" "--intent-to-add" "--refresh" "--ignore-errors" "--ignore-missing" "--"))
+   "-e, --edit" "-u" "--update" "-A" "--all" "-N" "--intent-to-add" "--refresh" "--ignore-errors"
+   "--ignore-missing" "--"))
 
 (define-git-command ("add")
   (:name :git-add-file)
   (:documentation "Add file contents to the index.")
   (:completion "-n" "--dry-run" "-v" "--verbose" "-f" "--force" "-i" "--interactive" "-p" "--patch"
-   "-e, --edit" "-u" "--update" "-A" "--all" "-N" "--intent-to-add" "--refresh" "--ignore-errors" "--ignore-missing" "--")
+   "-e, --edit" "-u" "--update" "-A" "--all" "-N" "--intent-to-add" "--refresh" "--ignore-errors"
+   "--ignore-missing" "--")
   (:file-arg t))
 
 (define-git-command ("am")
@@ -123,7 +126,7 @@
   (:mode git-branch-mode))
 
 (define-git-command ("bundle")
-  (:documentation "Move objects and refs by archive."))
+\  (:documentation "Move objects and refs by archive."))
 
 (define-git-command ("checkout")
   (:documentation "Checkout a branch or paths to the working tree."))
@@ -182,7 +185,8 @@
   (:documentation "Show commit logs.")
   (:mode git-log-mode))
 
-(define-git-command ("log" (format nil "-~D" *git-log-default-limit*) "--graph" "--oneline" "--decorate" "--branches")
+(define-git-command ("log" (format nil "-~D" *git-log-default-limit*)
+                     "--graph" "--oneline" "--decorate" "--branches")
   (:name :git-glog)
   (:documentation "Show commit logs.")
   (:mode git-log-mode))
@@ -211,16 +215,19 @@
 
 (define-git-command ("push " "matching")
   (:documentation "Update remote refs along with associated objects.
+
 Push all matching branches.")
   (:no-std-handles t))
 
 (define-git-command ("push" "tracking")
   (:documentation "Update remote refs along with associated objects.
+
 Push the current branch to whatever it is tracking.")
   (:no-std-handles t))
 
 (define-git-command ("push" "current")
   (:documentation "Update remote refs along with associated objects.
+
 Push the current branch.")
   (:no-std-handles t))
 
@@ -232,8 +239,7 @@ Push the current branch.")
 
 (define-git-command ("reset")
   (:name :git-reset-file)
-  (:documentation "Reset current HEAD to the specified state.
-This form resets the index entries for all <paths> to their state at <commit>. (It does not affect the working tree, nor the current branch.)")
+  (:documentation "Reset current HEAD to the specified state.")
   (:file-arg t))
 
 (define-git-command ("revert")
@@ -258,49 +264,70 @@ This form resets the index entries for all <paths> to their state at <commit>. (
 
 (define-git-command ("stash" "save")
   (:documentation "Stash the changes in a dirty working directory away.
+
 Save your local modifications to a new stash, and run git reset --hard to revert them.
 The <message> part is optional and gives the description along with the stashed state.
-For quickly making a snapshot, you can omit both \"save\" and <message>, but giving only <message> does not trigger this action to prevent a misspelled subcommand from making an unwanted stash."))
+For quickly making a snapshot, you can omit both \"save\" and <message>,
+but giving only <message> does not trigger this action to
+prevent a misspelled subcommand from making an unwanted stash."))
 
 (define-git-command ("stash" "list")
   (:documentation "Stash the changes in a dirty working directory away.
+
 List the stashes that you currently have.
-Each stash is listed with its name (e.g. stash@{0} is the latest stash, stash@{1} is the one before, etc.), the name of the branch that was current when the stash was made, and a short description of the commit the stash was based on."))
+Each stash is listed with its name
+(e.g. stash@{0} is the latest stash, stash@{1} is the one before, etc.),
+the name of the branch that was current when the stash was made,
+and a short description of the commit the stash was based on."))
 
 (define-git-command ("stash" "show")
   (:documentation "Stash the changes in a dirty working directory away.
+
 Show the changes recorded in the stash as a diff between the stashed state and its original parent.
 When no <stash> is given, shows the latest one.
-By default, the command shows the diffstat, but it will accept any format known to git diff (e.g., git stash show -p stash@{1} to view the second most recent stash in patch form)."))
+By default, the command shows the diffstat, but it will accept any format known to git diff
+(e.g., git stash show -p stash@{1} to view the second most recent stash in patch form)."))
 
 (define-git-command ("stash" "pop")
   (:documentation "Stash the changes in a dirty working directory away.
-Remove a single stashed state from the stash list and apply it on top of the current working tree state, i.e., do the inverse operation of git stash save.
+
+Remove a single stashed state from the stash list and apply it on top of the current working tree state,
+i.e., do the inverse operation of git stash save.
 The working directory must match the index."))
 
 (define-git-command ("stash" "apply")
   (:documentation "Stash the changes in a dirty working directory away.
+
 Like pop, but do not remove the state from the stash list."))
 
 (define-git-command ("stash" "branch")
   (:documentation "Stash the changes in a dirty working directory away.
-Creates and checks out a new branch named <branchname> starting from the commit at which the <stash> was originally created, applies the changes recorded in <stash> to the new working tree and index, then drops the <stash> if that completes successfully.
+
+Creates and checks out a new branch named <branchname> starting from
+the commit at which the <stash> was originally created,
+applies the changes recorded in <stash> to the new working tree and index,
+then drops the <stash> if that completes successfully.
 When no <stash> is given, applies the latest one."))
 
 (define-git-command ("stash" "clear")
   (:documentation "Stash the changes in a dirty working directory away.
+
 Remove all the stashed states.
-Note that those states will then be subject to pruning, and may be impossible to recover (see Examples below for a possible strategy)."))
+Note that those states will then be subject to pruning, and may be impossible to recover
+(see Examples below for a possible strategy)."))
 
 (define-git-command ("stash" "drop")
   (:documentation "Stash the changes in a dirty working directory away.
+
 Remove a single stashed state from the stash list.
 When no <stash> is given, it removes the latest one.
 i.e. stash@{0}"))
 
 (define-git-command ("stash" "create")
   (:documentation "Stash the changes in a dirty working directory away.
-Create a stash (which is a regular commit object) and return its object name, without storing it anywhere in the ref namespace."))
+
+Create a stash (which is a regular commit object) and return its object name,
+without storing it anywhere in the ref namespace."))
 
 ; -> xl-git/status.l
 ; (define-git-command ("status")
