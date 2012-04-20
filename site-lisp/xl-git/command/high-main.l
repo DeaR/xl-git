@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 17:33:52 DeaR>
+;; @timestamp   <2012-04-20 17:58:31 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -126,7 +126,7 @@ an unusually rich command set that provides both high-level operations and full 
   (:mode git-branch-mode))
 
 (define-git-command ("bundle")
-\  (:documentation "Move objects and refs by archive."))
+  (:documentation "Move objects and refs by archive."))
 
 (define-git-command ("checkout")
   (:documentation "Checkout a branch or paths to the working tree."))

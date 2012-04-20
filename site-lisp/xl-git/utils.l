@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 17:02:38 DeaR>
+;; @timestamp   <2012-04-20 18:01:44 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -121,15 +121,15 @@ nil ‚È‚ç read-string")
                      (string-left-trim " " (format nil "~{ ~A~}" command))
                    (string command)))
         (read) (args))
-    (loop
-      (if *git-completing-prompt*
+    (if *git-completing-prompt*
+        (loop
           (setf read (completing-read (format nil "git~[~:; ~]~A~{ ~A~}: " (length command) command (reverse args))
                                       completion :history 'git-prompt))
-        (setf read (read-string (format nil "git~[~:; ~]~A~{ ~A~}: " (length command) command (reverse args))
-                                :history 'git-prompt)))
-      (when (string-match "^[ \t\r\n]*$" read)
-        (return (string-left-trim " " (format nil "~{ ~A~}" (nreverse args)))))
-      (push read args))))
+          (when (string-match "^[ \t\r\n]*$" read)
+            (return (string-left-trim " " (format nil "~{ ~A~}" (nreverse args)))))
+          (push read args))
+      (read-string (format nil "git~[~:; ~]~A: " (length command) command)
+                   :history 'git-prompt))))
 
 
 
