@@ -19,8 +19,9 @@ A front end for git in [xyzzy].
 		
 		```lisp
 		; $MSYSGIT_DIR を msysgit のインストールディレクトリに置換して下さい
-		(push `("PATH" . ,(format nil "$MSYSGIT_DIR/bin;$MSYSGIT_DIR/mingw/bin;$MSYSGIT_DIR/cmd;~A;~A"
-		                          (si:system-root) (si:getenv "PATH")))
+		(push (cons "PATH"
+		             (format nil "$MSYSGIT_DIR\\bin;$MSYSGIT_DIR\\mingw\\bin;$MSYSGIT_DIR\\cmd;~A;~A"
+		                     (map-slash-to-backslash (si:system-root)) (si:getenv "PATH")))
 		      *git-environ*)
 		(push '("GIT_EDITOR" . "xyzzycli.exe -wait") *git-environ*)
 		
@@ -31,8 +32,9 @@ A front end for git in [xyzzy].
 		
 		```lisp
 		; $CYGWIN_DIR を cygwin のインストールディレクトリに置換して下さい
-		(push `("PATH" . ,(format nil "$CYGWIN_DIR/usr/local/bin;$CYGWIN_DIR/usr/bin;$CYGWIN_DIR/bin;~A;~A"
-		                          (si:system-root) (si:getenv "PATH")))
+		(push (cons "PATH"
+		            (format nil "$CYGWIN_DIR\\usr\\local\\bin;$CYGWIN_DIR\\usr\\bin;$CYGWIN_DIR\\bin;~A;~A"
+		                    (map-slash-to-backslash (si:system-root)) (si:getenv "PATH")))
 		      *git-environ*)
 		(push '("GIT_EDITOR" . "xyzzycli.exe -wait") *git-environ*)
 		

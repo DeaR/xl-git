@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 12:40:31 DeaR>
+;; @timestamp   <2012-04-20 15:36:42 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -154,7 +154,7 @@
 (define-git-command ("mv")
   (:name :git-mv-file)
   (:documentation "Move or rename a file, a directory, or a symlink.")
-  (:file-arg t))
+  (:file-arg 2))
 
 (define-git-command ("pull")
   (:documentation "Fetch from and merge with another repository or a local branch.")
