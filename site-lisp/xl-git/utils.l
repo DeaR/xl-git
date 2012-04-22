@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-22 18:10:24 DeaR>
+;; @timestamp   <2012-04-22 18:14:28 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -108,7 +108,7 @@ nil ‚È‚ç read-string")
                           command args file-arg)))
     (if no-std-handles
         (git-call-process cmdline :binary binary :exec-directory dir
-                          :no-std-handles (not no-std-handles)
+                          :no-std-handles no-std-handles
                           :show (or show :show))
       (let ((buffer (get-buffer-create *git-output-bufname*)))
         (when (= (count-windows) 1)
