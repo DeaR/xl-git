@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 12:48:16 DeaR>
+;; @timestamp   <2012-04-22 02:26:47 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -25,7 +25,8 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (require "xl-git/package"))
+  (require "xl-git/package")
+  (require "xl-git/diff"))
 
 (in-package :git)
 
@@ -74,17 +75,18 @@
 
 (defun git-log-regexp-keyword-list ()
   "git logモードのregexp-keyword-list"
-  (compile-regexp-keyword-list
-   `(("^[ */|\\]+ "
-      nil ,*git-log-color-line*)
-     ("\\(commit[: ]+\\)?[0-9a-f]\\{4,40\\}"
-      nil ,*git-log-color-sha*)
-     ("(\\(HEAD,? ?\\)?\\(\\(tag: [^, ():]+,? ?\\)*\\)\\(\\(origin/[^, ():]+,? ?\\)*\\)\\(\\([^():]+\\)*\\))"
-      nil ((0 . ,*git-log-color-brace*)
-           (1 . ,*git-log-color-head*)
-           (2 . ,*git-log-color-tag*)
-           (4 . ,*git-log-color-remote-branch*)
-           (6 . ,*git-log-color-branch*))))))
+  (append (compile-regexp-keyword-list
+           `(("^[ */|\\]+ "
+              nil ,*git-log-color-line*)
+             ("\\(commit[: ]+\\)?[0-9a-f]\\{4,40\\}"
+              nil ,*git-log-color-sha*)
+             ("(\\(HEAD,? ?\\)?\\(\\(tag: [^, ():]+,? ?\\)*\\)\\(\\(origin/[^, ():]+,? ?\\)*\\)\\(\\([^():]+\\)*\\))"
+              nil ((0 . ,*git-log-color-brace*)
+                   (1 . ,*git-log-color-head*)
+                   (2 . ,*git-log-color-tag*)
+                   (4 . ,*git-log-color-remote-branch*)
+                   (6 . ,*git-log-color-branch*)))))
+          (git-diff-regexp-keyword-list)))
 
 (defun git-log-mode (&optional (arg nil sv))
   "git logモード"

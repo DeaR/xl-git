@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 01:36:13 DeaR>
+;; @timestamp   <2012-04-22 02:45:14 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -63,8 +63,7 @@
   "出力バッファのプロセスが動作中なら送り、終了していたら関数を実行"
   (interactive)
   (let ((proc (buffer-process (selected-buffer))))
-    (when (and proc
-               (eq (process-status proc) :run))
+    (when (and proc (eq (process-status proc) :run))
       (process-send-string proc (string send))))
   (unless func
     (setf func (or (find-if #'(lambda (keymap)
@@ -85,8 +84,7 @@
   "出力バッファのプロセスが動作中なら送り、終了していたら閉じる"
   (interactive)
   (let ((proc (buffer-process (selected-buffer))))
-    (if (and proc
-             (eq (process-status proc) :run))
+    (if (and proc (eq (process-status proc) :run))
         (git-output-send-and-funcall)
       (git-output-quit))))
 

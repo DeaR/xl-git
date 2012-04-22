@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 18:01:44 DeaR>
+;; @timestamp   <2012-04-22 18:10:24 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -59,12 +59,16 @@ nil なら read-string")
 
 (defmacro define-git-command (command &rest options)
   "シンプルなgitコマンド生成"
-  (let ((name (or (second (assoc :name options))
-                  (substitute-string (if (listp command)
-                                         (format nil "git~{-~A~}" command)
-                                       (format nil "git-~A" command))
-                                     "[ -]+" "-")))
-        (documentation (second (assoc :documentation options))))
+  (let* ((command (if (listp command)
+                      command
+                    (list command)))
+         (binary (or (second (assoc :binary options))
+                     *git-binary*))
+         (name (or (second (assoc :name options))
+                   (substitute-string (format nil "~A~{-~A~}" (pathname-name binary) command) "[ -]+" "-")))
+         (package (or (second (assoc :package options))
+                      *package*))
+         (documentation (second (assoc :documentation options))))
     `(progn
        (defun ,(intern (string name)) (&optional args)
          ,documentation
@@ -74,12 +78,15 @@ nil なら read-string")
 
 (defun git-command-0 (command args &rest options)
   "シンプルなgitコマンド実体"
-  (let* ((completion (rest (assoc :completion options)))
+  (let* ((binary (or (second (assoc :binary options))
+                     *git-binary*))
+         (completion (rest (assoc :completion options)))
          (dir-prompt (second (assoc :dir-prompt options)))
          (no-prompt (second (assoc :no-prompt options)))
          (file-arg (second (assoc :file-arg options)))
          (mode (second (assoc :mode options)))
          (no-std-handles (second (assoc :no-std-handles options)))
+         (show (third (assoc :no-std-handles options)))
          (dir (if dir-prompt
                   (read-directory-name "Exec directory: ")
                 (default-directory)))
@@ -88,7 +95,7 @@ nil なら read-string")
                     (string command)))
          (args (or args
                    (unless no-prompt
-                     (git-read-args command completion))))
+                     (git-read-args command completion binary))))
          (file-arg (when file-arg
                      (let ((out (list (or (get-buffer-file-name)
                                           (read-file-name "File: ")))))
@@ -100,7 +107,9 @@ nil なら read-string")
          (cmdline (format nil "~A ~A~{ \"~A\"~}"
                           command args file-arg)))
     (if no-std-handles
-        (git-call-process cmdline :exec-directory dir :no-std-handles t :wait t)
+        (git-call-process cmdline :binary binary :exec-directory dir
+                          :no-std-handles (not no-std-handles)
+                          :show (or show :show))
       (let ((buffer (get-buffer-create *git-output-bufname*)))
         (when (= (count-windows) 1)
           (split-window nil *git-output-split-vertical-p*))
@@ -113,9 +122,10 @@ nil なら read-string")
         (set-default-directory dir buffer)
         (set-buffer-fileio-encoding *git-process-encoding* buffer)
         (set-buffer-eol-code *git-process-eol-code* buffer)
-        (git-make-process cmdline :exec-directory dir :output buffer :show :hide)))))
+        (git-make-process cmdline :binary binary :exec-directory dir
+                          :output buffer :show (or show :hide))))))
 
-(defun git-read-args (command &optional completion)
+(defun git-read-args (command &optional completion (binary *git-binary*))
   "argsをプロンプトで取得"
   (let ((command (if (listp command)
                      (string-left-trim " " (format nil "~{ ~A~}" command))
@@ -123,12 +133,13 @@ nil なら read-string")
         (read) (args))
     (if *git-completing-prompt*
         (loop
-          (setf read (completing-read (format nil "git~[~:; ~]~A~{ ~A~}: " (length command) command (reverse args))
+          (setf read (completing-read (format nil "~A~[~:; ~]~A~{ ~A~}: "
+                                              (pathname-name binary) (length command) command (reverse args))
                                       completion :history 'git-prompt))
           (when (string-match "^[ \t\r\n]*$" read)
             (return (string-left-trim " " (format nil "~{ ~A~}" (nreverse args)))))
           (push read args))
-      (read-string (format nil "git~[~:; ~]~A: " (length command) command)
+      (read-string (format nil "~A~[~:; ~]~A: " (pathname-name binary) (length command) command)
                    :history 'git-prompt))))
 
 

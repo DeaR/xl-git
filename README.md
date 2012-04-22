@@ -77,13 +77,11 @@ etc...
 	```lisp
 	git-install &rest options
 	```
-	*	`:bisect` -- 詳細な `git-bisect` のコマンドを利用する
-	*	`:stash` -- 詳細な `git-stash` のコマンドを利用する
 	*	`:flow` -- [git-flow] のコマンドを利用する
 	*	例:
 		
 		```lisp
-		(git-install :bisect :stash)
+		(git-install :flow)
 		```
 
 -	他のコマンドを関数として追加したい
@@ -93,6 +91,7 @@ etc...
 	```
 	*	`command` -- gitコマンド
 	*	`:name` -- 別の関数名を指定する
+	*	`:package` -- 別のパッケージを指定する(未実装)
 	*	`:documentation` -- 関数のドキュメントコメント
 	*	`:completion` -- 補完候補
 	*	`:dir-prompt` -- ディレクトリ入力を行わせる
@@ -102,13 +101,32 @@ etc...
 	*	例:
 		
 		```lisp
-		; (git-add-file)
-		(git::define-git-command ("add")
-		  (:name :git-add-file)
-		  (:documentation "Add file contents to the index.")
-		  (:completion "--version" "--help" "-c" "--exec-path" "--html-path" "--man-path" "--info-path"
-		   "-p" "--paginate" "--no-pager" "--git-dir=" "--work-tree=" "--bare" "--no-replace-objects")
-		   (:file-arg t))
+		; 自分仕様 git-log 改め git-glog
+		(git::define-git-command ("log" (format nil "-~D" *git-log-default-limit*)
+		                          "--graph" "--oneline" "--decorate" "--branches")
+		  (:name :git-glog)
+		  (:documentation "Show commit logs.")
+		  (:completion "--follow" "--no-decorate" "--decorate=" "--source" "--full-diff" "--log-size"
+		   "-n" "--max-count=" "--skip=" "--since=" "--after=" "--until=" "--before" "--author" "--committer="
+		   "--grep=" "--all-match" "-i" "--regexp-ignore-case" "-E" "--extended-regexp" "-F" "--fixed-strings"
+		   "--remove-empty" "--merges" "--no-merges" "--min-parents=" "--max-parents=" "--no-min-parents"
+		   "--no-max-parents" "--first-parent" "--not" "--all" "--branches" "--tags" "--remotes" "--glob="
+		   "--ignore-missing" "--bisect" "--stdin" "--cherry-mark" "--cherry-pick" "--left-only" "--right-only"
+		   "--cherry" "-g" "--walk-reflogs" "--merge" "--boundary" "--simplify-by-decoration" "--full-history"
+		   "--dense" "--sparse" "--simplify-merges" "--ancestry-path" "--topo-order" "--date-order" "--reverse"
+		   "--objects" "--objects-edge" "--unpacked" "--no-walk" "--do-walk" "--pretty" "--format=" "--abbrev-commit"
+		   "--no-abbrev-commit" "--oneline" "--encoding" "--notes" "--no-notes" "--show-notes" "--standard-notes"
+		   "--no-standard-notes" "--relative-date" "--date=" "--parents" "--children" "--left-right" "--graph"
+		   "-c" "--cc" "-m" "-r" "-t" "-s" "-p" "-u" "--patch" "-U" "--unified=" "--raw" "--patch-with-raw"
+		   "--patience" "--stat" "--numstat" "--shortstat" "--dirstat" "--summary" "--patch-with-stat" "-z"
+		   "--name-only" "--name-status" "--submodule" "--color" "--no-color" "--word-diff" "--word-diff-regex="
+		   "--color-words" "--no-renames" "--check" "--full-index" "--binary" "--abbrev" "-B" "-M" "--find-renames"
+		   "-C" "--find-copies" "--find-copies-harder" "-D" "--irreversible-delete" "-l" "--diff-dilter=" "-S" "-G"
+		   "--pickaxe-all" "--pickaxe-regex" "-O" "-R" "--relative" "-a" "--text" "--ignore-space-at-eol" "-b"
+		   "--ignore-space-change" "-w" "--ignore-all-space" "--inter-hunk-context=" "--exit-code" "--quiet"
+		   "--ext-diff" "--no-ext-diff" "--textconv" "--no-textconv" "--ignore-submodules" "--src-prefix="
+		   "--dst-prefix=" "--no-prefix")
+		  (:mode git::git-log-mode))
 		```
 
   [git-flow]: https://github.com/nvie/gitflow

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 19:39:43 DeaR>
+;; @timestamp   <2012-04-20 22:03:56 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -37,13 +37,7 @@
 
 (defun git-install (&rest options)
   "インストールする
-:bisect	: 詳細な git-bisect のコマンドを利用する
-:stash	: 詳細な git-stash のコマンドを利用する
 :flow	: git-flow のコマンドを利用する"
-  (when (find :bisect options)
-    (require "xl-git/command/bisect"))
-  (when (find :stash options)
-    (require "xl-git/command/stash"))
   (when (find :flow options)
     (require "xl-git/command/flow")))
 

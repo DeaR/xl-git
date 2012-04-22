@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 14:59:21 DeaR>
+;; @timestamp   <2012-04-22 17:27:20 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -49,27 +49,28 @@
           git-flow-hotfix-list
           git-flow-hotfix-start
           git-flow-hotfix-finish
-          git-flow-hotfix-publish
-          git-flow-support-list
-          git-flow-support-start
-          git-flow-version))
+          git-flow-hotfix-publish))
 
 
 
 (define-git-command ("flow" "init")
   (:documentation "Initialize a new git repo with support for the branching model.")
+  (:completion "-f" "-d")
   (:dir-prompt t))
 
 
 
 (define-git-command ("flow" "feature" "list")
-  (:documentation "Manage your feature branches."))
+  (:documentation "Manage your feature branches.")
+  (:completion "-v"))
 
 (define-git-command ("flow" "feature" "start")
-  (:documentation "Manage your feature branches."))
+  (:documentation "Manage your feature branches.")
+  (:completion "-F"))
 
 (define-git-command ("flow" "feature" "finish")
-  (:documentation "Manage your feature branches."))
+  (:documentation "Manage your feature branches.")
+  (:completion "-r" "-F" "-k" "-D"))
 
 (define-git-command ("flow" "feature" "publish")
   (:documentation "Manage your feature branches."))
@@ -82,25 +83,30 @@
   (:mode git-diff-mode))
 
 (define-git-command ("flow" "feature" "rebase")
-  (:documentation "Manage your feature branches."))
+  (:documentation "Manage your feature branches.")
+  (:completion "-i"))
 
 (define-git-command ("flow" "feature" "checkout")
   (:documentation "Manage your feature branches."))
 
 (define-git-command ("flow" "feature" "pull")
   (:documentation "Manage your feature branches.")
+  (:completion "-r")
   (:no-std-handles t))
 
 
 
 (define-git-command ("flow" "release" "list")
-  (:documentation "Manage your release branches."))
+  (:documentation "Manage your release branches.")
+  (:completion "-v"))
 
 (define-git-command ("flow" "release" "start")
-  (:documentation "Manage your release branches."))
+  (:documentation "Manage your release branches.")
+  (:completion "-F"))
 
 (define-git-command ("flow" "release" "finish")
-  (:documentation "Manage your release branches."))
+  (:documentation "Manage your release branches.")
+  (:completion "-F" "-s" "-u" "-m" "-p" "-k"))
 
 (define-git-command ("flow" "release" "publish")
   (:documentation "Manage your release branches."))
@@ -111,24 +117,19 @@
 
 
 (define-git-command ("flow" "hotfix" "list")
-  (:documentation "Manage your hotfix branches."))
+  (:documentation "Manage your hotfix branches.")
+  (:completion "-v"))
 
 (define-git-command ("flow" "hotfix" "start")
-  (:documentation "Manage your hotfix branches."))
+  (:documentation "Manage your hotfix branches.")
+  (:completion "-F"))
 
 (define-git-command ("flow" "hotfix" "finish")
-  (:documentation "Manage your hotfix branches."))
+  (:documentation "Manage your hotfix branches.")
+  (:completion "-F" "-s" "-u" "-m" "-p" "-k"))
 
 (define-git-command ("flow" "hotfix" "publish")
   (:documentation "Manage your hotfix branches."))
-
-
-
-(define-git-command ("flow" "support" "list")
-  (:documentation "Manage your support branches."))
-
-(define-git-command ("flow" "support" "start")
-  (:documentation "Manage your support branches."))
 
 
 

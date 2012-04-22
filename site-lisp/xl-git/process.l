@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 15:14:39 DeaR>
+;; @timestamp   <2012-04-22 02:45:14 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -91,8 +91,7 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
                           :show show
                           :wait wait
                           :no-std-handles no-std-handles)
-            (when (and wait
-                       (not no-std-handles))
+            (when (and wait (not no-std-handles))
               (save-excursion
                 (set-buffer output)
                 (let ((point (point-max)))
@@ -132,8 +131,7 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
 (defun git-kill-process (buffer)
   "gitのプロセスを強制終了"
   (let ((proc (buffer-process buffer)))
-    (when (and proc
-               (eq (process-status proc) :run))
+    (when (and proc (eq (process-status proc) :run))
       (kill-process proc)
       (while (eq (process-status proc) :run)
         (sleep-for 0.1))))
