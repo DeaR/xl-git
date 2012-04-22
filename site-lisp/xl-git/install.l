@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 22:03:56 DeaR>
+;; @timestamp   <2012-04-22 21:51:19 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -38,8 +38,36 @@
 (defun git-install (&rest options)
   "インストールする
 :flow	: git-flow のコマンドを利用する"
-  (when (find :flow options)
-    (require "xl-git/command/flow")))
+  (let* ((msysgit (member :msysgit options))
+         (msysgit-dir (second msysgit))
+         (cygwin (member :cygwin options))
+         (cygwin-dir (second cygwin))
+         (cygwin-env (third cygwin))
+         (flow (find :flow options)))
+    (cond (msysgit
+           (when (stringp (second msysgit))
+             (push (cons "PATH"
+                         (format nil "~A/bin;~A/mingw/bin;~A/cmd;~A;~A"
+                                 msysgit-dir msysgit-dir msysgit-dir
+                                 (si:system-root)
+                                 (si:getenv "PATH")))
+                   *git-environ*)
+             (push '("GIT_EDITOR" . "xyzzycli.exe -wait") *git-environ*))
+           (push '("CYGWIN" . "") *git-environ*))
+          (cygwin
+           (when (stringp (second cygwin))
+             (push (cons "PATH"
+                         (format nil "~A/usr/local/bin;~A/usr/bin;~A/bin;~A;~A"
+                                 cygwin-dir cygwin-dir cygwin-dir
+                                 (si:system-root)
+                                 (si:getenv "PATH")))
+                   *git-environ*)
+             (push '("GIT_EDITOR" . "xyzzycli.exe -wait") *git-environ*))
+           (if (stringp cygwin-env)
+               (push '("CYGWIN" . cygwin-env) *git-environ*)
+             (push '("CYGWIN" . "ntsec") *git-environ*))))
+    (when flow
+      (require "xl-git/command/flow"))))
 
 (defun git-uninstall ()
   "アンインストールする"

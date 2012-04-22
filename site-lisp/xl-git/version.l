@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 15:02:08 DeaR>
+;; @timestamp   <2012-04-22 18:24:27 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -44,17 +44,19 @@
 値1: xl-gitのバージョン
 値2: git や git-flow のバージョン"
   (let ((ext))
-    (multiple-value-bind (exit-code out)
-        (git-call-process '("version")
-                          :output (get-buffer-create *git-temp-bufname*)
-                          :show :hide :wait t)
-      (push `(:git ,(string-right-trim "\n" out)) ext))
     (when (modulep "xl-git/flow")
       (multiple-value-bind (exit-code out)
           (git-call-process '("flow" "version")
                             :output (get-buffer-create *git-temp-bufname*)
                             :show :hide :wait t)
-        (push `(:git-flow ,(string-right-trim "\n" out)) (rest ext))))
+        (when (= exit-code 0)
+          (push `(:git-flow ,(string-right-trim "\n" out)) ext))))
+    (multiple-value-bind (exit-code out)
+        (git-call-process '("version")
+                          :output (get-buffer-create *git-temp-bufname*)
+                          :show :hide :wait t)
+      (when (= exit-code 0)
+        (push `(:git ,(string-right-trim "\n" out)) ext)))
     (values +git-version+ ext)))
 
 (provide "xl-git/version")
