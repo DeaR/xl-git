@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-22 02:45:14 DeaR>
+;; @timestamp   <2012-04-23 18:28:41 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -29,13 +29,17 @@
 
 (in-package :git)
 
-(export '(*git-binary*
+(export '(*msysgit-directory*
+          *git-binary*
           *git-environ*
           *git-wrapper-bat*
           *git-process-encoding*
           *git-process-eol-code*))
 
 
+
+(defvar *msysgit-directory* nil
+  "msysgit のインストールディレクトリ")
 
 (defvar *git-binary* "git.exe"
   "git.exe のパス")
@@ -68,6 +72,19 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
         (ed::shell-command-line cmdline dir)
       (values cmdline dir))))
 
+(defun git-get-environ (&optional environ)
+  "環境変数を取得"
+  (append '(("GIT_EDITOR" . "xyzzycli.exe -wait"))
+          *git-environ*
+          `(("PATH" .
+             ,(concat (when *msysgit-directory*
+                        (let ((dir (map-slash-to-backslash (remove-trail-slash *msysgit-directory*))))
+                          (format nil "~A\\bin;~A\\mingw\\bin;~A\\cmd;" dir dir dir)))
+                      (map-slash-to-backslash (si:system-root)) ";"
+                      (or (rest (assoc "PATH" *git-environ* :test #'string-equal))
+                          (si:getenv "PATH")))))
+          environ))
+
 (defun git-call-process (args &key environ
                               (binary *git-binary*)
                               (output (selected-buffer))
@@ -84,8 +101,7 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
                                    no-std-handles)
                               (format nil "\"~A\" ~A" (merge-pathnames *git-wrapper-bat*) cmdline)
                             cmdline)
-                          :environ (append environ
-                                           *git-environ*)
+                          :environ (git-get-environ)
                           :output outfile
                           :exec-directory dir
                           :show show
@@ -112,8 +128,7 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
       (git-command-line binary args exec-directory)
     (prog1
         (make-process cmdline
-                      :environ (append environ
-                                       *git-environ*)
+                      :environ (git-get-environ)
                       :output output
                       :exec-directory dir
                       :incode encoding

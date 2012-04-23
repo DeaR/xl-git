@@ -15,24 +15,11 @@ A front end for git in [xyzzy].
 	```
 
 3.	更に環境固有の設定も追加します
-	*	[msysgit] を使用する場合
-		
-		```lisp
-		; 自分の環境での msysgit のインストールディレクトリに変更して下さい
-		(git-install :msysgit "C:/Program Files/Git")
-		```
-	*	[cygwin] を使用する場合
-		
-		```lisp
-		; 自分の環境での cygwin のインストールディレクトリに変更して下さい
-		(git-install :cygwin "C:/cygwin")
-		```
-	*	[git-flow] のコマンドも追加する場合
-		
-		```lisp
-		; :flow を追加してください
-		(git-install :msysgit "C:/Program Files/Git" :flow)
-		```
+	
+	```lisp
+	; 自分の環境での msysgit のインストールディレクトリに変更して下さい
+	(setf *msysgit-directory* "C:/msysgit")
+	```
 
 4.	(必要ならば) バイトコンパイルします
 
@@ -41,7 +28,6 @@ A front end for git in [xyzzy].
 
   [xyzzy]: http://www.jsdlab.co.jp/~kamei/
   [msysgit]: http://msysgit.github.com/
-  [cygwin]: http://www.cygwin.com/
   [git-flow]: https://github.com/nvie/gitflow
 
 
@@ -59,6 +45,30 @@ etc...
 -	`git-commit` では `*Git*` バッファにコミットメッセージを入力し、
 	`C-c C-c` もしくは `C-x C-s` でコミットを実行、
 	`C-c C-g` でキャンセルします
+
+
+## Setting
+-	[git-flow] のコマンドを追加する
+	
+	```lisp
+	(require "xl-git-flow")
+	```
+
+-	[msysgit] ではなく [cygwin] を利用する
+	
+	```lisp
+	(setf *msysgit-directory* nil)
+	```
+	システムの環境変数にPATHやCYGWIN等の環境変数を設定していない場合は `*git-environ*` に以下を参考に設定を行う
+	```lisp
+	(push `(("PATH" . ,(concat "C:/cygwin/usr/local/bin;C:/cygwin/bin;" (si:getenv "PATH")))
+	        ("CYGWIN" . "ntsec"))
+	      *git-environ*)
+	```
+
+  [git-flow]: https://github.com/nvie/gitflow
+  [msysgit]: http://msysgit.github.com/
+  [cygwin]: http://www.cygwin.com/
 
 
 ## Issue

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-22 18:14:28 DeaR>
+;; @timestamp   <2012-04-23 18:04:36 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -47,7 +47,7 @@
 (defvar *git-temp-bufname* " *Git Temp*"
   "作業バッファ名")
 
-(defvar *git-completing-prompt* t
+(defvar *git-completing-prompt* nil
   "引数入力を補完入力にする
 non-nil なら completing-read
 nil なら read-string")
@@ -56,6 +56,17 @@ nil なら read-string")
   "プロンプトの履歴")
 
 
+
+(defun git-uninstall ()
+  "アンインストールする"
+  (unregister-history-variable '*git-prompt-history*)
+
+  (setf #0=lisp::*modules*
+        (delete "xl-git" #0# :test #'string-equal))
+  (setf #0#
+        (delete "xl-git-flow" #0# :test #'string-equal))
+  (setf #0#
+        (delete "xl-git/.+" #0# :test #'string-match)))
 
 (defmacro define-git-command (command &rest options)
   "シンプルなgitコマンド生成"
