@@ -7,9 +7,9 @@ A front end for [git] in [xyzzy].
 
 
 ## Install
-1. 解凍して [xyzzy] のインストールディレクトリにコピーして下さい
+1. 解凍して [xyzzy] のインストールディレクトリにコピーします
 
-2. .xyzzy または siteinit.l に以下のコードを追加します
+2. `.xyzzy` または `siteinit.l` に以下のコードを追加します
    
    ```lisp
    (require "xl-git")
@@ -25,7 +25,7 @@ A front end for [git] in [xyzzy].
 4. (必要ならば) バイトコンパイルします
 
 5. 上記の設定を反映させる為に再起動をします
-   siteinit.l に設定した場合は再ダンプを行って下さい
+   `siteinit.l` に設定した場合は再ダンプも行います
 
   [xyzzy]: http://www.jsdlab.co.jp/~kamei/
 
@@ -34,47 +34,43 @@ A front end for [git] in [xyzzy].
 - `M-x git-init`
 - `M-x git-add`
 - `M-x git-commit`
+- `M-x git-push`
+- etc...
 
-etc...
+### `*Git*` バッファ
+- モードラインに `:Run` (プロセス実行中)の場合は `C-c C-g` で終了
+- モードラインに `:Exit` (プロセス終了)の場合は `C-c C-g` もしくは `q` で終了
 
-- 実行すると `*Git*` バッファが開かれます
-  終了(モードラインに:Exit)の場合は `C-c C-g` もしくは `q` で、
-  実行中(モードラインに:Run)の場合は `C-c C-g` で、終了します
-
-- `git-commit` では `COMMIT_EDITMSG` バッファにコミットメッセージを入力し、
-  `C-c C-c` もしくは `C-x C-s` でコミットを実行、
-  `C-c C-g` でキャンセルします
+### `COMMIT_EDITMSG` や `TAG_EDITMSG` バッファ等
+- `C-c C-c` もしくは `C-x C-s` で実行
+- `C-c C-g` でキャンセル
 
 
 ## Setting
-- [git-flow] のコマンドを追加したい
-  
-  ```lisp
-  (require "xl-git-flow")
-  ```
+### [git-flow] のコマンドを追加したい
+```lisp
+(require "xl-git-flow")
+```
 
-- [msysgit] ではなく [cygwin] の [git] を使用したい
-  
-  ```lisp
-  (setf *msysgit-directory* nil)
-  ```
-  環境変数にPATH等を設定していない場合は以下を参考に設定して下さい
-  ```lisp
-  (push `(("PATH" . ,(concat "C:/cygwin/usr/local/bin;C:/cygwin/bin;" (si:getenv "PATH")))
-          ("CYGWIN" . "ntsec"))
-        *git-environ*)
-  ```
+### [msysgit] ではなく [cygwin] を使用したい
+```lisp
+(setf *msysgit-directory* nil)
+```
+環境変数にPATH等を設定していない場合は以下を参考に設定して下さい
+```lisp
+(push `(("PATH" . ,(concat "C:/cygwin/usr/local/bin;C:/cygwin/bin;" (si:getenv "PATH")))
+        ("CYGWIN" . "ntsec"))
+      *git-environ*)
+```
 
-- 引数の入力時に補完入力を使用する(実験機能)
-  
-  ```lisp
-  (setf *git-completing-prompt* t)
-  ```
+### 引数の入力時に補完入力を使用する (実験機能)
+```lisp
+(setf *git-completing-prompt* t)
+```
 
   [git-flow]: https://github.com/nvie/gitflow
   [msysgit]: http://msysgit.github.com/
   [cygwin]: http://www.cygwin.com/
-  [git]: http://git-scm.com/
 
 
 ## Issue
