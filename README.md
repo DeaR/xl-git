@@ -1,7 +1,8 @@
 # xl-git
 
-A front end for git in [xyzzy].
+A front end for [git] in [xyzzy].
 
+  [git]: http://git-scm.com/
   [xyzzy]: http://www.jsdlab.co.jp/~kamei/
 
 
@@ -27,8 +28,6 @@ A front end for git in [xyzzy].
 	siteinit.l に設定した場合は再ダンプを行って下さい
 
   [xyzzy]: http://www.jsdlab.co.jp/~kamei/
-  [msysgit]: http://msysgit.github.com/
-  [git-flow]: https://github.com/nvie/gitflow
 
 
 ## Usage
@@ -42,37 +41,44 @@ etc...
 	終了(モードラインに:Exit)の場合は `C-c C-g` もしくは `q` で、
 	実行中(モードラインに:Run)の場合は `C-c C-g` で、終了します
 
--	`git-commit` では `*Git*` バッファにコミットメッセージを入力し、
+-	`git-commit` では `COMMIT_EDITMSG` バッファにコミットメッセージを入力し、
 	`C-c C-c` もしくは `C-x C-s` でコミットを実行、
 	`C-c C-g` でキャンセルします
 
 
 ## Setting
--	[git-flow] のコマンドを追加する
+-	[git-flow] のコマンドを追加したい
 	
 	```lisp
 	(require "xl-git-flow")
 	```
 
--	[msysgit] ではなく [cygwin] を利用する
+-	[msysgit] ではなく [cygwin] の [git] を使用したい
 	
 	```lisp
 	(setf *msysgit-directory* nil)
 	```
-	システムの環境変数にPATH等を設定していない場合は `*git-environ*` に以下を参考に設定を行う
+	環境変数にPATH等を設定していない場合は以下を参考に設定して下さい
 	```lisp
 	(push `(("PATH" . ,(concat "C:/cygwin/usr/local/bin;C:/cygwin/bin;" (si:getenv "PATH")))
 	        ("CYGWIN" . "ntsec"))
 	      *git-environ*)
 	```
 
+-	引数の入力時に補完入力を使用する(実験機能)
+	
+	```lisp
+	(setf *git-completing-prompt* t)
+	```
+
   [git-flow]: https://github.com/nvie/gitflow
   [msysgit]: http://msysgit.github.com/
   [cygwin]: http://www.cygwin.com/
+  [git]: http://git-scm.com/
 
 
 ## Issue
-下記のどちらかにでもご連絡下さい
+下記のどちらかにご連絡下さい
 
 -	[Issues - DeaR/xl-git](https://github.com/DeaR/xl-git/issues)
 -	[@nayuri_aohime](http://twitter.com/nayuri_aohime/)
