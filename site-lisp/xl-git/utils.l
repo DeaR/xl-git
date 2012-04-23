@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-23 18:04:36 DeaR>
+;; @timestamp   <2012-04-23 20:14:05 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -67,6 +67,14 @@ nil なら read-string")
         (delete "xl-git-flow" #0# :test #'string-equal))
   (setf #0#
         (delete "xl-git/.+" #0# :test #'string-match)))
+
+(defmacro with-selected-buffer (&body body)
+  "BODYの前後でカレントバッファを保存します"
+  `(let ((selected-buffer (selected-buffer)))
+     (unwind-protect
+         (progn
+           ,@body)
+       (set-buffer selected-buffer))))
 
 (defmacro define-git-command (command &rest options)
   "シンプルなgitコマンド生成"

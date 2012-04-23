@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-23 18:28:41 DeaR>
+;; @timestamp   <2012-04-23 20:23:20 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -155,25 +155,25 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
 (defun git-process-filter (proc str)
   "gitのプロセスのフィルター
 エスケープコードの置換の為"
-  (with-selected-window
-    (let ((buffer (switch-to-buffer (process-buffer proc)))
-          (p (point-max)))
-      (goto-char p)
-      (insert (substitute-string str *escape-code* ""))
-      (refresh-screen))))
+  (with-selected-buffer
+    (set-buffer (process-buffer proc))
+    (goto-char (point-max))
+    (insert str)
+    (save-excursion
+      (goto-char (point-min))
+      (replace-buffer *escape-code* "" :regexp t))
+    (refresh-screen)))
 
 (defun git-process-sentinel (proc)
   "gitのプロセスのセンチネル
-出力が一切無い場合、正常終了なのかエラーなのか代わりの出力を行う"
-  (with-selected-window
-    (let ((buffer (process-buffer proc)))
-      (when (and (eq (process-status proc) :exit)
-                 (set-buffer buffer)
-                 (goto-char (point-min))
-                 (= (point-min) (point-max)))
-        (let ((exit-code (process-exit-code proc)))
-          (if (= exit-code 0)
-              (insert "Success no output.")
-            (insert (format nil "Error! (~A)" exit-code))))))))
+出力が一切無い場合、正常終了なのかエラーなのかの出力を行う"
+  (with-selected-buffer
+    (and (eq (process-status proc) :exit)
+         (set-buffer (process-buffer proc))
+         (goto-char (point-min))
+         (= (point-min) (point-max))
+         (if (/= (process-exit-code proc) 0)
+             (insert (format nil "Error! (~D)" (process-exit-code proc)))
+           (insert "Success no output.")))))
 
 (provide "xl-git/process")
