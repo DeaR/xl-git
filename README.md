@@ -59,7 +59,7 @@ etc...
 	```lisp
 	(setf *msysgit-directory* nil)
 	```
-	システムの環境変数にPATHやCYGWIN等の環境変数を設定していない場合は `*git-environ*` に以下を参考に設定を行う
+	システムの環境変数にPATH等を設定していない場合は `*git-environ*` に以下を参考に設定を行う
 	```lisp
 	(push `(("PATH" . ,(concat "C:/cygwin/usr/local/bin;C:/cygwin/bin;" (si:getenv "PATH")))
 	        ("CYGWIN" . "ntsec"))
