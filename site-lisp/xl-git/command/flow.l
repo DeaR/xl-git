@@ -1,10 +1,10 @@
 ;; -*- mode: lisp; package: git; encoding: shift_jis -*-
 
-;; @name        xl-git/flow.l
+;; @name        xl-git/command/flow.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-22 17:27:20 DeaR>
+;; @timestamp   <2012-04-23 19:45:13 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -133,4 +133,4 @@
 
 
 
-(provide "xl-git/flow")
+(provide "xl-git/command/flow")

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-23 17:30:14 DeaR>
+;; @timestamp   <2012-04-23 19:47:38 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -24,9 +24,9 @@
 ;; DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (require "xl-git"))
+(in-package :user)
 
+(require "xl-git")
 (require "xl-git/command/flow")
 
 (provide "xl-git-flow")
