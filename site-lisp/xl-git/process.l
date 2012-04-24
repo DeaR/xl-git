@@ -1,10 +1,10 @@
-;; -*- mode: lisp; package: git; encoding: shift_jis -*-
+;; -*- mode: lisp; package: xl-git; encoding: shift_jis -*-
 
 ;; @name        xl-git/process.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-24 11:07:16 DeaR>
+;; @timestamp   <2012-04-24 12:53:46 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -27,7 +27,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (require "xl-git/package"))
 
-(in-package :git)
+(in-package :xl-git)
 
 (export '(*msysgit-directory*
           *git-binary*

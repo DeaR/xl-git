@@ -1,10 +1,10 @@
-;; -*- mode: lisp; package: git; encoding: shift_jis -*-
+;; -*- mode: lisp; package: xl-git; encoding: shift_jis -*-
 
 ;; @name        xl-git/diff.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-18 19:08:27 DeaR>
+;; @timestamp   <2012-04-24 12:53:46 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -27,7 +27,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (require "xl-git/package"))
 
-(in-package :git)
+(in-package :xl-git)
 
 (export '(*git-diff-color-header*
           *git-diff-color-add*

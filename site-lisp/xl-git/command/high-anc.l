@@ -1,10 +1,10 @@
-;; -*- mode: lisp; package: git; encoding: shift_jis -*-
+;; -*- mode: lisp; package: xl-git; encoding: shift_jis -*-
 
 ;; @name        xl-git/command/high-anc.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-20 16:39:46 DeaR>
+;; @timestamp   <2012-04-24 12:53:46 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -28,7 +28,7 @@
   (require "xl-git/package")
   (require "xl-git/utils"))
 
-(in-package :git)
+(in-package :xl-git)
 
 (export '(git-config
           git-help))

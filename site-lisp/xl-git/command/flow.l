@@ -1,10 +1,10 @@
-;; -*- mode: lisp; package: git; encoding: shift_jis -*-
+;; -*- mode: lisp; package: xl-git; encoding: shift_jis -*-
 
 ;; @name        xl-git/command/flow.l
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-23 19:45:13 DeaR>
+;; @timestamp   <2012-04-24 12:53:46 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -29,7 +29,7 @@
   (require "xl-git/utils")
   (require "xl-git/diff"))
 
-(in-package :git)
+(in-package :xl-git)
 
 (export '(git-flow-init
           git-flow-feature-list
