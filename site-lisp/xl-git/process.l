@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-23 20:23:20 DeaR>
+;; @timestamp   <2012-04-24 11:07:16 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -58,7 +58,7 @@ no-std-handles ‚ª t ‚ÌÛ‚É git-wrapper.bat ‚ğg—p‚·‚é")
 (defvar *git-process-eol-code* *eol-lf*
   "git.exe ‚Ì‰üsƒR[ƒh")
 
-(defconstant *escape-code* (compile-regexp "\\[[0-9;]*[a-z]" t)
+(defconstant +escape-code+ (compile-regexp "\\[[0-9;]*[a-z]" t)
   "íœ‚·‚éƒGƒXƒP[ƒvƒR[ƒh")
 
 
@@ -113,7 +113,7 @@ no-std-handles ‚ª t ‚ÌÛ‚É git-wrapper.bat ‚ğg—p‚·‚é")
                 (let ((point (point-max)))
                   (goto-char point)
                   (insert-file outfile encoding)
-                  (replace-buffer *escape-code* "" :regexp t)
+                  (replace-buffer +escape-code+ "" :regexp t)
                   (buffer-substring point (point-max))))))))
 
 (defun git-make-process (args &key environ
@@ -161,7 +161,7 @@ no-std-handles ‚ª t ‚ÌÛ‚É git-wrapper.bat ‚ğg—p‚·‚é")
     (insert str)
     (save-excursion
       (goto-char (point-min))
-      (replace-buffer *escape-code* "" :regexp t))
+      (replace-buffer +escape-code+ "" :regexp t))
     (refresh-screen)))
 
 (defun git-process-sentinel (proc)
