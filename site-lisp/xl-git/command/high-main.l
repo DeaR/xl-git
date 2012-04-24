@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-24 12:53:46 DeaR>
+;; @timestamp   <2012-04-24 20:35:27 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -368,8 +368,8 @@ slightly reducing the applicationÅfs startup time and simplifying the menubar.")
 (define-git-command ("log" (format nil "-~D" *git-log-default-limit*))
   (:name :git-log)
   (:documentation "Show commit logs.")
-  (:completion "--follow" "--no-decorate" "--decorate=" "--source" "--full-diff" "--log-size"
-   "-n" "--max-count=" "--skip=" "--since=" "--after=" "--until=" "--before" "--author" "--committer="
+  (:completion "--follow" "--no-decorate" "--decorate" "--source" "--full-diff" "--log-size" "-n"
+   "--max-count=" "--skip=" "--since=" "--after=" "--until=" "--before" "--author" "--committer="
    "--grep=" "--all-match" "-i" "--regexp-ignore-case" "-E" "--extended-regexp" "-F" "--fixed-strings"
    "--remove-empty" "--merges" "--no-merges" "--min-parents=" "--max-parents=" "--no-min-parents"
    "--no-max-parents" "--first-parent" "--not" "--all" "--branches" "--tags" "--remotes" "--glob="
