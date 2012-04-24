@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-24 12:53:46 DeaR>
+;; @timestamp   <2012-04-24 18:50:59 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -78,7 +78,9 @@
   (append (compile-regexp-keyword-list
            `(("^[ */|\\]+ "
               nil ,*git-log-color-line*)
-             ("\\(commit[: ]+\\)?[0-9a-f]\\{4,40\\}"
+             ("\\(commit \\)?[0-9a-f]\\{40\\}"
+              nil ,*git-log-color-sha*)
+             ("\\(commit \\)?[0-9a-f]\\{7\\}"
               nil ,*git-log-color-sha*)
              ("(\\(HEAD,? ?\\)?\\(\\(tag: [^, ():]+,? ?\\)*\\)\\(\\(origin/[^, ():]+,? ?\\)*\\)\\(\\([^():]+\\)*\\))"
               nil ((0 . ,*git-log-color-brace*)
