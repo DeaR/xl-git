@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-24 12:53:46 DeaR>
+;; @timestamp   <2012-04-24 20:17:19 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -25,7 +25,8 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (require "xl-git/package"))
+  (require "xl-git/package")
+  (require "xl-git/utils"))
 
 (in-package :xl-git)
 
@@ -48,11 +49,14 @@
 
 (defun git-branch-regexp-keyword-list ()
   "git branchモードのregexp-keyword-list"
-  (compile-regexp-keyword-list
-   `(("^\\* \\(.*\\)$"
-      nil ,*git-branch-color-current* nil 1)
-     ("remotes/[^ ]+"
-      nil ,*git-branch-color-remote*))))
+  (append (compile-regexp-keyword-list
+           `(("^\\* \\([^ ]+\\)$"
+              nil ,*git-branch-color-current* nil 1)))
+          (compile-regexp-keyword-list
+           (mapcar #'(lambda (b)
+                       `(,(concat "^[ *] \\(\\(remotes/\\)?" b "\\)")
+                         nil ,*git-branch-color-remote* nil 1))
+                   (git-get-remote-branch)))))
 
 (defun git-branch-mode (&optional (arg nil sv))
   "git branchモード"

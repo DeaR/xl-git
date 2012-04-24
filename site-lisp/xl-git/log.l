@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-24 18:50:59 DeaR>
+;; @timestamp   <2012-04-24 20:18:26 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -26,7 +26,8 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (require "xl-git/package")
-  (require "xl-git/diff"))
+  (require "xl-git/diff")
+  (require "xl-git/utils"))
 
 (in-package :xl-git)
 
@@ -76,18 +77,31 @@
 (defun git-log-regexp-keyword-list ()
   "git logÉÇÅ[ÉhÇÃregexp-keyword-list"
   (append (compile-regexp-keyword-list
-           `(("^[ */|\\]+ "
-              nil ,*git-log-color-line*)
+           `(("^\\([ /|\\]*\\)\\*?\\([ /|\\]*\\)"
+              nil ((1 . ,*git-log-color-line*)
+                   (2 . ,*git-log-color-line*)))
              ("\\(commit \\)?[0-9a-f]\\{40\\}"
               nil ,*git-log-color-sha*)
              ("\\(commit \\)?[0-9a-f]\\{7\\}"
               nil ,*git-log-color-sha*)
-             ("(\\(HEAD,? ?\\)?\\(\\(tag: [^, ():]+,? ?\\)*\\)\\(\\(origin/[^, ():]+,? ?\\)*\\)\\(\\([^():]+\\)*\\))"
+             ("(\\(HEAD\\)\\(, \\|)\\)"
               nil ((0 . ,*git-log-color-brace*)
-                   (1 . ,*git-log-color-head*)
-                   (2 . ,*git-log-color-tag*)
-                   (4 . ,*git-log-color-remote-branch*)
-                   (6 . ,*git-log-color-branch*)))))
+                   (1 . ,*git-log-color-head*)))
+             ("(?\\(tag: [^(), ]+\\)\\(, \\|)\\)"
+              nil ((0 . ,*git-log-color-brace*)
+                   (1 . ,*git-log-color-tag*)))))
+          (compile-regexp-keyword-list
+           (mapcar #'(lambda (b)
+                       `(,(concat "(?\\(" b "\\)\\(, \\|)\\)")
+                         nil ((0 . ,*git-log-color-brace*)
+                              (1 . ,*git-log-color-branch*))))
+                   (git-get-local-branch)))
+          (compile-regexp-keyword-list
+           (mapcar #'(lambda (b)
+                       `(,(concat "(?\\(" b "\\)\\(, \\|)\\)")
+                         nil ((0 . ,*git-log-color-brace*)
+                              (1 . ,*git-log-color-remote-branch*))))
+                   (git-get-remote-branch)))
           (git-diff-regexp-keyword-list)))
 
 (defun git-log-mode (&optional (arg nil sv))

@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-24 12:53:46 DeaR>
+;; @timestamp   <2012-04-24 19:44:16 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -56,6 +56,9 @@ nil なら read-string")
 
 (define-history-variable *git-prompt-history* nil
   "プロンプトの履歴")
+
+(defconstant +git-branch-name-regexp+ (compile-regexp "^[ *] \\([^ ]+\\)")
+  "ブランチ名の正規表現")
 
 
 
@@ -158,6 +161,30 @@ nil なら read-string")
           (push read args))
       (read-string (format nil "~A~[~:; ~]~A: " (pathname-name binary) (length command) command)
                    :history 'git-prompt))))
+
+(defun git-get-local-branch ()
+  "ローカルブランチをリストで取得"
+  (multiple-value-bind (exit-code out)
+      (git-call-process '("branch")
+                        :output (get-buffer-create *git-temp-bufname*)
+                        :show :hide :wait t)
+    (and (eq exit-code 0)
+         (mapcar #'(lambda (s)
+                     (and (string-match +git-branch-name-regexp+ s)
+                          (match-string 1)))
+                 (split-string out #\LFD)))))
+
+(defun git-get-remote-branch ()
+  "リモートブランチをリストで取得"
+  (multiple-value-bind (exit-code out)
+      (git-call-process '("branch" "-r")
+                        :output (get-buffer-create *git-temp-bufname*)
+                        :show :hide :wait t)
+    (and (eq exit-code 0)
+         (mapcar #'(lambda (s)
+                     (and (string-match +git-branch-name-regexp+ s)
+                          (match-string 1)))
+                 (split-string out #\LFD)))))
 
 
 
