@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-25 15:14:56 DeaR>
+;; @timestamp   <2012-04-25 19:16:00 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -98,7 +98,7 @@ no-std-handles Ç™ t ÇÃç€Ç… git-wrapper.bat ÇégópÇ∑ÇÈ")
   (multiple-value-bind (cmdline dir)
       (git-command-line binary args exec-directory (not #0=(and *git-wrapper-bat* no-std-handles (not (eq show :hide)))))
     (values (call-process (if #0#
-                              (format nil "\"~A\" ~A" (merge-pathnames *git-wrapper-bat*) cmdline)
+                              (format nil "\"~A\" ~A" *git-wrapper-bat* cmdline)
                             cmdline)
                           :environ (git-get-environ)
                           :output outfile
