@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-24 12:53:46 DeaR>
+;; @timestamp   <2012-04-25 20:00:56 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -57,7 +57,8 @@
     (when (and (set-window (get-buffer-window buffer))
                (> (count-windows) 1))
       (delete-window))
-    (delete-buffer buffer)))
+    (delete-buffer buffer))
+  (switch-to-buffer (selected-buffer)))
 
 (defun git-output-send-and-funcall (&optional (send *last-command-char*) func)
   "出力バッファのプロセスが動作中なら送り、終了していたら関数を実行"
