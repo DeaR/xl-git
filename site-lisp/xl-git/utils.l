@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-24 19:44:16 DeaR>
+;; @timestamp   <2012-04-25 17:26:21 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -65,9 +65,10 @@ nil なら read-string")
 (defun git-uninstall ()
   "アンインストールする"
   (unregister-history-variable '*git-prompt-history*)
-  (setf *modules* (delete "xl-git" *modules* :test #'string-equal))
-  (setf *modules* (delete "xl-git-flow" *modules* :test #'string-equal))
-  (setf *modules* (delete "xl-git/.+" *modules* :test #'string-match)))
+  (setf *modules* (delete "xl-git" *modules* :test #'string=))
+  (setf *modules* (delete "xl-git/" *modules* :test #'string-match))
+  (setf *modules* (delete "xl-git-flow" *modules* :test #'string=))
+  (unuse-package :xl-git))
 
 (defmacro with-selected-buffer (&body body)
   "BODYの前後でカレントバッファを保存します"
