@@ -1,10 +1,10 @@
 ;; -*- mode: lisp; package: user; encoding: shift_jis -*-
 
-;; @name        ni-before-uninstall/kuonn_witchcraft_museum/xl-git.l
+;; @name        ni-before-uninstall/kuonn_witchcraft_museum/xl-git.lisp
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-24 12:55:14 DeaR>
+;; @timestamp   <2012-05-01 15:42:16 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;

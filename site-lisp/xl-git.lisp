@@ -1,10 +1,10 @@
 ;; -*- mode: lisp; package: user; encoding: shift_jis -*-
 
-;; @name        xl-git.l
+;; @name        xl-git.lisp
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-23 19:47:22 DeaR>
+;; @timestamp   <2012-05-01 15:42:16 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;

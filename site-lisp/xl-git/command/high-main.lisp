@@ -1,10 +1,10 @@
 ;; -*- mode: lisp; package: xl-git; encoding: shift_jis -*-
 
-;; @name        xl-git/command/high-main.l
+;; @name        xl-git/command/high-main.lisp
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-04-24 20:35:27 DeaR>
+;; @timestamp   <2012-05-01 15:42:16 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -658,7 +658,7 @@ When no <stash> is given, shows the latest one.
 By default, the command shows the diffstat, but it will accept any format known to git diff
 (e.g., git stash show -p stash@{1} to view the second most recent stash in patch form)."))
 
-; -> xl-git/status.l
+; -> xl-git/status.lisp
 ; (define-git-command ("status")
 ;   (:documentation "Show the working tree status.")
 ;   (:completion "-s" "--short" "-b" "--branch" "--porcelain" "-u" "--untracked-files"
