@@ -58,9 +58,17 @@ A front end for [git] in [xyzzy].
 ```
 環境変数にPATH等を設定していない場合は以下を参考に設定して下さい
 ```lisp
+; 自分の環境での cygwin のインストールディレクトリに変更して下さい
 (push `(("PATH" . ,(concat "C:/cygwin/usr/local/bin;C:/cygwin/bin;" (si:getenv "PATH")))
         ("CYGWIN" . "ntsec"))
       *git-environ*)
+```
+
+### [cygwin] を導入済みだが [msysgit] を使用したい
+```lisp
+; 自分の環境での msysgit のインストールディレクトリに変更して下さい
+(setf *msysgit-directory* "C:/msysgit")
+(push '("CYGWIN" . "") *git-environ*)
 ```
 
 ### 引数の入力時に補完入力を使用する (実験機能)
