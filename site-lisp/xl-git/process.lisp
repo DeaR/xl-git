@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-05-23 14:40:36 DeaR>
+;; @timestamp   <2012-05-23 14:44:06 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -92,7 +92,7 @@
 íl2Ç…èoóÕï∂éöóÒÇï‘Ç∑"
   (multiple-value-bind (cmdline dir)
       (git-command-line binary args exec-directory t)
-    (values (call-process (concat cmdline (and no-std-handles (not (eq show :hide)) " && pause"))
+    (values (call-process (concat cmdline (and no-std-handles (not (eq show :hide)) " & pause"))
                           :environ (git-get-environ)
                           :output outfile
                           :exec-directory dir
