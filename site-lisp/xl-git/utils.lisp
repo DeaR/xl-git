@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-05-01 15:42:16 DeaR>
+;; @timestamp   <2012-05-23 14:03:28 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -129,14 +129,14 @@ nil ‚È‚ç read-string")
          (args (or args
                    (unless no-prompt
                      (git-read-args command completion binary))))
-         (file-arg (when file-arg
-                     (let ((out `(,(or (get-buffer-file-name) (read-file-name "File: ")))))
-                       (when (numberp file-arg)
-                         (dotimes (i (1- file-arg))
-                           (push (read-file-name (format nil "File ~D: " (+ i 2))) out)))
-                       (nreverse out))))
+         (file (when file-arg
+                 (let ((out) (buff (selected-buffer)))
+                   (dotimes (i (if (numberp file-arg) file-arg 1) (nreverse out))
+                     (push (read-file-name (format nil "File ~D: " (1+ i))
+                                           :default (get-buffer-file-name buff)) out)
+                     (setf buff (get-next-buffer buff t))))))
          (cmdline (format nil "~A ~A~{ \"~A\"~}" command args
-                          (mapcar #'(lambda (f) (relative-pathnames f dir)) file-arg))))
+                          (mapcar #'(lambda (f) (relative-pathnames f dir)) file))))
     (if no-std-handles
         (git-call-process cmdline :binary binary :exec-directory dir
                           :no-std-handles no-std-handles
