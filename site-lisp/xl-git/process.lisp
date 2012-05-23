@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-05-23 14:44:06 DeaR>
+;; @timestamp   <2012-05-23 15:30:50 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -67,18 +67,18 @@
         (ed::shell-command-line cmdline dir)
       (values cmdline dir))))
 
-(defun git-get-environ (&optional environ)
+(defun git-get-environ ()
   "ä¬ã´ïœêîÇéÊìæ"
-  (append `(("PATH" .
-             ,(concat (when *msysgit-directory*
-                        (let ((dir (map-slash-to-backslash (remove-trail-slash *msysgit-directory*))))
-                          (format nil "~A\\bin;~A\\mingw\\bin;~A\\cmd;" dir dir dir)))
+  (append *git-environ*
+          `(("PATH" .
+             ,(concat (and *msysgit-directory*
+                           (format nil "~A\\bin;~A\\mingw\\bin;~A\\cmd;"
+                                   #0=(map-slash-to-backslash (remove-trail-slash *msysgit-directory*)) #0# #0#))
                       (map-slash-to-backslash (si:system-root)) ";"
                       (or (rest (assoc "PATH" *git-environ* :test #'string-equal))
                           (si:getenv "PATH")))))
-          '(("GIT_EDITOR" . "xyzzycli.exe -wait"))
-          *git-environ*
-          environ))
+          (unless (assoc "GIT_EDITOR" *git-environ* :test #'string-equal)
+            '(("GIT_EDITOR" . "xyzzycli.exe -wait")))))
 
 (defun git-call-process (args &key environ
                               (binary *git-binary*)
