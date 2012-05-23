@@ -7,25 +7,25 @@ A front end for [git] in [xyzzy].
 
 
 ## Install
-1. �𓀂��� [xyzzy] �̃C���X�g�[���f�B���N�g���ɃR�s�[���܂�
+1. 解凍して [xyzzy] のインストールディレクトリにコピーします
 
-2. `.xyzzy` �܂��� `siteinit.l` �Ɉȉ��̃R�[�h��ǉ����܂�
+2. `.xyzzy` または `siteinit.l` に以下のコードを追加します
    
    ```lisp
    (require "xl-git")
    ```
 
-3. �X�Ɋ��ŗL�̐ݒ���ǉ����܂�
+3. 更に環境固有の設定も追加します
    
    ```lisp
-   ; �����̊��ł� msysgit �̃C���X�g�[���f�B���N�g���ɕύX���ĉ�����
+   ; 自分の環境での msysgit のインストールディレクトリに変更して下さい
    (setf *msysgit-directory* "C:/msysgit")
    ```
 
-4. (�K�v�Ȃ��) �o�C�g�R���p�C�����܂�
+4. (必要ならば) バイトコンパイルします
 
-5. ��L�̐ݒ�𔽉f������ׂɍċN�������܂�
-   `siteinit.l` �ɐݒ肵���ꍇ�͍ă_���v���s���܂�
+5. 上記の設定を反映させる為に再起動をします
+   `siteinit.l` に設定した場合は再ダンプも行います
 
   [xyzzy]: http://www.jsdlab.co.jp/~kamei/
 
@@ -37,41 +37,41 @@ A front end for [git] in [xyzzy].
 - `M-x git-push`
 - etc...
 
-### `*Git*` �o�b�t�@
-- ���[�h���C���� `:Run` (�v���Z�X���s��)�̏ꍇ�� `C-c C-g` �ŏI��
-- ���[�h���C���� `:Exit` (�v���Z�X�I��)�̏ꍇ�� `C-c C-g` �������� `q` �ŏI��
+### `*Git*` バッファ
+- モードラインに `:Run` (プロセス実行中)の場合は `C-c C-g` で終了
+- モードラインに `:Exit` (プロセス終了)の場合は `C-c C-g` もしくは `q` で終了
 
-### `COMMIT_EDITMSG` �� `TAG_EDITMSG` �o�b�t�@��
-- `C-c C-c` �������� `C-x C-s` �Ŏ��s
-- `C-c C-g` �ŃL�����Z��
+### `COMMIT_EDITMSG` や `TAG_EDITMSG` バッファ等
+- `C-c C-c` もしくは `C-x C-s` で実行
+- `C-c C-g` でキャンセル
 
 
 ## Setting
-### [git-flow] �̃R�}���h��ǉ�������
+### [git-flow] のコマンドを追加したい
 ```lisp
 (require "xl-git-flow")
 ```
 
-### [msysgit] �ł͂Ȃ� [cygwin] ���g�p������
+### [msysgit] ではなく [cygwin] を使用したい
 ```lisp
 (setf *msysgit-directory* nil)
 ```
-���ϐ���PATH����ݒ肵�Ă��Ȃ��ꍇ�͈ȉ����Q�l�ɐݒ肵�ĉ�����
+環境変数にPATH等を設定していない場合は以下を参考に設定して下さい
 ```lisp
-; �����̊��ł� cygwin �̃C���X�g�[���f�B���N�g���ɕύX���ĉ�����
+; 自分の環境での cygwin のインストールディレクトリに変更して下さい
 (push `(("PATH" . ,(concat "C:/cygwin/usr/local/bin;C:/cygwin/bin;" (si:getenv "PATH")))
         ("CYGWIN" . "ntsec"))
       *git-environ*)
 ```
 
-### [cygwin] �𓱓��ς݂��� [msysgit] ���g�p������
+### [cygwin] を導入済みだが [msysgit] を使用したい
 ```lisp
-; �����̊��ł� msysgit �̃C���X�g�[���f�B���N�g���ɕύX���ĉ�����
+; 自分の環境での msysgit のインストールディレクトリに変更して下さい
 (setf *msysgit-directory* "C:/msysgit")
 (push '("CYGWIN" . "") *git-environ*)
 ```
 
-### �����̓��͎��ɕ⊮���͂��g�p���� (�����@�\)
+### 引数の入力時に補完入力を使用する (実験機能)
 ```lisp
 (setf *git-completing-prompt* t)
 ```
@@ -82,7 +82,7 @@ A front end for [git] in [xyzzy].
 
 
 ## Issue
-���L�̂ǂ��炩�ɂ��A��������
+下記のどちらかにご連絡下さい
 
 - [Issues - DeaR/xl-git](https://github.com/DeaR/xl-git/issues)
 - [@nayuri_aohime](http://twitter.com/nayuri_aohime/)
