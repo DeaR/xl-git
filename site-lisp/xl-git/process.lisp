@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-05-01 15:42:16 DeaR>
+;; @timestamp   <2012-05-23 14:40:36 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -32,7 +32,6 @@
 (export '(*msysgit-directory*
           *git-binary*
           *git-environ*
-          *git-wrapper-bat*
           *git-process-encoding*
           *git-process-eol-code*))
 
@@ -47,10 +46,6 @@
 (defvar *git-environ* nil
   "必ず設定する環境変数
 '((\"VARNAME\" . \"VAR\"))")
-
-(defvar *git-wrapper-bat* (merge-pathnames "site-lisp/xl-git/git-wrapper.bat" (si:system-root))
-  "git-wrapper.bat のパス(nil なら無効)
-no-std-handles が t の際に git-wrapper.bat を使用する")
 
 (defvar *git-process-encoding* *encoding-utf8n*
   "git.exe の文字コード")
@@ -74,15 +69,15 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
 
 (defun git-get-environ (&optional environ)
   "環境変数を取得"
-  (append '(("GIT_EDITOR" . "xyzzycli.exe -wait"))
-          *git-environ*
-          `(("PATH" .
+  (append `(("PATH" .
              ,(concat (when *msysgit-directory*
                         (let ((dir (map-slash-to-backslash (remove-trail-slash *msysgit-directory*))))
                           (format nil "~A\\bin;~A\\mingw\\bin;~A\\cmd;" dir dir dir)))
                       (map-slash-to-backslash (si:system-root)) ";"
                       (or (rest (assoc "PATH" *git-environ* :test #'string-equal))
                           (si:getenv "PATH")))))
+          '(("GIT_EDITOR" . "xyzzycli.exe -wait"))
+          *git-environ*
           environ))
 
 (defun git-call-process (args &key environ
@@ -96,10 +91,8 @@ no-std-handles が t の際に git-wrapper.bat を使用する")
   "gitのプロセスを実行
 値2に出力文字列を返す"
   (multiple-value-bind (cmdline dir)
-      (git-command-line binary args exec-directory (not #0=(and *git-wrapper-bat* no-std-handles (not (eq show :hide)))))
-    (values (call-process (if #0#
-                              (format nil "\"~A\" ~A" *git-wrapper-bat* cmdline)
-                            cmdline)
+      (git-command-line binary args exec-directory t)
+    (values (call-process (concat cmdline (and no-std-handles (not (eq show :hide)) " && pause"))
                           :environ (git-get-environ)
                           :output outfile
                           :exec-directory dir
