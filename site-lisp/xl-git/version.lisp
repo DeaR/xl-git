@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-05-14 19:23:25 DeaR>
+;; @timestamp   <2012-05-23 16:05:38 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -35,7 +35,7 @@
 
 
 
-(defconstant +git-version+ "1.0a4")
+(defconstant +git-version+ "1.0b1")
 
 
 
