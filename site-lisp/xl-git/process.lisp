@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-05-23 15:30:50 DeaR>
+;; @timestamp   <2012-05-25 20:10:48 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -87,7 +87,7 @@
                               (exec-directory (default-directory))
                               (encoding *git-process-encoding*)
                               (eol-code *git-process-eol-code*)
-                              no-std-handles show wait)
+                              show wait no-std-handles no-outfile-delete)
   "gitのプロセスを実行
 値2に出力文字列を返す"
   (multiple-value-bind (cmdline dir)
@@ -105,6 +105,8 @@
                 (let ((point (point-max)))
                   (goto-char point)
                   (insert-file outfile encoding)
+                  (unless no-outfile-delete
+                    (delete-file outfile))
                   (replace-buffer +escape-code+ "" :regexp t)
                   (buffer-substring point (point-max))))))))
 
