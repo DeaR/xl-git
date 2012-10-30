@@ -15,7 +15,7 @@ A front end for [git] in [xyzzy].
    (require "xl-git")
    ```
 
-3. 更に環境固有の設定も追加します
+3. 環境変数 `GITDIR` を設定していない場合は以下も追加します
    
    ```lisp
    ; 自分の環境での msysgit のインストールディレクトリに変更して下さい
@@ -66,8 +66,6 @@ A front end for [git] in [xyzzy].
 
 ### [cygwin] を導入済みだが [msysgit] を使用したい
 ```lisp
-; 自分の環境での msysgit のインストールディレクトリに変更して下さい
-(setf *msysgit-directory* "C:/msysgit")
 (push '("CYGWIN" . "") *git-environ*)
 ```
 
