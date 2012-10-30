@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-05-25 20:10:48 DeaR>
+;; @timestamp   <2012-10-30 17:11:02 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -72,7 +72,7 @@
   (append *git-environ*
           `(("PATH" .
              ,(concat (and *msysgit-directory*
-                           (format nil "~A\\bin;~A\\mingw\\bin;~A\\cmd;"
+                           (format nil "~A\\cmd;~A\\bin;"
                                    #0=(map-slash-to-backslash (remove-trail-slash *msysgit-directory*)) #0# #0#))
                       (map-slash-to-backslash (si:system-root)) ";"
                       (or (rest (assoc "PATH" *git-environ* :test #'string-equal))
