@@ -4,7 +4,7 @@
 ;; @description A front-end for git in xyzzy.
 ;; @namespace   http://kuonn.mydns.jp/
 ;; @author      DeaR
-;; @timestamp   <2012-10-30 17:11:02 DeaR>
+;; @timestamp   <2012-10-30 17:18:27 DeaR>
 
 ;; Copyright (c) 2012 DeaR <nayuri@kuonn.mydns.jp>
 ;;
@@ -37,7 +37,7 @@
 
 
 
-(defvar *msysgit-directory* nil
+(defvar *msysgit-directory* (si:getenv "GITDIR")
   "msysgit のインストールディレクトリ")
 
 (defvar *git-binary* "git.exe"
